@@ -1,0 +1,7 @@
+name: Npclib
+version: ${project.version}
+main: dev.crystall.npclib.Npclib
+api-version: 1.16
+authors: [ CrystallDEV ]
+description: NPCLib that uses packets to display efficient custom player mobs
+website: https://www.crystall.dev
