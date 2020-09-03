@@ -70,6 +70,12 @@
       <id>codemc-repo</id>
       <url>https://repo.codemc.org/repository/maven-public/</url>
     </repository>
+
+    <!--    PROTOCOLLIB-->
+    <repository>
+      <id>dmulloy2-repo</id>
+      <url>https://repo.dmulloy2.net/nexus/repository/public/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -101,6 +107,20 @@
       <groupId>org.bukkit</groupId>
       <artifactId>craftbukkit</artifactId>
       <version>${spigot.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>RELEASE</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!--    PROTOCOL LIb-->
+    <dependency>
+      <groupId>com.comphenix.protocol</groupId>
+      <artifactId>ProtocolLib</artifactId>
+      <version>4.5.1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

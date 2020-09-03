@@ -3,5 +3,6 @@ version: ${project.version}
 main: dev.crystall.playernpclib
 api-version: 1.16
 authors: [ CrystallDEV ]
+depend: [ ProtocolLib ]
 description: PlayerNPCLib that uses packets to display efficient custom player mobs
 website: https://www.crystall.dev
