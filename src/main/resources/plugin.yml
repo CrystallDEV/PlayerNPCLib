@@ -1,6 +1,6 @@
 name: PlayerNPCLib
 version: ${project.version}
-main: dev.crystall.playernpclib
+main: dev.crystall.NPCTester
 api-version: 1.16
 authors: [ CrystallDEV ]
 depend: [ ProtocolLib ]
