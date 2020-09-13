@@ -9,13 +9,12 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@Getter
 public class NPCRemoveEvent extends Event {
 
   private static final HandlerList handlers = new HandlerList();
 
-  @Getter
   private final BasePlayerNPC npc;
-
 
   public NPCRemoveEvent(final BasePlayerNPC npc) {
     this.npc = npc;
@@ -30,4 +29,5 @@ public class NPCRemoveEvent extends Event {
   public HandlerList getHandlers() {
     return handlers;
   }
+
 }
