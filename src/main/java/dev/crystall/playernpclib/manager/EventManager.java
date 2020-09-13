@@ -1,6 +1,7 @@
 package dev.crystall.playernpclib.manager;
 
 import dev.crystall.playernpclib.PlayerNPCLib;
+import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -20,7 +21,9 @@ public class EventManager implements Listener {
 
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event) {
-    EntityManager.getPlayerNPCList().forEach(npc -> npc.show(event.getPlayer()));
+    for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
+      npc.show(event.getPlayer());
+    }
   }
 
   @EventHandler

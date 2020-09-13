@@ -37,11 +37,15 @@ public class NPCTester extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onRightClick(PlayerInteractEvent event) {
     if (event.getAction().toString().startsWith("RIGHT") && event.getPlayer().isSneaking()) {
-      playerNPCLib.getEntityManager().spawnEntity(new StaticPlayerNPC("Crystall", event.getPlayer().getLocation()));
+      StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
+      npc.setName(String.valueOf(npc.getEntityId()));
+      playerNPCLib.getEntityManager().spawnEntity(npc);
     }
 
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
-      playerNPCLib.getEntityManager().spawnEntity(new MoveablePlayerNPC("Crystall", event.getPlayer().getLocation()));
+      MoveablePlayerNPC npc = new MoveablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
+      npc.setName(String.valueOf(npc.getEntityId()));
+      playerNPCLib.getEntityManager().spawnEntity(npc);
     }
   }
 

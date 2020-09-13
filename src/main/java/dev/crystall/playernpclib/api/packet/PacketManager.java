@@ -7,16 +7,17 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityHeadRotation;
+import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
 import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
 import dev.crystall.nms.wrappers.WrapperPlayServerPlayerInfo;
-import dev.crystall.nms.wrappers.WrapperPlayServerRelEntityMove;
-import dev.crystall.nms.wrappers.WrapperPlayServerRelEntityMoveLook;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.utility.MathUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.bukkit.Bukkit;
@@ -36,19 +37,24 @@ public class PacketManager {
   }
 
   public static void sendMovePacket(Player player, BasePlayerNPC npc) {
-    WrapperPlayServerRelEntityMove moveWrapper = new WrapperPlayServerRelEntityMove();
+    WrapperPlayServerEntityTeleport moveWrapper = new WrapperPlayServerEntityTeleport();
     moveWrapper.setEntityID(npc.getEntityId());
-
-    Optional<Player> nearbyPlayer = npc.getLocation().getNearbyPlayers(10).stream().findFirst();
+    moveWrapper.setX(npc.getLocation().getX());
+    moveWrapper.setY(npc.getLocation().getY());
+    moveWrapper.setZ(npc.getLocation().getZ());
+    moveWrapper.setYaw(npc.getLocation().getYaw());
+    moveWrapper.setPitch(npc.getLocation().getPitch());
     sendPacket(player, moveWrapper.getHandle(), false);
 
-    // Head rotation
-    WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
-    headWrapper.setEntityID(npc.getEntityId());
-
-    nearbyPlayer.ifPresent(value ->
-      headWrapper.setHeadYaw((byte) (MathUtils.getLookAtYaw(npc.getLocation(), nearbyPlayer.get().getLocation()) * 256.0F / 360.0F + 75)));
-    sendPacket(player, headWrapper.getHandle(), false);
+    //    // Head rotation
+    //    WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
+    //    headWrapper.setEntityID(npc.getEntityId());
+    //
+    //    Optional<Player> nearbyPlayer = npc.getLocation().getNearbyPlayers(10).stream()
+    //      .min(Comparator.comparingDouble(o -> o.getLocation().distance(npc.getLocation())));
+    //    nearbyPlayer.ifPresent(value ->
+    //      headWrapper.setHeadYaw((byte) (MathUtils.getLookAtYaw(npc.getLocation(), nearbyPlayer.get().getLocation()) * 256.0F / 360.0F + 75)));
+    //    sendPacket(player, headWrapper.getHandle(), false);
   }
 
   public static void sendNPCCreatePackets(Player player, BasePlayerNPC npc) {
@@ -97,7 +103,13 @@ public class PacketManager {
   }
 
   public static void sendHidePackets(Player player, BasePlayerNPC npc) {
+    // Remove entity
+    WrapperPlayServerEntityDestroy spawnWrapper = new WrapperPlayServerEntityDestroy();
+    spawnWrapper.setEntityIds(new int[]{npc.getEntityId()});
+    sendPacket(player, spawnWrapper.getHandle(), false);
 
+    // Remove player from tab list if its still on there
+    sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER);
   }
 
   public static void sendMetadataPacket(Player player, BasePlayerNPC npc) {

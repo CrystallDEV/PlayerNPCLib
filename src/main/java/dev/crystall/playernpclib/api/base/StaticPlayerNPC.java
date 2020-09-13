@@ -15,4 +15,9 @@ public class StaticPlayerNPC extends BasePlayerNPC {
   public void onSpawn() {
     super.onSpawn();
   }
+
+  @Override
+  public void onDespawn() {
+
+  }
 }

@@ -25,32 +25,30 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
-public class WrapperPlayServerRelEntityMoveLook extends AbstractPacket {
+public class WrapperPlayServerEntityTeleport extends AbstractPacket {
 	public static final PacketType TYPE =
-			PacketType.Play.Server.REL_ENTITY_MOVE_LOOK;
+			PacketType.Play.Server.ENTITY_TELEPORT;
 
-	public WrapperPlayServerRelEntityMoveLook() {
+	public WrapperPlayServerEntityTeleport() {
 		super(new PacketContainer(TYPE), TYPE);
 		handle.getModifier().writeDefaults();
 	}
 
-	public WrapperPlayServerRelEntityMoveLook(PacketContainer packet) {
+	public WrapperPlayServerEntityTeleport(PacketContainer packet) {
 		super(packet, TYPE);
 	}
 
 	/**
-	 * Retrieve Entity ID.
-	 * <p>
-	 * Notes: entity's ID
+	 * Retrieve entity ID.
 	 * 
-	 * @return The current Entity ID
+	 * @return The current EID
 	 */
 	public int getEntityID() {
 		return handle.getIntegers().read(0);
 	}
 
 	/**
-	 * Set Entity ID.
+	 * Set entity ID.
 	 * 
 	 * @param value - new value.
 	 */
@@ -59,77 +57,47 @@ public class WrapperPlayServerRelEntityMoveLook extends AbstractPacket {
 	}
 
 	/**
-	 * Retrieve the entity of the painting that will be spawned.
+	 * Retrieve the entity.
 	 * 
 	 * @param world - the current world of the entity.
-	 * @return The spawned entity.
+	 * @return The entity.
 	 */
 	public Entity getEntity(World world) {
 		return handle.getEntityModifier(world).read(0);
 	}
 
 	/**
-	 * Retrieve the entity of the painting that will be spawned.
+	 * Retrieve the entity.
 	 * 
 	 * @param event - the packet event.
-	 * @return The spawned entity.
+	 * @return The entity.
 	 */
 	public Entity getEntity(PacketEvent event) {
 		return getEntity(event.getPlayer().getWorld());
 	}
 
-	/**
-	 * Retrieve DX.
-	 * 
-	 * @return The current DX
-	 */
-	public double getDx() {
-		return handle.getShorts().read(0) / 4096D;
+	public double getX() {
+		return handle.getDoubles().read(0);
 	}
 
-	/**
-	 * Set DX.
-	 *
-	 * @param value - new value.
-	 */
-	public void setDx(double value) {
-		handle.getShorts().write(0, (short) (value * 4096));
+	public void setX(double value) {
+		handle.getDoubles().write(0, value);
 	}
 
-	/**
-	 * Retrieve DY.
-	 *
-	 * @return The current DY
-	 */
-	public double getDy() {
-		return handle.getShorts().read(1) / 4096D;
+	public double getY() {
+		return handle.getDoubles().read(1);
 	}
 
-	/**
-	 * Set DY.
-	 *
-	 * @param value - new value.
-	 */
-	public void setDy(double value) {
-		handle.getShorts().write(1, (short) (value * 4096));
+	public void setY(double value) {
+		handle.getDoubles().write(1, value);
 	}
 
-	/**
-	 * Retrieve DZ.
-	 *
-	 * @return The current DZ
-	 */
-	public double getDz() {
-		return handle.getShorts().read(2) / 4096D;
+	public double getZ() {
+		return handle.getDoubles().read(2);
 	}
 
-	/**
-	 * Set DZ.
-	 *
-	 * @param value - new value.
-	 */
-	public void setDz(double value) {
-		handle.getShorts().write(2, (short) (value * 4096));
+	public void setZ(double value) {
+		handle.getDoubles().write(2, value);
 	}
 
 	/**
@@ -168,20 +136,10 @@ public class WrapperPlayServerRelEntityMoveLook extends AbstractPacket {
 		handle.getBytes().write(1, (byte) (value * 256.0F / 360.0F));
 	}
 
-	/**
-	 * Retrieve On Ground.
-	 * 
-	 * @return The current On Ground
-	 */
 	public boolean getOnGround() {
 		return handle.getBooleans().read(0);
 	}
 
-	/**
-	 * Set On Ground.
-	 * 
-	 * @param value - new value.
-	 */
 	public void setOnGround(boolean value) {
 		handle.getBooleans().write(0, value);
 	}
