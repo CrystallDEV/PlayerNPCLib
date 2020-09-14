@@ -1,28 +1,43 @@
 package dev.crystall.playernpclib.api.base;
 
 import dev.crystall.playernpclib.PlayerNPCLib;
-import dev.crystall.playernpclib.api.packet.PacketManager;
+import dev.crystall.playernpclib.manager.PacketManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 
 /**
  * Created by CrystallDEV on 01/09/2020
  */
-public class MoveablePlayerNPC extends BasePlayerNPC {
+public class MovablePlayerNPC extends BasePlayerNPC {
 
-  public MoveablePlayerNPC(String name, Location location) {
+  /**
+   * This will be the bukkit entity, which is being spawned on the server but hidden to all players
+   */
+  protected LivingEntity bukkitLivingEntity;
+  private final EntityType entityType;
+
+
+  public MovablePlayerNPC(String name, Location location, EntityType entityType) {
     super(name, location);
+    this.entityType = entityType;
   }
 
   @Override
   public void onSpawn() {
-    this.bukkitLivingEntity = (Zombie) getLocation().getWorld().spawnEntity(getLocation(), EntityType.ZOMBIE);
-    this.bukkitLivingEntity.setAdult();
-    this.bukkitLivingEntity.setShouldBurnInDay(false);
+    this.bukkitLivingEntity = (LivingEntity) getLocation().getWorld().spawnEntity(getLocation(), entityType);
+    if (this.bukkitLivingEntity instanceof Ageable) {
+      ((Ageable) this.bukkitLivingEntity).setAdult();
+      ((Ageable) this.bukkitLivingEntity).setAdult();
+    }
+    if (this.bukkitLivingEntity instanceof Zombie) {
+      ((Zombie) this.bukkitLivingEntity).setShouldBurnInDay(false);
+    }
     this.bukkitLivingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.31F);
 
     for (Player player1 : Bukkit.getOnlinePlayers()) {
@@ -39,7 +54,7 @@ public class MoveablePlayerNPC extends BasePlayerNPC {
 
   @Override
   public void onDespawn() {
-    getBukkitLivingEntity().remove();
+    this.bukkitLivingEntity.remove();
     for (Player player : Bukkit.getOnlinePlayers()) {
       hide(player);
     }
@@ -48,7 +63,7 @@ public class MoveablePlayerNPC extends BasePlayerNPC {
   @Override
   public void show(Player player) {
     super.show(player);
-    PlayerNPCLib.getInstance().getEntityHider().hideEntity(player, getBukkitLivingEntity());
+    PlayerNPCLib.getInstance().getEntityHider().hideEntity(player, this.bukkitLivingEntity);
   }
 
   @Override

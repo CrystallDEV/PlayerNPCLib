@@ -2,13 +2,12 @@ package dev.crystall.playernpclib.api.base;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import dev.crystall.playernpclib.PlayerNPCLib;
-import dev.crystall.playernpclib.api.packet.PacketManager;
+import dev.crystall.playernpclib.manager.PacketManager;
 import dev.crystall.playernpclib.manager.EntityManager;
 import java.util.UUID;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Zombie;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -20,17 +19,14 @@ public abstract class BasePlayerNPC {
 
   private final UUID uuid = UUID.randomUUID();
 
+  private boolean isSpawned = false;
   /**
    * The id the entity will be registered with at the server
    */
-  private final int entityId = Integer.MAX_VALUE - EntityManager.getPlayerNPCList().size();
-
-  /**
-   * This will be the bukkit entity, which is being spawned on the server but hidden to all players
-   */
-  protected Zombie bukkitLivingEntity;
+  protected int entityId = Integer.MAX_VALUE - EntityManager.getPlayerNPCList().size();
 
   protected Location location;
+
 
   protected BasePlayerNPC(String name, Location location) {
     this.name = name;
@@ -41,12 +37,14 @@ public abstract class BasePlayerNPC {
     for (Player player : PlayerNPCLib.getInstance().getPlugin().getServer().getOnlinePlayers()) {
       show(player);
     }
+    isSpawned = true;
   }
 
   public void onDespawn() {
     for (Player player : PlayerNPCLib.getInstance().getPlugin().getServer().getOnlinePlayers()) {
       hide(player);
     }
+    isSpawned = false;
   }
 
   public void setName(String name) {

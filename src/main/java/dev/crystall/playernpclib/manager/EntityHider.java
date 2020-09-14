@@ -83,7 +83,7 @@ public class EntityHider implements Listener {
     BLOCK_BREAK_ANIMATION,
     NAMED_SOUND_EFFECT,
     CUSTOM_SOUND_EFFECT,
-    COMBAT_EVENT
+    COMBAT_EVENT,
   };
 
   /**
@@ -352,7 +352,23 @@ public class EntityHider implements Listener {
   public final boolean canSee(Player observer, Entity entity) {
     validate(observer, entity);
 
-    return isVisible(observer, entity.getEntityId());
+    return canSee(observer, entity.getEntityId());
+  }
+
+  /**
+   * Determine if the given entity has been hidden from an observer.
+   * <p>
+   * Note that the entity may very well be occluded or out of range from the perspective
+   * of the observer. This method simply checks if an entity has been completely hidden
+   * for that observer.
+   *
+   * @param observer - the observer.
+   * @param entityId - the entity that may be hidden.
+   * @return TRUE if the player may see the entity, FALSE if the entity has been hidden.
+   */
+  public final boolean canSee(Player observer, int entityId) {
+
+    return isVisible(observer, entityId);
   }
 
   // For valdiating the input parameters

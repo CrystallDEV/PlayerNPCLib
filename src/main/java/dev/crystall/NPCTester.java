@@ -3,8 +3,9 @@ package dev.crystall;
 import static org.bukkit.Bukkit.getPluginManager;
 
 import dev.crystall.playernpclib.PlayerNPCLib;
-import dev.crystall.playernpclib.api.base.MoveablePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.base.StaticPlayerNPC;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +44,7 @@ public class NPCTester extends JavaPlugin implements Listener {
     }
 
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
-      MoveablePlayerNPC npc = new MoveablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
+      MovablePlayerNPC npc = new MovablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation(), EntityType.ZOMBIE);
       npc.setName(String.valueOf(npc.getEntityId()));
       playerNPCLib.getEntityManager().spawnEntity(npc);
     }

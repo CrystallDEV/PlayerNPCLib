@@ -1,4 +1,4 @@
-package dev.crystall.playernpclib.api.packet;
+package dev.crystall.playernpclib.manager;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
@@ -8,18 +8,14 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
-import dev.crystall.nms.wrappers.WrapperPlayServerEntityHeadRotation;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
 import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
 import dev.crystall.nms.wrappers.WrapperPlayServerPlayerInfo;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
-import dev.crystall.playernpclib.api.utility.MathUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
