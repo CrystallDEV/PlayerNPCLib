@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
+import dev.crystall.nms.wrappers.WrapperPlayServerEntityEquipment;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
 import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
 import dev.crystall.nms.wrappers.WrapperPlayServerPlayerInfo;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -83,14 +83,11 @@ public class PacketManager {
     sendPacket(player, infoWrapper.getHandle(), false);
   }
 
-  public static void sendEquipmentPackets(Player player, EquipmentSlot slot, boolean auto) {
-    //    for (NPCSlot slot : NPCSlot.values()) {
-    //      sendEquipmentPacket(player, slot, true);
-    //    }
-  }
-
-  public static void sendEquipmentPacket(Player player, EquipmentSlot slot, boolean auto) {
-
+  public static void sendEquipmentPackets(Player player, BasePlayerNPC npc) {
+    WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
+    wrapper.setEntityID(npc.getEntityId());
+    wrapper.SetSlotStackPairLists(npc.getItemSlots());
+    sendPacket(player, wrapper.getHandle(), false);
   }
 
   public static void sendShowPackets(Player player, BasePlayerNPC npc) {
