@@ -39,10 +39,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
       ((Zombie) this.bukkitLivingEntity).setShouldBurnInDay(false);
     }
     this.bukkitLivingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.31F);
-
-    for (Player player1 : Bukkit.getOnlinePlayers()) {
-      show(player1);
-    }
+    super.onSpawn();
 
     Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getInstance().getPlugin(), () -> {
       this.location = this.bukkitLivingEntity.getLocation();
@@ -54,16 +51,18 @@ public class MovablePlayerNPC extends BasePlayerNPC {
 
   @Override
   public void onDespawn() {
-    this.bukkitLivingEntity.remove();
-    for (Player player : Bukkit.getOnlinePlayers()) {
-      hide(player);
+    super.onDespawn();
+    if (this.bukkitLivingEntity != null) {
+      this.bukkitLivingEntity.remove();
     }
   }
 
   @Override
   public void show(Player player) {
     super.show(player);
-    PlayerNPCLib.getInstance().getEntityHider().hideEntity(player, this.bukkitLivingEntity);
+    if (this.bukkitLivingEntity != null) {
+      PlayerNPCLib.getInstance().getEntityHider().hideEntity(player, this.bukkitLivingEntity);
+    }
   }
 
   @Override

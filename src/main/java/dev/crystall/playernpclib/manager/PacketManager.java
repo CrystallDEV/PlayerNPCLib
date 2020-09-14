@@ -6,7 +6,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
 import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
@@ -75,7 +74,7 @@ public class PacketManager {
     WrapperPlayServerPlayerInfo infoWrapper = new WrapperPlayServerPlayerInfo();
 
     infoWrapper.setAction(action);
-    PlayerInfoData data = new PlayerInfoData(new WrappedGameProfile(npc.getUuid(), npc.getName()), 1, EnumWrappers.NativeGameMode.CREATIVE,
+    PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, EnumWrappers.NativeGameMode.CREATIVE,
       WrappedChatComponent.fromText(npc.getName()));
 
     List<PlayerInfoData> dataList = new ArrayList<>();

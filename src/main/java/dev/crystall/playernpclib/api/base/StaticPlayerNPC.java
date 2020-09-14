@@ -18,6 +18,6 @@ public class StaticPlayerNPC extends BasePlayerNPC {
 
   @Override
   public void onDespawn() {
-
+    super.onDespawn();
   }
 }

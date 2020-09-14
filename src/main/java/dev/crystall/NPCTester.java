@@ -5,13 +5,15 @@ import static org.bukkit.Bukkit.getPluginManager;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.base.StaticPlayerNPC;
+import dev.crystall.playernpclib.api.event.NPCInteractEvent;
+import dev.crystall.playernpclib.api.event.NPCInteractEvent.ClickType;
+import dev.crystall.playernpclib.api.skin.SkinFetcher;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.RandomUtils;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,24 +40,29 @@ public class NPCTester extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onRightClick(PlayerInteractEvent event) {
     if (event.getAction().toString().startsWith("RIGHT") && event.getPlayer().isSneaking()) {
-      StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
-      npc.setName(String.valueOf(npc.getEntityId()));
-      playerNPCLib.getEntityManager().spawnEntity(npc);
+      SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
+        StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
+        npc.setName(String.valueOf(npc.getEntityId()));
+        npc.setSkin(skin);
+        Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), () -> playerNPCLib.getEntityManager().spawnEntity(npc));
+      });
     }
 
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
-      MovablePlayerNPC npc = new MovablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation(), EntityType.ZOMBIE);
-      npc.setName(String.valueOf(npc.getEntityId()));
-      playerNPCLib.getEntityManager().spawnEntity(npc);
+      SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
+        MovablePlayerNPC npc = new MovablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation(), EntityType.ZOMBIE);
+        npc.setName(String.valueOf(npc.getEntityId()));
+        npc.setSkin(skin);
+        Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), () -> playerNPCLib.getEntityManager().spawnEntity(npc));
+      });
+
     }
   }
 
   @EventHandler
-  public void onEntityInteract(EntityDamageByEntityEvent event) {
-    if (event.getDamager() instanceof Player && ((Player) event.getDamager()).isSneaking()) {
-      if (PlayerNPCLib.isNPC((LivingEntity) event.getEntity())) {
-        //        playerNPCLib.getEntityManager().removeEntity(event.getEntity());
-      }
+  public void onEntityInteract(NPCInteractEvent event) {
+    if (event.getClickType() == ClickType.LEFT_CLICK) {
+      event.getNpc().onDespawn();
     }
   }
 }

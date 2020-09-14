@@ -106,7 +106,7 @@ public class EntityManager {
       ? NPCInteractEvent.ClickType.LEFT_CLICK : NPCInteractEvent.ClickType.RIGHT_CLICK;
 
     NPCInteractEvent interactEvent = new NPCInteractEvent(player, npc, clickType);
-    interactEvent.callEvent();
+    Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), interactEvent::callEvent);
 
     // Since this is a packet sent by the client, we need to make some checks
     if (!player.getWorld().equals(npc.getLocation().getWorld()) || player.getLocation().distanceSquared(npc.getLocation()) > 64 || player.isDead()) {
