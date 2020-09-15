@@ -8,11 +8,13 @@ import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityEquipment;
+import dev.crystall.nms.wrappers.WrapperPlayServerEntityHeadRotation;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
 import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
 import dev.crystall.nms.wrappers.WrapperPlayServerPlayerInfo;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,27 +33,12 @@ public class PacketManager {
 
   }
 
-  public static void sendMovePacket(Player player, BasePlayerNPC npc) {
-    WrapperPlayServerEntityTeleport moveWrapper = new WrapperPlayServerEntityTeleport();
-    moveWrapper.setEntityID(npc.getEntityId());
-    moveWrapper.setX(npc.getLocation().getX());
-    moveWrapper.setY(npc.getLocation().getY());
-    moveWrapper.setZ(npc.getLocation().getZ());
-    moveWrapper.setYaw(npc.getLocation().getYaw());
-    moveWrapper.setPitch(npc.getLocation().getPitch());
-    sendPacket(player, moveWrapper.getHandle(), false);
-
-    //    // Head rotation
-    //    WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
-    //    headWrapper.setEntityID(npc.getEntityId());
-    //
-    //    Optional<Player> nearbyPlayer = npc.getLocation().getNearbyPlayers(10).stream()
-    //      .min(Comparator.comparingDouble(o -> o.getLocation().distance(npc.getLocation())));
-    //    nearbyPlayer.ifPresent(value ->
-    //      headWrapper.setHeadYaw((byte) (MathUtils.getLookAtYaw(npc.getLocation(), nearbyPlayer.get().getLocation()) * 256.0F / 360.0F + 75)));
-    //    sendPacket(player, headWrapper.getHandle(), false);
-  }
-
+  /**
+   * Sends packets to the given player to create a custom npc
+   *
+   * @param player
+   * @param npc
+   */
   public static void sendNPCCreatePackets(Player player, BasePlayerNPC npc) {
     // Add entity to player list
     sendPlayerInfoPacket(player, npc, PlayerInfoAction.ADD_PLAYER);
@@ -66,10 +53,53 @@ public class PacketManager {
     Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getInstance().getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 1L);
   }
 
-  public static void sendAnimationPacket(Player player, BasePlayerNPC npc) {
+  /**
+   * Sends position update packets to the given player
+   *
+   * @param player
+   * @param npc
+   */
+  public static void sendMovePacket(Player player, MovablePlayerNPC npc) {
+    // Location update
+    WrapperPlayServerEntityTeleport moveWrapper = new WrapperPlayServerEntityTeleport();
+    moveWrapper.setEntityID(npc.getEntityId());
+    moveWrapper.setX(npc.getLocation().getX());
+    moveWrapper.setY(npc.getLocation().getY());
+    moveWrapper.setZ(npc.getLocation().getZ());
+    moveWrapper.setYaw(npc.getLocation().getYaw());
+    moveWrapper.setPitch(npc.getLocation().getPitch());
+    sendPacket(player, moveWrapper.getHandle(), false);
 
+    // Head rotation
+    WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
+    headWrapper.setEntityID(npc.getEntityId());
+    headWrapper.setHeadYaw((byte) (npc.getBukkitLivingEntity().getEyeLocation().getYaw() * 256.0F / 360.0F));
+    sendPacket(player, headWrapper.getHandle(), false);
   }
 
+  /**
+   * Sends packets to hide the npc from the player
+   *
+   * @param player
+   * @param npc
+   */
+  public static void sendHidePackets(Player player, BasePlayerNPC npc) {
+    // Remove entity
+    WrapperPlayServerEntityDestroy spawnWrapper = new WrapperPlayServerEntityDestroy();
+    spawnWrapper.setEntityIds(new int[]{npc.getEntityId()});
+    sendPacket(player, spawnWrapper.getHandle(), false);
+
+    // Remove player from tab list if its still on there
+    sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER);
+  }
+
+  /**
+   * Sends packets to either add or remove the given npc for the given player from the tablist
+   *
+   * @param player
+   * @param npc
+   * @param action
+   */
   public static void sendPlayerInfoPacket(Player player, BasePlayerNPC npc, PlayerInfoAction action) {
     WrapperPlayServerPlayerInfo infoWrapper = new WrapperPlayServerPlayerInfo();
 
@@ -90,18 +120,8 @@ public class PacketManager {
     sendPacket(player, wrapper.getHandle(), false);
   }
 
-  public static void sendShowPackets(Player player, BasePlayerNPC npc) {
+  public static void sendAnimationPacket(Player player, BasePlayerNPC npc) {
 
-  }
-
-  public static void sendHidePackets(Player player, BasePlayerNPC npc) {
-    // Remove entity
-    WrapperPlayServerEntityDestroy spawnWrapper = new WrapperPlayServerEntityDestroy();
-    spawnWrapper.setEntityIds(new int[]{npc.getEntityId()});
-    sendPacket(player, spawnWrapper.getHandle(), false);
-
-    // Remove player from tab list if its still on there
-    sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER);
   }
 
   public static void sendMetadataPacket(Player player, BasePlayerNPC npc) {

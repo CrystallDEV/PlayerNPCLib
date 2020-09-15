@@ -1,5 +1,7 @@
 package dev.crystall.playernpclib.manager;
 
+import static com.comphenix.protocol.PacketType.Play.Server.NAMED_SOUND_EFFECT;
+
 import com.comphenix.protocol.PacketType.Play.Client;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -25,6 +27,8 @@ import org.bukkit.util.Vector;
  * Created by CrystallDEV on 01/09/2020
  */
 public class EntityManager {
+
+  private static int ENTITY_ID_COUNTER = Integer.MAX_VALUE;
 
   @Getter
   private static final List<BasePlayerNPC> playerNPCList = new CopyOnWriteArrayList<>();
@@ -177,6 +181,10 @@ public class EntityManager {
     Vector dir = npc.getLocation().toVector().subtract(player.getEyeLocation().toVector()).normalize();
     double cosFOV = Math.cos(Math.toRadians(60));
     return dir.dot(player.getEyeLocation().getDirection()) >= cosFOV;
+  }
+
+  public static int tickAndGetCounter() {
+    return --ENTITY_ID_COUNTER;
   }
 
 }

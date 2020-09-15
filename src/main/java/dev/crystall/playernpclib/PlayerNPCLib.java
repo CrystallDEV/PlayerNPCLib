@@ -8,7 +8,7 @@ import dev.crystall.playernpclib.manager.EntityHider.Policy;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.EventManager;
 import lombok.Getter;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -66,8 +66,8 @@ public class PlayerNPCLib {
     }
   }
 
-  public static boolean isNPC(LivingEntity livingEntity) {
-    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> npc.getEntityId() == livingEntity.getEntityId());
+  public static boolean isNPC(Entity e) {
+    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> npc.getEntityId() == e.getEntityId());
   }
 
 }

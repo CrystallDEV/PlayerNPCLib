@@ -2,6 +2,7 @@ package dev.crystall.playernpclib.api.base;
 
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.manager.PacketManager;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
@@ -14,6 +15,7 @@ import org.bukkit.entity.Zombie;
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@Getter
 public class MovablePlayerNPC extends BasePlayerNPC {
 
   /**
@@ -39,6 +41,8 @@ public class MovablePlayerNPC extends BasePlayerNPC {
       ((Zombie) this.bukkitLivingEntity).setShouldBurnInDay(false);
     }
     this.bukkitLivingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.31F);
+    // Prevent sounds from this entity
+    this.bukkitLivingEntity.setSilent(true);
     super.onSpawn();
 
     Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getInstance().getPlugin(), () -> {

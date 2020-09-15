@@ -43,7 +43,7 @@ public abstract class BasePlayerNPC {
   /**
    * The id the entity will be registered with at the server
    */
-  protected int entityId = Integer.MAX_VALUE - EntityManager.getPlayerNPCList().size();
+  protected int entityId;
   protected Location location;
   protected WrappedGameProfile gameProfile;
 
@@ -52,12 +52,12 @@ public abstract class BasePlayerNPC {
     this.name = name;
     this.location = location;
     this.gameProfile = new WrappedGameProfile(uuid, name);
+    this.entityId = EntityManager.tickAndGetCounter();
   }
 
   public void onSpawn() {
     for (Player player : PlayerNPCLib.getInstance().getPlugin().getServer().getOnlinePlayers()) {
       show(player);
-      PacketManager.sendEquipmentPackets(player, this);
     }
     isSpawned = true;
   }
@@ -76,6 +76,7 @@ public abstract class BasePlayerNPC {
 
   public void show(Player player) {
     PacketManager.sendNPCCreatePackets(player, this);
+    PacketManager.sendEquipmentPackets(player, this);
   }
 
   public void hide(Player player) {
