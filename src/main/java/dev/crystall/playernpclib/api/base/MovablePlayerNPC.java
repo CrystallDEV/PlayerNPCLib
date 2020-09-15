@@ -83,4 +83,12 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   public void hide(Player player) {
     super.hide(player);
   }
+
+  @Override
+  public void setItem(ItemSlot slot, ItemStack itemStack) {
+    super.setItem(slot, itemStack);
+    if (this.bukkitLivingEntity != null) {
+      this.bukkitLivingEntity.getEquipment().setItem(Utils.getEquipmentSlotFor(slot), itemStack);
+    }
+  }
 }
