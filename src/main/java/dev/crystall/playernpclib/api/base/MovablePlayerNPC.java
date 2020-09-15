@@ -1,16 +1,20 @@
 package dev.crystall.playernpclib.api.base;
 
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import dev.crystall.playernpclib.PlayerNPCLib;
+import dev.crystall.playernpclib.api.utility.Utils;
 import dev.crystall.playernpclib.manager.PacketManager;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -21,8 +25,14 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   /**
    * This will be the bukkit entity, which is being spawned on the server but hidden to all players
    */
-  protected LivingEntity bukkitLivingEntity;
+  protected Creature bukkitLivingEntity;
   private final EntityType entityType;
+
+  /**
+   * Defines if this npc should target and attack players / entities nearby
+   */
+  @Setter
+  private boolean isAggressive = false;
 
 
   public MovablePlayerNPC(String name, Location location, EntityType entityType) {
@@ -32,7 +42,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
 
   @Override
   public void onSpawn() {
-    this.bukkitLivingEntity = (LivingEntity) getLocation().getWorld().spawnEntity(getLocation(), entityType);
+    this.bukkitLivingEntity = (Creature) getLocation().getWorld().spawnEntity(getLocation(), entityType);
     if (this.bukkitLivingEntity instanceof Ageable) {
       ((Ageable) this.bukkitLivingEntity).setAdult();
       ((Ageable) this.bukkitLivingEntity).setAdult();
@@ -40,7 +50,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     if (this.bukkitLivingEntity instanceof Zombie) {
       ((Zombie) this.bukkitLivingEntity).setShouldBurnInDay(false);
     }
-    this.bukkitLivingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.31F);
+    this.bukkitLivingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.35F);
     // Prevent sounds from this entity
     this.bukkitLivingEntity.setSilent(true);
     super.onSpawn();

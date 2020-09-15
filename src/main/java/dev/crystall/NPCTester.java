@@ -10,6 +10,7 @@ import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent.ClickType;
 import dev.crystall.playernpclib.api.skin.SkinFetcher;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.RandomUtils;
 import org.bukkit.entity.EntityType;
@@ -62,17 +63,19 @@ public class NPCTester extends JavaPlugin implements Listener {
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
       SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
         MovablePlayerNPC npc = new MovablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation(), EntityType.ZOMBIE);
-        npc.setName(String.valueOf(npc.getEntityId()));
+        npc.setName(ChatColor.RED + "Barbarian");
         npc.setSkin(skin);
+        npc.setAggressive(true);
 
-        npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
-        npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
-        npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
-        npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
-        npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
-        npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
-
-        Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), () -> playerNPCLib.getEntityManager().spawnEntity(npc));
+        Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), () -> {
+          playerNPCLib.getEntityManager().spawnEntity(npc);
+          npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
+          npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
+          npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
+          npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
+          npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
+          npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
+        });
       });
 
     }

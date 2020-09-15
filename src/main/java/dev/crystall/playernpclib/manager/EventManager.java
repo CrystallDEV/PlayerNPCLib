@@ -2,10 +2,14 @@ package dev.crystall.playernpclib.manager;
 
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -41,4 +45,43 @@ public class EventManager implements Listener {
     }
   }
 
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onEntityAttack(EntityDamageByEntityEvent event) {
+    for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
+      if (npc instanceof MovablePlayerNPC) {
+        MovablePlayerNPC movablePlayerNPC = (MovablePlayerNPC) npc;
+        if (!event.getDamager().equals(movablePlayerNPC.getBukkitLivingEntity())) {
+          continue;
+        }
+
+        // The monster is supposed to attack
+        if (movablePlayerNPC.isAggressive()) {
+          continue;
+        }
+
+        event.setCancelled(true);
+        return;
+      }
+    }
+  }
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void onTargetAggro(EntityTargetLivingEntityEvent event) {
+    for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
+      if (npc instanceof MovablePlayerNPC) {
+        MovablePlayerNPC movablePlayerNPC = (MovablePlayerNPC) npc;
+        if (!event.getEntity().equals(movablePlayerNPC.getBukkitLivingEntity())) {
+          continue;
+        }
+
+        // The monster is supposed to attack
+        if (movablePlayerNPC.isAggressive()) {
+          continue;
+        }
+
+        event.setCancelled(true);
+        return;
+      }
+    }
+  }
 }
