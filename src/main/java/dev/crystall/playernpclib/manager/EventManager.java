@@ -3,8 +3,10 @@ package dev.crystall.playernpclib.manager;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
+import dev.crystall.playernpclib.api.event.NPCAttackEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -47,6 +49,10 @@ public class EventManager implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void onEntityAttack(EntityDamageByEntityEvent event) {
+    if (!(event.getDamager() instanceof LivingEntity) || !(event.getEntity() instanceof LivingEntity)) {
+      return; // We only handle damage between two living entities
+    }
+
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
       if (npc instanceof MovablePlayerNPC) {
         MovablePlayerNPC movablePlayerNPC = (MovablePlayerNPC) npc;
@@ -56,7 +62,7 @@ public class EventManager implements Listener {
 
         // The monster is supposed to attack
         if (movablePlayerNPC.isAggressive()) {
-          continue;
+          new NPCAttackEvent(npc, (LivingEntity) event.getEntity()).callEvent();
         }
 
         event.setCancelled(true);
