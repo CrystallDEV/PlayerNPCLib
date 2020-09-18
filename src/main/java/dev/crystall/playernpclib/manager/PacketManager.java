@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import dev.crystall.nms.wrappers.WrapperPlayServerAnimation;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityEquipment;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityHeadRotation;
@@ -120,7 +121,11 @@ public class PacketManager {
     sendPacket(player, wrapper.getHandle(), false);
   }
 
-  public static void sendAnimationPacket(Player player, BasePlayerNPC npc) {
+  public static void sendAnimationPacket(Player player, BasePlayerNPC npc, int animationID) {
+    WrapperPlayServerAnimation animationWrapper = new WrapperPlayServerAnimation();
+    animationWrapper.setEntityID(npc.getEntityId());
+    animationWrapper.setAnimation(animationID);
+    sendPacket(player, animationWrapper.getHandle(), false);
 
   }
 

@@ -83,19 +83,17 @@ public abstract class BasePlayerNPC {
     PacketManager.sendHidePackets(player, this);
   }
 
-  public BasePlayerNPC setSkin(PlayerSkin skin) {
+  public void setSkin(PlayerSkin skin) {
     gameProfile.getProperties().get("textures").clear();
     if (skin != null) {
       gameProfile.getProperties().put("textures", new WrappedSignedProperty("textures", skin.getValue(), skin.getSignature()));
     }
-    return this;
   }
 
   public void setName(String name) {
     // TODO send packet to update the name
     this.name = name;
     this.gameProfile = new WrappedGameProfile(uuid, name);
-
   }
 
   public Hologram generateHologram() {
@@ -105,8 +103,8 @@ public abstract class BasePlayerNPC {
   /**
    * Sets an item for the given slot
    *
-   * @param slot
-   * @param itemStack
+   * @param slot the slot to update the item for
+   * @param itemStack the itemstack to set
    */
   public void setItem(ItemSlot slot, ItemStack itemStack) {
     Preconditions.checkNotNull(itemStack, "itemStack cannot be NULL.");
@@ -119,9 +117,28 @@ public abstract class BasePlayerNPC {
     gearSlot.get().setSecond(itemStack);
 
     if (isSpawned) {
+      // TODO get only nearby players
       for (Player player : Bukkit.getServer().getOnlinePlayers()) {
         PacketManager.sendEquipmentPackets(player, this);
       }
+    }
+  }
+
+  /**
+   * Plays the given animation to all nearby players
+   *
+   * @param animationId the id of the animation to play
+   */
+  public void playAnimation(int animationId) {
+    if (!isSpawned) {
+      PlayerNPCLib.getInstance().getPlugin().getLogger().info(
+        String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getName(), this.getUuid())
+      );
+      return;
+    }
+    // TODO get only nearby players and play the animation for them
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      PacketManager.sendAnimationPacket(player, this, animationId);
     }
   }
 

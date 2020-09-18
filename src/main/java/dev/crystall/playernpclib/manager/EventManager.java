@@ -63,6 +63,7 @@ public class EventManager implements Listener {
         // The monster is supposed to attack
         if (movablePlayerNPC.isAggressive()) {
           new NPCAttackEvent(npc, (LivingEntity) event.getEntity()).callEvent();
+          npc.playAnimation(0);
         }
 
         event.setCancelled(true);
