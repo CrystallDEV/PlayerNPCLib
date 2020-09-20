@@ -1,9 +1,11 @@
 package dev.crystall.playernpclib.manager;
 
+import com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.event.NPCAttackEvent;
+import dev.crystall.playernpclib.api.utility.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
@@ -11,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -91,4 +94,26 @@ public class EventManager implements Listener {
       }
     }
   }
+
+  @EventHandler
+  public void onRemove(EntityRemoveFromWorldEvent event) {
+    MovablePlayerNPC playerNPC = (MovablePlayerNPC) Utils.getNPCFromEntity(event.getEntity());
+    if (playerNPC == null) {
+      return; // Not an entity related to our library
+    }
+
+    playerNPC.onDespawn();
+  }
+
+  @EventHandler
+  public void onDeath(EntityDeathEvent event) {
+    MovablePlayerNPC playerNPC = (MovablePlayerNPC) Utils.getNPCFromEntity(event.getEntity());
+    if (playerNPC == null) {
+      return; // Not an entity related to our library
+    }
+
+    playerNPC.onDespawn();
+  }
+
+
 }
