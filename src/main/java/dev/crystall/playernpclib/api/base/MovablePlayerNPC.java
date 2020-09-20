@@ -8,12 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -50,7 +50,6 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     if (this.bukkitLivingEntity instanceof Zombie) {
       ((Zombie) this.bukkitLivingEntity).setShouldBurnInDay(false);
     }
-    this.bukkitLivingEntity.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.35F);
     // Prevent sounds from this entity
     this.bukkitLivingEntity.setSilent(true);
     super.onSpawn();
@@ -91,4 +90,19 @@ public class MovablePlayerNPC extends BasePlayerNPC {
       this.bukkitLivingEntity.getEquipment().setItem(Utils.getEquipmentSlotFor(slot), itemStack);
     }
   }
+
+  public void updateInventory() {
+    if (isSpawned()) {
+      // Update items on here with the ones on
+      for (ItemSlot itemSlot : ItemSlot.values()) {
+        EquipmentSlot slot = Utils.getEquipmentSlotFor(itemSlot);
+        getItemSlots().put(itemSlot, bukkitLivingEntity.getEquipment().getItem(slot));
+      }
+      // TODO get only nearby players
+      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+        PacketManager.sendEquipmentPackets(player, this);
+      }
+    }
+  }
+
 }

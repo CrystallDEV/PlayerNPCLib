@@ -3,7 +3,9 @@ package dev.crystall.playernpclib.manager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
+import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import dev.crystall.nms.wrappers.WrapperPlayServerAnimation;
@@ -18,6 +20,7 @@ import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -117,7 +120,14 @@ public class PacketManager {
   public static void sendEquipmentPackets(Player player, BasePlayerNPC npc) {
     WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
     wrapper.setEntityID(npc.getEntityId());
-    wrapper.SetSlotStackPairLists(npc.getItemSlots());
+    wrapper.SetSlotStackPairLists(Arrays.asList(
+      new Pair<>(ItemSlot.MAINHAND, npc.getItemSlots().get(ItemSlot.MAINHAND)),
+      new Pair<>(ItemSlot.OFFHAND, npc.getItemSlots().get(ItemSlot.OFFHAND)),
+      new Pair<>(ItemSlot.FEET, npc.getItemSlots().get(ItemSlot.FEET)),
+      new Pair<>(ItemSlot.LEGS, npc.getItemSlots().get(ItemSlot.LEGS)),
+      new Pair<>(ItemSlot.CHEST, npc.getItemSlots().get(ItemSlot.CHEST)),
+      new Pair<>(ItemSlot.HEAD, npc.getItemSlots().get(ItemSlot.HEAD))
+    ));
     sendPacket(player, wrapper.getHandle(), false);
   }
 

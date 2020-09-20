@@ -2,8 +2,12 @@ package dev.crystall.playernpclib.api.utility;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import dev.crystall.playernpclib.PlayerNPCLib;
+import dev.crystall.playernpclib.api.base.BasePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
+import dev.crystall.playernpclib.manager.EntityManager;
 import java.util.Arrays;
 import java.util.IllegalFormatException;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
@@ -53,4 +57,16 @@ public class Utils {
     }
   }
 
+  public static BasePlayerNPC getNPCFromEntity(Entity entity) {
+    for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
+      if (npc instanceof MovablePlayerNPC) {
+        MovablePlayerNPC movablePlayerNPC = (MovablePlayerNPC) npc;
+        if (!entity.equals(movablePlayerNPC.getBukkitLivingEntity())) {
+          continue;
+        }
+        return movablePlayerNPC;
+      }
+    }
+    return null;
+  }
 }
