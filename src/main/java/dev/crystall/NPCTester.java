@@ -56,7 +56,7 @@ public class NPCTester extends JavaPlugin implements Listener {
         npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
         npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
 
-        Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), () -> playerNPCLib.getEntityManager().spawnEntity(npc));
+        Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> PlayerNPCLib.getEntityManager().spawnEntity(npc));
       });
     }
 
@@ -84,7 +84,7 @@ public class NPCTester extends JavaPlugin implements Listener {
   @EventHandler
   public void onEntityInteract(NPCInteractEvent event) {
     if (event.getClickType() == ClickType.LEFT_CLICK) {
-      PlayerNPCLib.getInstance().getEntityManager().removeEntity(event.getNpc());
+      PlayerNPCLib.getEntityManager().removeEntity(event.getNpc());
     }
   }
 }

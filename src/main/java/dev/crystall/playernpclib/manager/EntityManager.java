@@ -1,7 +1,5 @@
 package dev.crystall.playernpclib.manager;
 
-import static com.comphenix.protocol.PacketType.Play.Server.NAMED_SOUND_EFFECT;
-
 import com.comphenix.protocol.PacketType.Play.Client;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -34,7 +32,7 @@ public class EntityManager {
   private static final List<BasePlayerNPC> playerNPCList = new CopyOnWriteArrayList<>();
 
   public EntityManager() {
-    ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(PlayerNPCLib.getInstance().getPlugin(), Client.USE_ENTITY) {
+    ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(PlayerNPCLib.getPlugin(), Client.USE_ENTITY) {
       @Override
       public void onPacketReceiving(PacketEvent event) {
         handleInteractPacket(event.getPlayer(), event.getPacket());
@@ -110,7 +108,7 @@ public class EntityManager {
       ? NPCInteractEvent.ClickType.LEFT_CLICK : NPCInteractEvent.ClickType.RIGHT_CLICK;
 
     NPCInteractEvent interactEvent = new NPCInteractEvent(player, npc, clickType);
-    Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), interactEvent::callEvent);
+    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), interactEvent::callEvent);
 
     // Since this is a packet sent by the client, we need to make some checks
     if (!player.getWorld().equals(npc.getLocation().getWorld()) || player.getLocation().distanceSquared(npc.getLocation()) > 64 || player.isDead()) {
@@ -146,7 +144,7 @@ public class EntityManager {
    * @return
    */
   public boolean canSee(Player player, BasePlayerNPC npc) {
-    return PlayerNPCLib.getInstance().getEntityHider().canSee(player, npc.getEntityId());
+    return PlayerNPCLib.getEntityHider().canSee(player, npc.getEntityId());
   }
 
   /**

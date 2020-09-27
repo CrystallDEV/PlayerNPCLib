@@ -7,6 +7,7 @@ import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.event.NPCAttackEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -18,6 +19,8 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 
 /**
  * Created by CrystallDEV on 13/09/2020
@@ -25,7 +28,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class EventManager implements Listener {
 
   public EventManager() {
-    Bukkit.getPluginManager().registerEvents(this, PlayerNPCLib.getInstance().getPlugin());
+    Bukkit.getPluginManager().registerEvents(this, PlayerNPCLib.getPlugin());
   }
 
   @EventHandler
@@ -46,7 +49,7 @@ public class EventManager implements Listener {
     Location to = event.getTo();
     // Only check movement when the player moves from one block to another.
     if (from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ()) {
-      PlayerNPCLib.getInstance().getEntityManager().handleRealPlayerMove(event.getPlayer());
+      PlayerNPCLib.getEntityManager().handleRealPlayerMove(event.getPlayer());
     }
   }
 
@@ -101,8 +104,10 @@ public class EventManager implements Listener {
     if (playerNPC == null) {
       return; // Not an entity related to our library
     }
-
-    playerNPC.onDespawn();
+    playerNPC.remove();
+    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> {
+      PlayerNPCLib.getEntityManager().removeEntity(playerNPC);
+    }, 20L);
   }
 
   @EventHandler
@@ -111,8 +116,22 @@ public class EventManager implements Listener {
     if (playerNPC == null) {
       return; // Not an entity related to our library
     }
+    playerNPC.remove();
+    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> {
+      PlayerNPCLib.getEntityManager().removeEntity(playerNPC);
+    }, 20L);
+  }
 
-    playerNPC.onDespawn();
+  @EventHandler
+  public void onChunkUnload(ChunkUnloadEvent event) {
+    Chunk chunk = event.getChunk();
+
+  }
+
+  @EventHandler
+  public void onChunkLoad(ChunkLoadEvent event) {
+    Chunk chunk = event.getChunk();
+
   }
 
 

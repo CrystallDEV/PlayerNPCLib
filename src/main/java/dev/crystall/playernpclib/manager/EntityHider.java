@@ -122,7 +122,7 @@ public class EntityHider implements Listener {
     Preconditions.checkNotNull(plugin, "plugin cannot be NULL.");
 
     if (policy == null) {
-      PlayerNPCLib.getInstance().getPlugin().getLogger().info("EntityHider :: no policy defined, default set to Policy.WHITELIST");
+      PlayerNPCLib.getPlugin().getLogger().info("EntityHider :: no policy defined, default set to Policy.WHITELIST");
       policy = Policy.WHITELIST;
     }
 

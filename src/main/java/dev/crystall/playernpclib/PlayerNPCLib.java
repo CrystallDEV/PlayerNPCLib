@@ -20,28 +20,32 @@ public class PlayerNPCLib {
   /**
    * The plugin that uses this library
    */
-  private final JavaPlugin plugin;
+  @Getter
+  private static JavaPlugin plugin;
 
   /**
    * Manages all custom player npcs (static and non static ones)
    */
-  private EntityManager entityManager;
+  @Getter
+  private static EntityManager entityManager;
 
   /**
    * Manages all events happening in this library
    */
-  private EventManager eventManager;
+  @Getter
+  private static EventManager eventManager;
 
   /**
    * Handles hiding and showing of entities
    */
-  private EntityHider entityHider;
+  @Getter
+  private static EntityHider entityHider;
 
 
   public PlayerNPCLib(JavaPlugin plugin) {
     Utils.verify(instance == null, "Only one instance of " + getClass().getCanonicalName() + " is allowed");
     PlayerNPCLib.instance = this;
-    this.plugin = plugin;
+    PlayerNPCLib.plugin = plugin;
 
     String versionName = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
     if (!createManager(versionName)) {
@@ -53,12 +57,16 @@ public class PlayerNPCLib {
     plugin.getLogger().info("Enabled for Server Version " + versionName);
   }
 
+  public void onDisable() {
+
+  }
+
   private boolean createManager(String versionName) {
     try {
       MinecraftVersions.valueOf(versionName);
-      this.entityManager = new EntityManager();
-      this.eventManager = new EventManager();
-      this.entityHider = new EntityHider(plugin, Policy.BLACKLIST);
+      PlayerNPCLib.entityManager = new EntityManager();
+      PlayerNPCLib.eventManager = new EventManager();
+      PlayerNPCLib.entityHider = new EntityHider(plugin, Policy.BLACKLIST);
       return true;
     } catch (IllegalArgumentException exception) {
       plugin.getLogger().severe("[PlayerNPCLib] Your server's version (" + versionName + ") is not supported. PlayerNPCLib will not be enabled");

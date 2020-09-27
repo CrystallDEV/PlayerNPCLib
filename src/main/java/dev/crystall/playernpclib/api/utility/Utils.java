@@ -33,8 +33,8 @@ public class Utils {
     try {
       throw new RuntimeException(error + " - " + Arrays.toString(args));
     } catch (IllegalFormatException e) { // In-case there was an error formatting the error message, still throw the exception.
-      PlayerNPCLib.getInstance().getPlugin().getLogger().severe("[Utils#verify] Can't format message");
-      PlayerNPCLib.getInstance().getPlugin().getLogger().severe(e.getMessage());
+      PlayerNPCLib.getPlugin().getLogger().severe("[Utils#verify] Can't format message");
+      PlayerNPCLib.getPlugin().getLogger().severe(e.getMessage());
     }
   }
 
