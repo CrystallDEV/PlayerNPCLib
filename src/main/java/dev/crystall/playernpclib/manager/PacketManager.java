@@ -2,16 +2,18 @@ package dev.crystall.playernpclib.manager;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import dev.crystall.nms.wrappers.WrapperPlayServerAnimation;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityEquipment;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityHeadRotation;
+import dev.crystall.nms.wrappers.WrapperPlayServerEntityMetadata;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
 import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
 import dev.crystall.nms.wrappers.WrapperPlayServerPlayerInfo;
@@ -19,9 +21,8 @@ import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -31,6 +32,7 @@ import org.bukkit.entity.Player;
 public class PacketManager {
 
   private PacketManager() {
+
   }
 
   public static void sendScoreBoardTeamPacket(Player player, BasePlayerNPC npc) {
@@ -54,7 +56,7 @@ public class PacketManager {
     spawnWrapper.setPosition(npc.getLocation().toVector());
     sendPacket(player, spawnWrapper.getHandle(), false);
 
-    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getInstance().getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 1L);
+    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 1L);
   }
 
   /**
@@ -106,14 +108,9 @@ public class PacketManager {
    */
   public static void sendPlayerInfoPacket(Player player, BasePlayerNPC npc, PlayerInfoAction action) {
     WrapperPlayServerPlayerInfo infoWrapper = new WrapperPlayServerPlayerInfo();
-
+    PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(npc.getName()));
+    infoWrapper.setData(Collections.singletonList(data));
     infoWrapper.setAction(action);
-    PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, EnumWrappers.NativeGameMode.CREATIVE,
-      WrappedChatComponent.fromText(npc.getName()));
-
-    List<PlayerInfoData> dataList = new ArrayList<>();
-    dataList.add(data);
-    infoWrapper.setData(dataList);
     sendPacket(player, infoWrapper.getHandle(), false);
   }
 
@@ -139,8 +136,20 @@ public class PacketManager {
 
   }
 
-  public static void sendMetadataPacket(Player player, BasePlayerNPC npc) {
+  public static void sendDeathMetaData(Player player, BasePlayerNPC npc) {
+    WrapperPlayServerEntityMetadata wrapperEntityMeta = new WrapperPlayServerEntityMetadata();
+    wrapperEntityMeta.setEntityID(npc.getEntityId());
 
+    // Create the data watcher for this entity
+    WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(player).deepClone();
+    watcher.setObject(8, 0F);
+
+    //    Optional<?> opt = Optional.of(WrappedChatComponent.fromText("dead").getHandle());
+    //    watcher.setObject(new WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), opt);
+    //    watcher.setObject(new WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)), true); //custom name visible
+
+    wrapperEntityMeta.setMetadata(watcher.getWatchableObjects());
+    sendPacket(player, wrapperEntityMeta.getHandle(), false);
   }
 
   /**
@@ -154,12 +163,12 @@ public class PacketManager {
       ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
 
       if (debug) {
-        PlayerNPCLib.getInstance().getPlugin().getServer().getConsoleSender()
-          .sendMessage("Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName());
+        PlayerNPCLib.getPlugin().getServer().getConsoleSender().sendMessage(
+          "Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName()
+        );
       }
     } catch (InvocationTargetException e) {
-      throw new RuntimeException(
-        "Cannot send packet " + packetContainer, e);
+      throw new RuntimeException("Cannot send packet " + packetContainer, e);
     }
   }
 
