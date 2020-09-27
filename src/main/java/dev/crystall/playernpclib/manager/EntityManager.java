@@ -45,7 +45,7 @@ public class EntityManager {
    */
   public void spawnEntity(BasePlayerNPC npc) {
     if (new NPCSpawnEvent(npc).callEvent()) {
-      npc.onSpawn();
+      npc.spawn();
       playerNPCList.add(npc);
     }
   }
@@ -60,7 +60,7 @@ public class EntityManager {
     }
 
     playerNPCList.remove(npc);
-    npc.onDespawn();
+    npc.remove();
     return true;
   }
 

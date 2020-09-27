@@ -41,7 +41,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   }
 
   @Override
-  public void onSpawn() {
+  public void spawn() {
     this.bukkitLivingEntity = (Creature) getLocation().getWorld().spawnEntity(getLocation(), entityType);
     if (this.bukkitLivingEntity instanceof Ageable) {
       ((Ageable) this.bukkitLivingEntity).setAdult();
@@ -52,9 +52,9 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     }
     // Prevent sounds from this entity
     this.bukkitLivingEntity.setSilent(true);
-    super.onSpawn();
+    super.spawn();
 
-    Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getInstance().getPlugin(), () -> {
+    Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
       this.location = this.bukkitLivingEntity.getLocation();
       for (Player player : Bukkit.getOnlinePlayers()) {
         PacketManager.sendMovePacket(player, this);
@@ -63,8 +63,8 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   }
 
   @Override
-  public void onDespawn() {
-    super.onDespawn();
+  public void remove() {
+    super.remove();
     if (this.bukkitLivingEntity != null) {
       this.bukkitLivingEntity.remove();
     }
@@ -74,7 +74,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   public void show(Player player) {
     super.show(player);
     if (this.bukkitLivingEntity != null) {
-      PlayerNPCLib.getInstance().getEntityHider().hideEntity(player, this.bukkitLivingEntity);
+      PlayerNPCLib.getEntityHider().hideEntity(player, this.bukkitLivingEntity);
     }
   }
 
@@ -104,5 +104,4 @@ public class MovablePlayerNPC extends BasePlayerNPC {
       }
     }
   }
-
 }

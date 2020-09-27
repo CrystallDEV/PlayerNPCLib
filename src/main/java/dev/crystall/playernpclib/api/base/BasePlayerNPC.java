@@ -1,9 +1,9 @@
 package dev.crystall.playernpclib.api.base;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.google.common.base.Preconditions;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.skin.PlayerSkin;
@@ -13,6 +13,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -34,32 +35,38 @@ public abstract class BasePlayerNPC {
    */
   protected int entityId;
   protected Location location;
-  protected WrappedGameProfile gameProfile;
+  @Setter
+  protected PlayerSkin playerSkin;
 
   protected BasePlayerNPC(String name, Location location) {
     this.name = name;
     this.location = location;
-    this.gameProfile = new WrappedGameProfile(uuid, name);
     this.entityId = EntityManager.tickAndGetCounter();
   }
 
-  public void onSpawn() {
-    for (Player player : PlayerNPCLib.getInstance().getPlugin().getServer().getOnlinePlayers()) {
+  public void spawn() {
+    for (Player player : PlayerNPCLib.getPlugin().getServer().getOnlinePlayers()) {
       show(player);
     }
     isSpawned = true;
   }
 
-  public void onDespawn() {
-    for (Player player : PlayerNPCLib.getInstance().getPlugin().getServer().getOnlinePlayers()) {
-      hide(player);
+  public void remove() {
+    if (!isSpawned) {
+      return;
+    }
+    // TODO get only nearby players and play the animation for them
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      PacketManager.sendDeathMetaData(player, this);
     }
     isSpawned = false;
   }
 
   public void update() {
-    onDespawn();
-    onSpawn();
+    for (Player player : Bukkit.getOnlinePlayers()) {
+      hide(player);
+      show(player);
+    }
   }
 
   public void show(Player player) {
@@ -71,21 +78,15 @@ public abstract class BasePlayerNPC {
     PacketManager.sendHidePackets(player, this);
   }
 
-  public void setSkin(PlayerSkin skin) {
-    gameProfile.getProperties().get("textures").clear();
-    if (skin != null) {
-      gameProfile.getProperties().put("textures", new WrappedSignedProperty("textures", skin.getValue(), skin.getSignature()));
-    }
-  }
-
   public void setName(String name) {
-    // TODO send packet to update the name
     this.name = name;
-    this.gameProfile = new WrappedGameProfile(uuid, name);
-  }
-
-  public Hologram generateHologram() {
-    return null;
+    if (isSpawned) {
+      // TODO get only nearby players
+      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+        PacketManager.sendPlayerInfoPacket(player, this, PlayerInfoAction.UPDATE_DISPLAY_NAME);
+      }
+    }
+    update();
   }
 
   /**
@@ -114,9 +115,7 @@ public abstract class BasePlayerNPC {
    */
   public void playAnimation(int animationId) {
     if (!isSpawned) {
-      PlayerNPCLib.getInstance().getPlugin().getLogger().info(
-        String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getName(), this.getUuid())
-      );
+      PlayerNPCLib.getPlugin().getLogger().info(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getName(), this.getUuid()));
       return;
     }
     // TODO get only nearby players and play the animation for them
@@ -125,4 +124,12 @@ public abstract class BasePlayerNPC {
     }
   }
 
+  public WrappedGameProfile getGameProfile() {
+    WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
+    if (playerSkin != null) {
+      wrappedGameProfile.getProperties().get("textures").clear();
+      wrappedGameProfile.getProperties().put("textures", new WrappedSignedProperty("textures", playerSkin.getValue(), playerSkin.getSignature()));
+    }
+    return wrappedGameProfile;
+  }
 }

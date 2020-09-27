@@ -59,6 +59,7 @@ public class EventManager implements Listener {
       return; // We only handle damage between two living entities
     }
 
+
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
       if (npc instanceof MovablePlayerNPC) {
         MovablePlayerNPC movablePlayerNPC = (MovablePlayerNPC) npc;

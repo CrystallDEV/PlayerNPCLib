@@ -10,14 +10,4 @@ public class StaticPlayerNPC extends BasePlayerNPC {
   public StaticPlayerNPC(String name, Location location) {
     super(name, location);
   }
-
-  @Override
-  public void onSpawn() {
-    super.onSpawn();
-  }
-
-  @Override
-  public void onDespawn() {
-    super.onDespawn();
-  }
 }

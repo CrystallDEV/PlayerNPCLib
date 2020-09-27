@@ -38,8 +38,8 @@ public class NPCTester extends JavaPlugin implements Listener {
   @Override
   public void onDisable() {
     super.onDisable();
+    playerNPCLib.onDisable();
   }
-
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onRightClick(PlayerInteractEvent event) {
@@ -47,7 +47,7 @@ public class NPCTester extends JavaPlugin implements Listener {
       SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
         StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
         npc.setName(String.valueOf(npc.getEntityId()));
-        npc.setSkin(skin);
+        npc.setPlayerSkin(skin);
 
         npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
         npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
@@ -64,11 +64,11 @@ public class NPCTester extends JavaPlugin implements Listener {
       SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
         MovablePlayerNPC npc = new MovablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation(), EntityType.ZOMBIE);
         npc.setName(ChatColor.RED + "Barbarian");
-        npc.setSkin(skin);
+        npc.setPlayerSkin(skin);
         npc.setAggressive(true);
 
-        Bukkit.getScheduler().runTask(PlayerNPCLib.getInstance().getPlugin(), () -> {
-          playerNPCLib.getEntityManager().spawnEntity(npc);
+        Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
+          PlayerNPCLib.getEntityManager().spawnEntity(npc);
           npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
           npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
           npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
