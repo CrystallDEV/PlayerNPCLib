@@ -46,12 +46,8 @@ public abstract class BasePlayerNPC {
   protected BasePlayerNPC(String name, Location location) {
     this.location = location;
     this.entityId = EntityManager.tickAndGetCounter();
-
-    // Run this task in the bukkit scheduler because it needs to be synced.
-    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
-      this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
-      setName(name);
-    });
+    this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
+    setName(name);
 
     task[0] = Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
       if (this.hologram != null && !this.hologram.isDeleted()) {
@@ -93,6 +89,7 @@ public abstract class BasePlayerNPC {
   }
 
   public void show(Player player) {
+    PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), true);
     PacketManager.sendNPCCreatePackets(player, this);
     PacketManager.sendEquipmentPackets(player, this);
     PacketManager.sendScoreBoardTeamPacket(player, this);
@@ -103,6 +100,7 @@ public abstract class BasePlayerNPC {
 
   public void hide(Player player) {
     PacketManager.sendHidePackets(player, this);
+    PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
     if (hologram != null) {
       hologram.getVisibilityManager().hideTo(player);
     }

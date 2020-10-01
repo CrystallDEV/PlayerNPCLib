@@ -44,12 +44,10 @@ public class EntityManager {
    * @param npc
    */
   public void spawnEntity(BasePlayerNPC npc) {
-    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
-      if (new NPCSpawnEvent(npc).callEvent()) {
-        npc.spawn();
-        playerNPCList.add(npc);
-      }
-    });
+    if (new NPCSpawnEvent(npc).callEvent()) {
+      npc.spawn();
+      playerNPCList.add(npc);
+    }
   }
 
   /**
@@ -71,11 +69,6 @@ public class EntityManager {
    */
   public void handleRealPlayerMove(Player player) {
     for (BasePlayerNPC npc : getPlayerNPCList()) {
-      if (!canSee(player, npc)) {
-        // NPC is hidden from the player
-        continue;
-      }
-
       if (!canSee(player, npc) && inRangeOf(player, npc) && inViewOf(player, npc)) {
         // The player is in range and can see the NPC, auto-show it.
         showNPC(player, npc);

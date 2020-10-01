@@ -143,7 +143,7 @@ public class EntityHider implements Listener {
    * @param visible - TRUE if the entity should be made visible, FALSE if not.
    * @return TRUE if the entity was visible before this method call, FALSE otherwise.
    */
-  protected boolean setVisibility(Player observer, int entityID, boolean visible) {
+  public boolean setVisibility(Player observer, int entityID, boolean visible) {
     switch (policy) {
       case BLACKLIST:
         // Non-membership means they are visible

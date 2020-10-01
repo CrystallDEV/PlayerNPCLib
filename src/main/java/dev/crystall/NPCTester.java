@@ -43,38 +43,34 @@ public class NPCTester extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onRightClick(PlayerInteractEvent event) {
     if (event.getAction().toString().startsWith("RIGHT") && event.getPlayer().isSneaking()) {
-      SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
-        StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
-        npc.setSubName(String.valueOf(npc.getEntityId()));
-        npc.setPlayerSkin(skin);
+      StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
+      npc.setSubName(String.valueOf(npc.getEntityId()));
+      npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(0, 5000)));
 
-        npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
-        npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
-        npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
-        npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
-        npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
-        npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
+      npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
+      npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
+      npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
+      npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
+      npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
+      npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
 
-        PlayerNPCLib.getEntityManager().spawnEntity(npc);
-      });
+      PlayerNPCLib.getEntityManager().spawnEntity(npc);
     }
 
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
-      SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
-        MovablePlayerNPC npc = new MovablePlayerNPC(ChatColor.RED + "Barbarian", event.getPlayer().getLocation(), EntityType.ZOMBIE);
-        npc.setSubName(String.valueOf(npc.getEntityId()));
-        npc.setPlayerSkin(skin);
-        npc.setAggressive(true);
+      MovablePlayerNPC npc = new MovablePlayerNPC(ChatColor.RED + "Barbarian", event.getPlayer().getLocation(), EntityType.ZOMBIE);
+      npc.setSubName(String.valueOf(npc.getEntityId()));
+      npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(0, 5000)));
+      npc.setAggressive(true);
 
-        npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
-        npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
-        npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
-        npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
-        npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
-        npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
+      npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
+      npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
+      npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
+      npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
+      npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
+      npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
 
-        PlayerNPCLib.getEntityManager().spawnEntity(npc);
-      });
+      PlayerNPCLib.getEntityManager().spawnEntity(npc);
 
     }
   }

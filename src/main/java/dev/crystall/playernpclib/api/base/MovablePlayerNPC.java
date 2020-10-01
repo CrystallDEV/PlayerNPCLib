@@ -51,6 +51,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     }
     // Prevent sounds from this entity
     this.bukkitLivingEntity.setSilent(true);
+    this.bukkitLivingEntity.setCanPickupItems(false);
     super.spawn();
 
     Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
