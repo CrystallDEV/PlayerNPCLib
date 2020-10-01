@@ -2,12 +2,11 @@ package dev.crystall.playernpclib.api.skin;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.crystall.playernpclib.PlayerNPCLib;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.bukkit.Bukkit;
 
 /**
@@ -16,11 +15,10 @@ import org.bukkit.Bukkit;
 public class SkinFetcher {
 
   private static final String MINESKIN_API = "https://api.mineskin.org/get/id/";
-  private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
   // TODO maybe replace with the mineskin API java client -> https://github.com/InventivetalentDev/MineskinClient
   public static void asyncFetchSkin(int id, Callback<PlayerSkin> callback) {
-    EXECUTOR.submit(() -> {
+    Bukkit.getScheduler().runTaskAsynchronously(PlayerNPCLib.getPlugin(), () -> {
       PlayerSkin skin = fetchSkin(id);
       if (skin == null) {
         callback.failed();

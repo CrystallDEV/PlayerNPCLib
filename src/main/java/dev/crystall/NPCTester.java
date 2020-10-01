@@ -55,7 +55,7 @@ public class NPCTester extends JavaPlugin implements Listener {
         npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
         npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
 
-        Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> PlayerNPCLib.getEntityManager().spawnEntity(npc));
+        PlayerNPCLib.getEntityManager().spawnEntity(npc);
       });
     }
 
@@ -66,15 +66,14 @@ public class NPCTester extends JavaPlugin implements Listener {
         npc.setPlayerSkin(skin);
         npc.setAggressive(true);
 
-        Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
-          PlayerNPCLib.getEntityManager().spawnEntity(npc);
-          npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
-          npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
-          npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
-          npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
-          npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
-          npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
-        });
+        npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
+        npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
+        npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
+        npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
+        npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
+        npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
+
+        PlayerNPCLib.getEntityManager().spawnEntity(npc);
       });
 
     }

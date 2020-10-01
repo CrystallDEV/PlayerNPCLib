@@ -34,7 +34,6 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   @Setter
   private boolean isAggressive = false;
 
-
   public MovablePlayerNPC(String name, Location location, EntityType entityType) {
     super(name, location);
     this.entityType = entityType;
@@ -65,9 +64,11 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   @Override
   public void remove() {
     super.remove();
-    if (this.bukkitLivingEntity != null) {
-      this.bukkitLivingEntity.remove();
-    }
+    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
+      if (this.bukkitLivingEntity != null) {
+        this.bukkitLivingEntity.remove();
+      }
+    });
   }
 
   @Override
@@ -86,9 +87,11 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   @Override
   public void setItem(ItemSlot slot, ItemStack itemStack) {
     super.setItem(slot, itemStack);
-    if (this.bukkitLivingEntity != null) {
-      this.bukkitLivingEntity.getEquipment().setItem(Utils.getEquipmentSlotFor(slot), itemStack);
-    }
+    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
+      if (this.bukkitLivingEntity != null) {
+        this.bukkitLivingEntity.getEquipment().setItem(Utils.getEquipmentSlotFor(slot), itemStack);
+      }
+    });
   }
 
   public void updateInventory() {

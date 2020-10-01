@@ -32,7 +32,7 @@ public abstract class BasePlayerNPC {
   private final UUID uuid = UUID.randomUUID();
   private boolean isSpawned = false;
   private final Map<ItemSlot, ItemStack> itemSlots = new EnumMap<>(ItemSlot.class);
-  private final Hologram hologram;
+  private Hologram hologram;
   private final BukkitTask[] task = new BukkitTask[1];
 
   /**
@@ -46,8 +46,12 @@ public abstract class BasePlayerNPC {
   protected BasePlayerNPC(String name, Location location) {
     this.location = location;
     this.entityId = EntityManager.tickAndGetCounter();
-    this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), location.clone().add(0, 2.5, 0));
-    setName(name);
+
+    // Run this task in the bukkit scheduler because it needs to be synced.
+    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
+      this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
+      setName(name);
+    });
 
     task[0] = Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
       if (this.hologram != null && !this.hologram.isDeleted()) {

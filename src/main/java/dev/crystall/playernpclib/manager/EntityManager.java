@@ -44,10 +44,12 @@ public class EntityManager {
    * @param npc
    */
   public void spawnEntity(BasePlayerNPC npc) {
-    if (new NPCSpawnEvent(npc).callEvent()) {
-      npc.spawn();
-      playerNPCList.add(npc);
-    }
+    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
+      if (new NPCSpawnEvent(npc).callEvent()) {
+        npc.spawn();
+        playerNPCList.add(npc);
+      }
+    });
   }
 
   /**
