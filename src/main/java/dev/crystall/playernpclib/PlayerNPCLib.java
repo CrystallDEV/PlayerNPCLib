@@ -8,8 +8,12 @@ import dev.crystall.playernpclib.manager.EntityHider.Policy;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.EventManager;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.Team.Option;
+import org.bukkit.scoreboard.Team.OptionStatus;
 
 @Getter
 public class PlayerNPCLib {
@@ -52,6 +56,28 @@ public class PlayerNPCLib {
       // Disable the plugin if we encounter an error. Its most likely that the plugin depends on this library
       getServer().getPluginManager().disablePlugin(plugin);
       return;
+    }
+    if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+      plugin.getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");
+      plugin.getLogger().severe("*** This plugin will be disabled. ***");
+      getServer().getPluginManager().disablePlugin(plugin);
+      return;
+    }
+
+    // Create the scoreboard for the npcs to be in
+    Team npcTeam = null;
+    for (Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
+      if (team.getName().equals(Constants.NPC_TEAM_NAME)) {
+        npcTeam = team;
+        break;
+      }
+    }
+
+    if (npcTeam == null) {
+      npcTeam = Bukkit.getScoreboardManager().getMainScoreboard().registerNewTeam(Constants.NPC_TEAM_NAME);
+      npcTeam.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.NEVER);
+      npcTeam.setOption(Option.DEATH_MESSAGE_VISIBILITY, OptionStatus.NEVER);
+      npcTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
     }
 
     plugin.getLogger().info("Enabled for Server Version " + versionName);

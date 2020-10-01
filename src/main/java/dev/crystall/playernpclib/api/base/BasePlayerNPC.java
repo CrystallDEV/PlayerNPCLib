@@ -1,9 +1,10 @@
 package dev.crystall.playernpclib.api.base;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
-import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.base.Preconditions;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.skin.PlayerSkin;
@@ -18,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitTask;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -29,6 +31,8 @@ public abstract class BasePlayerNPC {
   private final UUID uuid = UUID.randomUUID();
   private boolean isSpawned = false;
   private final Map<ItemSlot, ItemStack> itemSlots = new EnumMap<>(ItemSlot.class);
+  private final Hologram hologram;
+  private final BukkitTask[] task = new BukkitTask[1];
 
   /**
    * The id the entity will be registered with at the server
@@ -39,9 +43,16 @@ public abstract class BasePlayerNPC {
   protected PlayerSkin playerSkin;
 
   protected BasePlayerNPC(String name, Location location) {
-    this.name = name;
     this.location = location;
     this.entityId = EntityManager.tickAndGetCounter();
+    this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), location.clone().add(0, 2.5, 0));
+    setName(name);
+
+    task[0] = Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
+      if (this.hologram != null && !this.hologram.isDeleted()) {
+        this.hologram.teleport(this.location.clone().add(0, 2.5, 0));
+      }
+    }, 0L, 1L);
   }
 
   public void spawn() {
@@ -55,38 +66,44 @@ public abstract class BasePlayerNPC {
     if (!isSpawned) {
       return;
     }
+
+    isSpawned = false;
+    if (task[0] != null && !task[0].isCancelled()) {
+      task[0].cancel();
+    }
+
+    if (this.hologram != null) {
+      this.hologram.delete();
+    }
+
     // TODO get only nearby players and play the animation for them
     for (Player player : Bukkit.getOnlinePlayers()) {
       PacketManager.sendDeathMetaData(player, this);
-    }
-    isSpawned = false;
-  }
-
-  public void update() {
-    for (Player player : Bukkit.getOnlinePlayers()) {
-      hide(player);
-      show(player);
     }
   }
 
   public void show(Player player) {
     PacketManager.sendNPCCreatePackets(player, this);
     PacketManager.sendEquipmentPackets(player, this);
+    PacketManager.sendScoreBoardTeamPacket(player, this);
+    if (hologram != null) {
+      hologram.getVisibilityManager().showTo(player);
+    }
   }
 
   public void hide(Player player) {
     PacketManager.sendHidePackets(player, this);
+    if (hologram != null) {
+      hologram.getVisibilityManager().hideTo(player);
+    }
   }
 
   public void setName(String name) {
     this.name = name;
-    if (isSpawned) {
-      // TODO get only nearby players
-      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-        PacketManager.sendPlayerInfoPacket(player, this, PlayerInfoAction.UPDATE_DISPLAY_NAME);
-      }
+    if (hologram != null) {
+      hologram.clearLines();
+      hologram.insertTextLine(0, name);
     }
-    update();
   }
 
   /**

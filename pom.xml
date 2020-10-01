@@ -76,7 +76,7 @@
     <!-- Holographic displays-->
     <repository>
       <id>codemc-repo</id>
-      <url>https://repo.codemc.org/repository/maven-public/</url>
+      <url>https://repo.codemc.io/repository/maven-public/</url>
     </repository>
 
     <!--    PROTOCOLLIB-->
@@ -107,7 +107,8 @@
     <dependency>
       <groupId>com.gmail.filoghost.holographicdisplays</groupId>
       <artifactId>holographicdisplays-api</artifactId>
-      <version>2.3.3-SNAPSHOT</version>
+      <version>2.4.0</version>
+      <scope>provided</scope>
     </dependency>
 
     <!--  Craftbukkit  -->

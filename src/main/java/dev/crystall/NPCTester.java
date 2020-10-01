@@ -62,8 +62,7 @@ public class NPCTester extends JavaPlugin implements Listener {
 
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
       SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
-        MovablePlayerNPC npc = new MovablePlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation(), EntityType.ZOMBIE);
-        npc.setName(ChatColor.RED + "Barbarian");
+        MovablePlayerNPC npc = new MovablePlayerNPC(ChatColor.RED + "Barbarian", event.getPlayer().getLocation(), EntityType.ZOMBIE);
         npc.setPlayerSkin(skin);
         npc.setAggressive(true);
 

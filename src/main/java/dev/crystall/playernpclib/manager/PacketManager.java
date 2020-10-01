@@ -17,6 +17,9 @@ import dev.crystall.nms.wrappers.WrapperPlayServerEntityMetadata;
 import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
 import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
 import dev.crystall.nms.wrappers.WrapperPlayServerPlayerInfo;
+import dev.crystall.nms.wrappers.WrapperPlayServerScoreboardTeam;
+import dev.crystall.nms.wrappers.WrapperPlayServerScoreboardTeam.Mode;
+import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
@@ -36,7 +39,11 @@ public class PacketManager {
   }
 
   public static void sendScoreBoardTeamPacket(Player player, BasePlayerNPC npc) {
-
+    WrapperPlayServerScoreboardTeam wrapperTeam = new WrapperPlayServerScoreboardTeam();
+    wrapperTeam.setName(Constants.NPC_TEAM_NAME);
+    wrapperTeam.setMode(Mode.PLAYERS_ADDED);
+    wrapperTeam.setPlayers(Collections.singletonList(npc.getName()));
+    sendPacket(player, wrapperTeam.getHandle(), false);
   }
 
   /**
