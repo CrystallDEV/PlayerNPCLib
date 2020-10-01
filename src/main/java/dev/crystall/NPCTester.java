@@ -9,7 +9,6 @@ import dev.crystall.playernpclib.api.base.StaticPlayerNPC;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent.ClickType;
 import dev.crystall.playernpclib.api.skin.SkinFetcher;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.RandomUtils;
@@ -46,7 +45,7 @@ public class NPCTester extends JavaPlugin implements Listener {
     if (event.getAction().toString().startsWith("RIGHT") && event.getPlayer().isSneaking()) {
       SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
         StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
-        npc.setName(String.valueOf(npc.getEntityId()));
+        npc.setSubName(String.valueOf(npc.getEntityId()));
         npc.setPlayerSkin(skin);
 
         npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
@@ -63,6 +62,7 @@ public class NPCTester extends JavaPlugin implements Listener {
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
       SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(0, 5000), skin -> {
         MovablePlayerNPC npc = new MovablePlayerNPC(ChatColor.RED + "Barbarian", event.getPlayer().getLocation(), EntityType.ZOMBIE);
+        npc.setSubName(String.valueOf(npc.getEntityId()));
         npc.setPlayerSkin(skin);
         npc.setAggressive(true);
 

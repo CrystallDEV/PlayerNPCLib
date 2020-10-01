@@ -28,6 +28,7 @@ import org.bukkit.scheduler.BukkitTask;
 public abstract class BasePlayerNPC {
 
   private String name;
+  private String subName;
   private final UUID uuid = UUID.randomUUID();
   private boolean isSpawned = false;
   private final Map<ItemSlot, ItemStack> itemSlots = new EnumMap<>(ItemSlot.class);
@@ -53,6 +54,11 @@ public abstract class BasePlayerNPC {
         this.hologram.teleport(this.location.clone().add(0, 2.5, 0));
       }
     }, 0L, 1L);
+  }
+
+  protected BasePlayerNPC(String name, Location location, String subName) {
+    this(name, location);
+    setSubName(subName);
   }
 
   public void spawn() {
@@ -100,9 +106,23 @@ public abstract class BasePlayerNPC {
 
   public void setName(String name) {
     this.name = name;
+    updateDisplayName();
+  }
+
+  public void setSubName(String subName) {
+    this.subName = subName;
+    updateDisplayName();
+  }
+
+  public void updateDisplayName() {
     if (hologram != null) {
       hologram.clearLines();
-      hologram.insertTextLine(0, name);
+      if (name != null && !name.isEmpty()) {
+        hologram.insertTextLine(0, name);
+      }
+      if (subName != null && !subName.isEmpty()) {
+        hologram.insertTextLine(1, subName);
+      }
     }
   }
 
