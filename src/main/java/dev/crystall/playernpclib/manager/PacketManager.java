@@ -63,7 +63,7 @@ public class PacketManager {
     spawnWrapper.setPosition(npc.getLocation().toVector());
     sendPacket(player, spawnWrapper.getHandle(), false);
 
-    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 1L);
+    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 5L);
   }
 
   /**

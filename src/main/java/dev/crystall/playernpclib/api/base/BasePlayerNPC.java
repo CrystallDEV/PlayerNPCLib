@@ -14,7 +14,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -40,7 +39,6 @@ public abstract class BasePlayerNPC {
    */
   protected int entityId;
   protected Location location;
-  @Setter
   protected PlayerSkin playerSkin;
 
   protected BasePlayerNPC(String name, Location location) {
@@ -88,6 +86,11 @@ public abstract class BasePlayerNPC {
     }
   }
 
+  public void update(Player player) {
+    hide(player);
+    show(player);
+  }
+
   public void show(Player player) {
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), true);
     PacketManager.sendNPCCreatePackets(player, this);
@@ -129,25 +132,6 @@ public abstract class BasePlayerNPC {
   }
 
   /**
-   * Sets an item for the given slot
-   *
-   * @param slot the slot to update the item for
-   * @param itemStack the itemstack to set
-   */
-  public void setItem(ItemSlot slot, ItemStack itemStack) {
-    Preconditions.checkNotNull(itemStack, "itemStack cannot be NULL.");
-    Preconditions.checkNotNull(slot, "slot cannot be NULL.");
-
-    itemSlots.put(slot, itemStack);
-    if (isSpawned) {
-      // TODO get only nearby players
-      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-        PacketManager.sendEquipmentPackets(player, this);
-      }
-    }
-  }
-
-  /**
    * Plays the given animation to all nearby players
    *
    * @param animationId the id of the animation to play
@@ -170,5 +154,34 @@ public abstract class BasePlayerNPC {
       wrappedGameProfile.getProperties().put("textures", new WrappedSignedProperty("textures", playerSkin.getValue(), playerSkin.getSignature()));
     }
     return wrappedGameProfile;
+  }
+
+  /**
+   * Sets an item for the given slot
+   *
+   * @param slot the slot to update the item for
+   * @param itemStack the itemstack to set
+   */
+  public void setItem(ItemSlot slot, ItemStack itemStack) {
+    Preconditions.checkNotNull(itemStack, "itemStack cannot be NULL.");
+    Preconditions.checkNotNull(slot, "slot cannot be NULL.");
+
+    itemSlots.put(slot, itemStack);
+    if (isSpawned) {
+      // TODO get only nearby players
+      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+        PacketManager.sendEquipmentPackets(player, this);
+      }
+    }
+  }
+
+  public void setPlayerSkin(PlayerSkin playerSkin) {
+    this.playerSkin = playerSkin;
+    if (isSpawned) {
+      // TODO get only nearby players
+      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+        this.update(player);
+      }
+    }
   }
 }
