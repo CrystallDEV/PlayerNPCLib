@@ -115,7 +115,7 @@ public class PacketManager {
    */
   public static void sendPlayerInfoPacket(Player player, BasePlayerNPC npc, PlayerInfoAction action) {
     WrapperPlayServerPlayerInfo infoWrapper = new WrapperPlayServerPlayerInfo();
-    PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, NativeGameMode.SURVIVAL, WrappedChatComponent.fromText(npc.getName()));
+    PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, NativeGameMode.NOT_SET, WrappedChatComponent.fromText(npc.getName()));
     infoWrapper.setData(Collections.singletonList(data));
     infoWrapper.setAction(action);
     sendPacket(player, infoWrapper.getHandle(), false);

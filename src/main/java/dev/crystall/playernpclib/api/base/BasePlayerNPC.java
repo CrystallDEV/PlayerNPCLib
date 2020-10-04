@@ -31,7 +31,7 @@ public abstract class BasePlayerNPC {
   private final UUID uuid = UUID.randomUUID();
   private boolean isSpawned = false;
   private final Map<ItemSlot, ItemStack> itemSlots = new EnumMap<>(ItemSlot.class);
-  private Hologram hologram;
+  private final Hologram hologram;
   private final BukkitTask[] task = new BukkitTask[1];
 
   /**
