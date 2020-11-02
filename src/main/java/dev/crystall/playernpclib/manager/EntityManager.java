@@ -14,7 +14,10 @@ import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
 import dev.crystall.playernpclib.api.utility.MathUtils;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -31,11 +34,14 @@ public class EntityManager {
   @Getter
   private static final List<BasePlayerNPC> playerNPCList = new CopyOnWriteArrayList<>();
 
+  // Prevent players from clicking at very high speeds.
+  private final Set<UUID> interactableDelay = new HashSet<>();
+
   public EntityManager() {
     ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(PlayerNPCLib.getPlugin(), Client.USE_ENTITY) {
       @Override
       public void onPacketReceiving(PacketEvent event) {
-        handleInteractPacket(event.getPlayer(), event.getPacket());
+        handleInteractPacket(event.getPlayer(), event);
       }
     });
   }
@@ -81,9 +87,10 @@ public class EntityManager {
 
   /**
    * @param player
-   * @param packet
+   * @param event
    */
-  private void handleInteractPacket(Player player, PacketContainer packet) {
+  private void handleInteractPacket(Player player, PacketEvent event) {
+    PacketContainer packet = event.getPacket();
     WrapperPlayClientUseEntity packetWrapper = new WrapperPlayClientUseEntity(packet);
 
     BasePlayerNPC npc = null;
@@ -99,11 +106,25 @@ public class EntityManager {
       return;
     }
 
+    // Cancel the event since we handle stuff ourself
+    event.setCancelled(true);
+
+    // Active delay
+    if (interactableDelay.contains(player.getUniqueId())) {
+      return;
+    }
+
     NPCInteractEvent.ClickType clickType = packetWrapper.getType() == EntityUseAction.ATTACK
       ? NPCInteractEvent.ClickType.LEFT_CLICK : NPCInteractEvent.ClickType.RIGHT_CLICK;
 
+    // Add the player to the delay set
+    interactableDelay.add(player.getUniqueId());
+
     NPCInteractEvent interactEvent = new NPCInteractEvent(player, npc, clickType);
-    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), interactEvent::callEvent);
+    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
+      interactEvent.callEvent();
+      interactableDelay.remove(player.getUniqueId());
+    });
 
     // Since this is a packet sent by the client, we need to make some checks
     if (!player.getWorld().equals(npc.getLocation().getWorld()) || player.getLocation().distanceSquared(npc.getLocation()) > 64 || player.isDead()) {

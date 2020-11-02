@@ -132,7 +132,6 @@ public class EventManager implements Listener {
   @EventHandler
   public void onChunkLoad(ChunkLoadEvent event) {
     Chunk chunk = event.getChunk();
-
   }
 
 
