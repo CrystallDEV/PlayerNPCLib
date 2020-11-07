@@ -14,7 +14,7 @@
   <description>PlayerNPCLib that uses packets to display efficient custom player mobs</description>
   <properties>
     <java.version>11</java.version>
-    <paper.version>1.16.3-R0.1-SNAPSHOT</paper.version>
+    <paper.version>1.16.4-R0.1-SNAPSHOT</paper.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <url>https://www.crystall.dev</url>
