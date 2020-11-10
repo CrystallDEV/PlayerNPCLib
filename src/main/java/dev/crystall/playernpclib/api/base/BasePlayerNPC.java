@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -32,7 +31,6 @@ public abstract class BasePlayerNPC {
   private boolean isSpawned = false;
   private final Map<ItemSlot, ItemStack> itemSlots = new EnumMap<>(ItemSlot.class);
   private final Hologram hologram;
-  private final BukkitTask[] task = new BukkitTask[1];
 
   /**
    * The id the entity will be registered with at the server
@@ -46,12 +44,6 @@ public abstract class BasePlayerNPC {
     this.entityId = EntityManager.tickAndGetCounter();
     this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
     setName(name);
-
-    task[0] = Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
-      if (this.hologram != null && !this.hologram.isDeleted()) {
-        this.hologram.teleport(this.location.clone().add(0, 2.5, 0));
-      }
-    }, 0L, 1L);
   }
 
   protected BasePlayerNPC(String name, Location location, String subName) {
@@ -72,9 +64,6 @@ public abstract class BasePlayerNPC {
     }
 
     isSpawned = false;
-    if (task[0] != null && !task[0].isCancelled()) {
-      task[0].cancel();
-    }
 
     if (this.hologram != null) {
       this.hologram.delete();

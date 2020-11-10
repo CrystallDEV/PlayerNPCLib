@@ -44,6 +44,14 @@ public class EntityManager {
         handleInteractPacket(event.getPlayer(), event);
       }
     });
+
+    Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
+      for (BasePlayerNPC npc : playerNPCList) {
+        if (npc.isSpawned() && npc.getHologram() != null && !npc.getHologram().isDeleted()) {
+          npc.getHologram().teleport(npc.getLocation().clone().add(0, 2.5, 0));
+        }
+      }
+    }, 0L, 1L);
   }
 
   /**
