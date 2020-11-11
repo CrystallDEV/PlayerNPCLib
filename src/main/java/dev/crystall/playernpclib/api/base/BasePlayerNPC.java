@@ -86,6 +86,7 @@ public abstract class BasePlayerNPC {
     PacketManager.sendEquipmentPackets(player, this);
     PacketManager.sendScoreBoardTeamPacket(player, this);
     if (hologram != null) {
+      updateDisplayName();
       hologram.getVisibilityManager().showTo(player);
     }
   }
@@ -171,6 +172,13 @@ public abstract class BasePlayerNPC {
       for (Player player : Bukkit.getServer().getOnlinePlayers()) {
         this.update(player);
       }
+    }
+  }
+
+  public void setLocation(Location location) {
+    this.location = location;
+    for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+      update(player);
     }
   }
 }
