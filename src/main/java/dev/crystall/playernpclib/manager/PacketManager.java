@@ -61,7 +61,15 @@ public class PacketManager {
     spawnWrapper.setEntityID(npc.getEntityId());
     spawnWrapper.setPlayerUUID(npc.getUuid());
     spawnWrapper.setPosition(npc.getLocation().toVector());
+    spawnWrapper.setPitch(npc.getLocation().getPitch());
+    spawnWrapper.setYaw(npc.getLocation().getYaw());
     sendPacket(player, spawnWrapper.getHandle(), false);
+
+    // Head rotation
+    WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
+    headWrapper.setEntityID(npc.getEntityId());
+    headWrapper.setHeadYaw((byte) (npc.getEyeLocation().getYaw() * 256.0F / 360.0F));
+    sendPacket(player, headWrapper.getHandle(), false);
 
     Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 5L);
   }

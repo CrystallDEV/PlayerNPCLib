@@ -37,6 +37,7 @@ public abstract class BasePlayerNPC {
    */
   protected int entityId;
   protected Location location;
+  protected Location eyeLocation;
   protected PlayerSkin playerSkin;
 
   protected BasePlayerNPC(String name, Location location) {
