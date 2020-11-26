@@ -16,40 +16,52 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dev.crystall.nms.wrappers;
-
-import java.util.List;
+package dev.crystall.playernpclib.nms.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
-import com.comphenix.protocol.wrappers.PlayerInfoData;
 
-public class WrapperPlayServerPlayerInfo extends AbstractPacket {
-	public static final PacketType TYPE = PacketType.Play.Server.PLAYER_INFO;
+public class WrapperPlayServerEntityDestroy extends AbstractPacket {
+	public static final PacketType TYPE = PacketType.Play.Server.ENTITY_DESTROY;
 
-	public WrapperPlayServerPlayerInfo() {
+	public WrapperPlayServerEntityDestroy() {
 		super(new PacketContainer(TYPE), TYPE);
 		handle.getModifier().writeDefaults();
 	}
 
-	public WrapperPlayServerPlayerInfo(PacketContainer packet) {
+	public WrapperPlayServerEntityDestroy(PacketContainer packet) {
 		super(packet, TYPE);
 	}
 
-	public PlayerInfoAction getAction() {
-		return handle.getPlayerInfoAction().read(0);
+	/**
+	 * Retrieve Count.
+	 * <p>
+	 * Notes: length of following array
+	 * 
+	 * @return The current Count
+	 */
+	public int getCount() {
+		return handle.getIntegerArrays().read(0).length;
 	}
 
-	public void setAction(PlayerInfoAction value) {
-		handle.getPlayerInfoAction().write(0, value);
+	/**
+	 * Retrieve Entity IDs.
+	 * <p>
+	 * Notes: the list of entities of destroy
+	 * 
+	 * @return The current Entity IDs
+	 */
+	public int[] getEntityIDs() {
+		return handle.getIntegerArrays().read(0);
 	}
 
-	public List<PlayerInfoData> getData() {
-		return handle.getPlayerInfoDataLists().read(0);
+	/**
+	 * Set Entity IDs.
+	 * 
+	 * @param value - new value.
+	 */
+	public void setEntityIds(int[] value) {
+		handle.getIntegerArrays().write(0, value);
 	}
 
-	public void setData(List<PlayerInfoData> value) {
-		handle.getPlayerInfoDataLists().write(0, value);
-	}
 }

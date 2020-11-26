@@ -16,9 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dev.crystall.nms.wrappers;
-
-import java.util.List;
+package dev.crystall.playernpclib.nms.wrappers;
 
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -26,18 +24,17 @@ import org.bukkit.entity.Entity;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
-public class WrapperPlayServerEntityMetadata extends AbstractPacket {
+public class WrapperPlayServerEntityHeadRotation extends AbstractPacket {
 	public static final PacketType TYPE =
-			PacketType.Play.Server.ENTITY_METADATA;
+			PacketType.Play.Server.ENTITY_HEAD_ROTATION;
 
-	public WrapperPlayServerEntityMetadata() {
+	public WrapperPlayServerEntityHeadRotation() {
 		super(new PacketContainer(TYPE), TYPE);
 		handle.getModifier().writeDefaults();
 	}
 
-	public WrapperPlayServerEntityMetadata(PacketContainer packet) {
+	public WrapperPlayServerEntityHeadRotation(PacketContainer packet) {
 		super(packet, TYPE);
 	}
 
@@ -82,20 +79,22 @@ public class WrapperPlayServerEntityMetadata extends AbstractPacket {
 	}
 
 	/**
-	 * Retrieve Metadata.
+	 * Retrieve Head Yaw.
+	 * <p>
+	 * Notes: head yaw in steps of 2p/256
 	 * 
-	 * @return The current Metadata
+	 * @return The current Head Yaw
 	 */
-	public List<WrappedWatchableObject> getMetadata() {
-		return handle.getWatchableCollectionModifier().read(0);
+	public byte getHeadYaw() {
+		return handle.getBytes().read(0);
 	}
 
 	/**
-	 * Set Metadata.
+	 * Set Head Yaw.
 	 * 
 	 * @param value - new value.
 	 */
-	public void setMetadata(List<WrappedWatchableObject> value) {
-		handle.getWatchableCollectionModifier().write(0, value);
+	public void setHeadYaw(byte value) {
+		handle.getBytes().write(0, value);
 	}
 }

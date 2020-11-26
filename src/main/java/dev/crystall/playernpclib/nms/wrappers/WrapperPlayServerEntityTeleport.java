@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package dev.crystall.nms.wrappers;
+package dev.crystall.playernpclib.nms.wrappers;
 
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -25,32 +25,30 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
-public class WrapperPlayServerEntityHeadRotation extends AbstractPacket {
+public class WrapperPlayServerEntityTeleport extends AbstractPacket {
 	public static final PacketType TYPE =
-			PacketType.Play.Server.ENTITY_HEAD_ROTATION;
+			PacketType.Play.Server.ENTITY_TELEPORT;
 
-	public WrapperPlayServerEntityHeadRotation() {
+	public WrapperPlayServerEntityTeleport() {
 		super(new PacketContainer(TYPE), TYPE);
 		handle.getModifier().writeDefaults();
 	}
 
-	public WrapperPlayServerEntityHeadRotation(PacketContainer packet) {
+	public WrapperPlayServerEntityTeleport(PacketContainer packet) {
 		super(packet, TYPE);
 	}
 
 	/**
-	 * Retrieve Entity ID.
-	 * <p>
-	 * Notes: entity's ID
+	 * Retrieve entity ID.
 	 * 
-	 * @return The current Entity ID
+	 * @return The current EID
 	 */
 	public int getEntityID() {
 		return handle.getIntegers().read(0);
 	}
 
 	/**
-	 * Set Entity ID.
+	 * Set entity ID.
 	 * 
 	 * @param value - new value.
 	 */
@@ -59,42 +57,90 @@ public class WrapperPlayServerEntityHeadRotation extends AbstractPacket {
 	}
 
 	/**
-	 * Retrieve the entity of the painting that will be spawned.
+	 * Retrieve the entity.
 	 * 
 	 * @param world - the current world of the entity.
-	 * @return The spawned entity.
+	 * @return The entity.
 	 */
 	public Entity getEntity(World world) {
 		return handle.getEntityModifier(world).read(0);
 	}
 
 	/**
-	 * Retrieve the entity of the painting that will be spawned.
+	 * Retrieve the entity.
 	 * 
 	 * @param event - the packet event.
-	 * @return The spawned entity.
+	 * @return The entity.
 	 */
 	public Entity getEntity(PacketEvent event) {
 		return getEntity(event.getPlayer().getWorld());
 	}
 
-	/**
-	 * Retrieve Head Yaw.
-	 * <p>
-	 * Notes: head yaw in steps of 2p/256
-	 * 
-	 * @return The current Head Yaw
-	 */
-	public byte getHeadYaw() {
-		return handle.getBytes().read(0);
+	public double getX() {
+		return handle.getDoubles().read(0);
+	}
+
+	public void setX(double value) {
+		handle.getDoubles().write(0, value);
+	}
+
+	public double getY() {
+		return handle.getDoubles().read(1);
+	}
+
+	public void setY(double value) {
+		handle.getDoubles().write(1, value);
+	}
+
+	public double getZ() {
+		return handle.getDoubles().read(2);
+	}
+
+	public void setZ(double value) {
+		handle.getDoubles().write(2, value);
 	}
 
 	/**
-	 * Set Head Yaw.
+	 * Retrieve the yaw of the current entity.
 	 * 
-	 * @param value - new value.
+	 * @return The current Yaw
 	 */
-	public void setHeadYaw(byte value) {
-		handle.getBytes().write(0, value);
+	public float getYaw() {
+		return (handle.getBytes().read(0) * 360.F) / 256.0F;
+	}
+
+	/**
+	 * Set the yaw of the current entity.
+	 * 
+	 * @param value - new yaw.
+	 */
+	public void setYaw(float value) {
+		handle.getBytes().write(0, (byte) (value * 256.0F / 360.0F));
+	}
+
+	/**
+	 * Retrieve the pitch of the current entity.
+	 * 
+	 * @return The current pitch
+	 */
+	public float getPitch() {
+		return (handle.getBytes().read(1) * 360.F) / 256.0F;
+	}
+
+	/**
+	 * Set the pitch of the current entity.
+	 * 
+	 * @param value - new pitch.
+	 */
+	public void setPitch(float value) {
+		handle.getBytes().write(1, (byte) (value * 256.0F / 360.0F));
+	}
+
+	public boolean getOnGround() {
+		return handle.getBooleans().read(0);
+	}
+
+	public void setOnGround(boolean value) {
+		handle.getBooleans().write(0, value);
 	}
 }

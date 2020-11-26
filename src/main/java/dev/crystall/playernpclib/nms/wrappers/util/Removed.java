@@ -1,4 +1,4 @@
-package dev.crystall.nms.wrappers.util;
+package dev.crystall.playernpclib.nms.wrappers.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
