@@ -9,6 +9,10 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import dev.crystall.playernpclib.Constants;
+import dev.crystall.playernpclib.PlayerNPCLib;
+import dev.crystall.playernpclib.api.base.BasePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerAnimation;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerEntityDestroy;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerEntityEquipment;
@@ -19,10 +23,6 @@ import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerPlayerInfo;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerScoreboardTeam;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerScoreboardTeam.Mode;
-import dev.crystall.playernpclib.Constants;
-import dev.crystall.playernpclib.PlayerNPCLib;
-import dev.crystall.playernpclib.api.base.BasePlayerNPC;
-import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -66,10 +66,12 @@ public class PacketManager {
     sendPacket(player, spawnWrapper.getHandle(), false);
 
     // Head rotation
-    WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
-    headWrapper.setEntityID(npc.getEntityId());
-    headWrapper.setHeadYaw((byte) (npc.getEyeLocation().getYaw() * 256.0F / 360.0F));
-    sendPacket(player, headWrapper.getHandle(), false);
+    if (npc.getEyeLocation() != null) {
+      WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
+      headWrapper.setEntityID(npc.getEntityId());
+      headWrapper.setHeadYaw((byte) (npc.getEyeLocation().getYaw() * 256.0F / 360.0F));
+      sendPacket(player, headWrapper.getHandle(), false);
+    }
 
     Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 5L);
   }

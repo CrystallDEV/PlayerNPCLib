@@ -86,23 +86,6 @@ public class EntityHider implements Listener {
     COMBAT_EVENT,
   };
 
-  /**
-   * The current entity visibility policy.
-   *
-   * @author Kristian
-   */
-  public enum Policy {
-    /**
-     * All entities are invisible by default. Only entities specifically made visible may be seen.
-     */
-    WHITELIST,
-
-    /**
-     * All entities are visible by default. An entity can only be hidden explicitly.
-     */
-    BLACKLIST,
-  }
-
   private ProtocolManager manager;
 
   // Listeners
@@ -110,7 +93,7 @@ public class EntityHider implements Listener {
   private final PacketAdapter protocolListener;
 
   // Current policy
-  protected final Policy policy;
+  protected final EntityHidePolicy policy;
 
   /**
    * Construct a new entity hider.
@@ -118,12 +101,12 @@ public class EntityHider implements Listener {
    * @param plugin - the plugin that controls this entity hider.
    * @param policy - the default visibility policy.
    */
-  public EntityHider(Plugin plugin, Policy policy) {
+  public EntityHider(Plugin plugin, EntityHidePolicy policy) {
     Preconditions.checkNotNull(plugin, "plugin cannot be NULL.");
 
     if (policy == null) {
       PlayerNPCLib.getPlugin().getLogger().info("EntityHider :: no policy defined, default set to Policy.WHITELIST");
-      policy = Policy.WHITELIST;
+      policy = EntityHidePolicy.WHITELIST;
     }
 
     // Save policy,
@@ -192,7 +175,7 @@ public class EntityHider implements Listener {
    */
   protected boolean isVisible(Player observer, int entityID) {
     // If we are using a whitelist, presence means visibility - if not, the opposite is the case
-    return (policy == Policy.WHITELIST) == getMembership(observer, entityID);
+    return (policy == EntityHidePolicy.WHITELIST) == getMembership(observer, entityID);
   }
 
   /**
@@ -255,6 +238,9 @@ public class EntityHider implements Listener {
     return new PacketAdapter(plugin, ENTITY_PACKETS) {
       @Override
       public void onPacketSending(PacketEvent event) {
+        if (event.isPlayerTemporary()) {
+          return;
+        }
         int index = event.getPacketType() == COMBAT_EVENT ? 1 : 0;
 
         Integer entityID = event.getPacket().getIntegers().readSafely(index);
@@ -382,7 +368,7 @@ public class EntityHider implements Listener {
    *
    * @return The current visibility policy.
    */
-  public Policy getPolicy() {
+  public EntityHidePolicy getPolicy() {
     return policy;
   }
 

@@ -3,8 +3,8 @@ package dev.crystall.playernpclib;
 import static org.bukkit.Bukkit.getServer;
 
 import dev.crystall.playernpclib.api.utility.Utils;
+import dev.crystall.playernpclib.manager.EntityHidePolicy;
 import dev.crystall.playernpclib.manager.EntityHider;
-import dev.crystall.playernpclib.manager.EntityHider.Policy;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.EventManager;
 import lombok.Getter;
@@ -92,7 +92,7 @@ public class PlayerNPCLib {
       MinecraftVersions.valueOf(versionName);
       PlayerNPCLib.entityManager = new EntityManager();
       PlayerNPCLib.eventManager = new EventManager();
-      PlayerNPCLib.entityHider = new EntityHider(plugin, Policy.BLACKLIST);
+      PlayerNPCLib.entityHider = new EntityHider(plugin, EntityHidePolicy.BLACKLIST);
       return true;
     } catch (IllegalArgumentException exception) {
       plugin.getLogger().severe("[PlayerNPCLib] Your server's version (" + versionName + ") is not supported. PlayerNPCLib will not be enabled");

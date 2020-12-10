@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -29,7 +28,6 @@ public class NPCShowEvent extends Event implements Cancellable {
     return handlers;
   }
 
-  @NotNull
   @Override
   public HandlerList getHandlers() {
     return handlers;
