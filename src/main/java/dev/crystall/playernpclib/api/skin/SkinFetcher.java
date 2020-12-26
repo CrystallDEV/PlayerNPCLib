@@ -6,7 +6,9 @@ import dev.crystall.playernpclib.PlayerNPCLib;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.Bukkit;
 
 /**
@@ -15,6 +17,7 @@ import org.bukkit.Bukkit;
 public class SkinFetcher {
 
   private static final String MINESKIN_API = "https://api.mineskin.org/get/id/";
+  private static final Map<Integer, PlayerSkin> cachedSkins = new ConcurrentHashMap<>();
 
   // TODO maybe replace with the mineskin API java client -> https://github.com/InventivetalentDev/MineskinClient
   public static void asyncFetchSkin(int id, Callback<PlayerSkin> callback) {
@@ -30,6 +33,11 @@ public class SkinFetcher {
 
   public static PlayerSkin fetchSkin(int id) {
     try {
+      // Check for cached value and return it
+      if (cachedSkins.containsKey(id)) {
+        return cachedSkins.get(id);
+      }
+
       StringBuilder builder = new StringBuilder();
       HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(MINESKIN_API + id).openConnection();
       httpURLConnection.setRequestMethod("GET");
@@ -50,7 +58,9 @@ public class SkinFetcher {
       String value = textures.get("value").getAsString();
       String signature = textures.get("signature").getAsString();
 
-      return new PlayerSkin(value, signature);
+      PlayerSkin skin = new PlayerSkin(value, signature);
+      cachedSkins.put(id, skin);
+      return skin;
     } catch (IOException exception) {
       Bukkit.getLogger().severe("Could not fetch skin! (Id: " + id + "). Message: " + exception.getMessage());
       exception.printStackTrace();
