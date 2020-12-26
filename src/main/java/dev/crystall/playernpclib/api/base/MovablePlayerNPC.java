@@ -1,6 +1,7 @@
 package dev.crystall.playernpclib.api.base;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.utility.Utils;
 import dev.crystall.playernpclib.manager.PacketManager;
@@ -102,8 +103,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
         EquipmentSlot slot = Utils.getEquipmentSlotFor(itemSlot);
         getItemSlots().put(itemSlot, bukkitLivingEntity.getEquipment().getItem(slot));
       }
-      // TODO get only nearby players
-      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
         PacketManager.sendEquipmentPackets(player, this);
       }
     }

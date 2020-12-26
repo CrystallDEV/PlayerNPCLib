@@ -5,9 +5,10 @@ package dev.crystall.playernpclib;
  */
 public class Constants {
 
-  private Constants(){
+  private Constants() {
   }
 
   public static final String NPC_TEAM_NAME = "PlayerNPCLibNPCS";
+  public static final int NPC_VISIBILITY_RANGE = 50;
 
 }

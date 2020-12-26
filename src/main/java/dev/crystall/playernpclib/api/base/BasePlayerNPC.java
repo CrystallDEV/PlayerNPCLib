@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.base.Preconditions;
+import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.skin.PlayerSkin;
 import dev.crystall.playernpclib.manager.EntityManager;
@@ -70,8 +71,7 @@ public abstract class BasePlayerNPC {
       this.hologram.delete();
     }
 
-    // TODO get only nearby players and play the animation for them
-    for (Player player : Bukkit.getOnlinePlayers()) {
+    for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
       PacketManager.sendDeathMetaData(player, this);
     }
   }
@@ -132,8 +132,7 @@ public abstract class BasePlayerNPC {
       PlayerNPCLib.getPlugin().getLogger().info(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getName(), this.getUuid()));
       return;
     }
-    // TODO get only nearby players and play the animation for them
-    for (Player player : Bukkit.getOnlinePlayers()) {
+    for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
       PacketManager.sendAnimationPacket(player, this, animationId);
     }
   }
@@ -159,8 +158,7 @@ public abstract class BasePlayerNPC {
 
     itemSlots.put(slot, itemStack);
     if (isSpawned) {
-      // TODO get only nearby players
-      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
         PacketManager.sendEquipmentPackets(player, this);
       }
     }
@@ -169,17 +167,18 @@ public abstract class BasePlayerNPC {
   public void setPlayerSkin(PlayerSkin playerSkin) {
     this.playerSkin = playerSkin;
     if (isSpawned) {
-      // TODO get only nearby players
-      for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
         this.update(player);
       }
     }
   }
 
-  public void setLocation(Location location) {
+  public void setLocation(Location location, boolean update) {
     this.location = location;
-    for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-      update(player);
+    if (update) {
+      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+        update(player);
+      }
     }
   }
 }

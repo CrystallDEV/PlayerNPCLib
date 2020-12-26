@@ -6,8 +6,10 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
+import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.event.NPCHideEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
@@ -49,6 +51,9 @@ public class EntityManager {
       for (BasePlayerNPC npc : playerNPCList) {
         if (npc.isSpawned() && npc.getHologram() != null && !npc.getHologram().isDeleted()) {
           npc.getHologram().teleport(npc.getLocation().clone().add(0, 2.5, 0));
+        }
+        for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+          PacketManager.sendMovePacket(player, movablePlayerNPC);
         }
       }
     }, 0L, 1L);
@@ -123,7 +128,7 @@ public class EntityManager {
     }
 
     NPCInteractEvent.ClickType clickType = packetWrapper.getType() == EntityUseAction.ATTACK
-      ? NPCInteractEvent.ClickType.LEFT_CLICK : NPCInteractEvent.ClickType.RIGHT_CLICK;
+        ? NPCInteractEvent.ClickType.LEFT_CLICK : NPCInteractEvent.ClickType.RIGHT_CLICK;
 
     // Add the player to the delay set
     interactableDelay.add(player.getUniqueId());
