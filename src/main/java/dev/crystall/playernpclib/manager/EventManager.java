@@ -33,6 +33,7 @@ public class EventManager implements Listener {
 
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event) {
+    PacketManager.sendScoreBoardTeamCreatePacket(event.getPlayer());
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
       npc.show(event.getPlayer());
     }

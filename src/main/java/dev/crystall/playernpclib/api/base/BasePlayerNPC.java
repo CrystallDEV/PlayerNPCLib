@@ -26,7 +26,8 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public abstract class BasePlayerNPC {
 
-  private String name;
+  private String internalName;
+  private String displayName;
   private String subName;
   private final UUID uuid = UUID.randomUUID();
   private boolean isSpawned = false;
@@ -41,15 +42,16 @@ public abstract class BasePlayerNPC {
   protected Location eyeLocation;
   protected PlayerSkin playerSkin;
 
-  protected BasePlayerNPC(String name, Location location) {
+  protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
     this.entityId = EntityManager.tickAndGetCounter();
     this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
-    setName(name);
+    this.internalName = uuid.toString().substring(0, 16);
+    setDisplayName(displayName);
   }
 
-  protected BasePlayerNPC(String name, Location location, String subName) {
-    this(name, location);
+  protected BasePlayerNPC(String displayName, Location location, String subName) {
+    this(displayName, location);
     setSubName(subName);
   }
 
@@ -100,8 +102,8 @@ public abstract class BasePlayerNPC {
     }
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
     updateDisplayName();
   }
 
@@ -113,8 +115,8 @@ public abstract class BasePlayerNPC {
   public void updateDisplayName() {
     if (hologram != null) {
       hologram.clearLines();
-      if (name != null && !name.isEmpty()) {
-        hologram.insertTextLine(0, name);
+      if (displayName != null && !displayName.isEmpty()) {
+        hologram.insertTextLine(0, displayName);
       }
       if (subName != null && !subName.isEmpty()) {
         hologram.insertTextLine(1, subName);
@@ -129,7 +131,8 @@ public abstract class BasePlayerNPC {
    */
   public void playAnimation(int animationId) {
     if (!isSpawned) {
-      PlayerNPCLib.getPlugin().getLogger().info(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getName(), this.getUuid()));
+      PlayerNPCLib.getPlugin().getLogger()
+          .info(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
       return;
     }
     for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
@@ -138,7 +141,7 @@ public abstract class BasePlayerNPC {
   }
 
   public WrappedGameProfile getGameProfile() {
-    WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, name);
+    WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, internalName);
     if (playerSkin != null) {
       wrappedGameProfile.getProperties().get("textures").clear();
       wrappedGameProfile.getProperties().put("textures", new WrappedSignedProperty("textures", playerSkin.getValue(), playerSkin.getSignature()));

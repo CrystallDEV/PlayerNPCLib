@@ -54,13 +54,6 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     this.bukkitLivingEntity.setSilent(true);
     this.bukkitLivingEntity.setCanPickupItems(false);
     super.spawn();
-
-    Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
-      this.location = this.bukkitLivingEntity.getLocation();
-      for (Player player : Bukkit.getOnlinePlayers()) {
-        PacketManager.sendMovePacket(player, this);
-      }
-    }, 0L, 1L);
   }
 
   @Override

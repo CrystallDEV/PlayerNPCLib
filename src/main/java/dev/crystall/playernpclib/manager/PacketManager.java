@@ -35,14 +35,22 @@ import org.bukkit.entity.Player;
 public class PacketManager {
 
   private PacketManager() {
-
   }
 
   public static void sendScoreBoardTeamPacket(Player player, BasePlayerNPC npc) {
     WrapperPlayServerScoreboardTeam wrapperTeam = new WrapperPlayServerScoreboardTeam();
     wrapperTeam.setName(Constants.NPC_TEAM_NAME);
     wrapperTeam.setMode(Mode.PLAYERS_ADDED);
-    wrapperTeam.setPlayers(Collections.singletonList(npc.getName()));
+    wrapperTeam.setPlayers(Collections.singletonList(npc.getInternalName()));
+    sendPacket(player, wrapperTeam.getHandle(), false);
+  }
+
+  public static void sendScoreBoardTeamCreatePacket(Player player) {
+    WrapperPlayServerScoreboardTeam wrapperTeam = new WrapperPlayServerScoreboardTeam();
+    wrapperTeam.setName(Constants.NPC_TEAM_NAME);
+    wrapperTeam.setMode(Mode.TEAM_CREATED);
+    wrapperTeam.setNameTagVisibility("always");
+    wrapperTeam.setPlayers(Collections.emptyList());
     sendPacket(player, wrapperTeam.getHandle(), false);
   }
 
@@ -73,7 +81,7 @@ public class PacketManager {
       sendPacket(player, headWrapper.getHandle(), false);
     }
 
-    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 5L);
+    Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 20L);
   }
 
   /**
@@ -125,7 +133,8 @@ public class PacketManager {
    */
   public static void sendPlayerInfoPacket(Player player, BasePlayerNPC npc, PlayerInfoAction action) {
     WrapperPlayServerPlayerInfo infoWrapper = new WrapperPlayServerPlayerInfo();
-    PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, NativeGameMode.NOT_SET, WrappedChatComponent.fromText(npc.getName()));
+
+    PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, NativeGameMode.NOT_SET, WrappedChatComponent.fromText(npc.getDisplayName()));
     infoWrapper.setData(Collections.singletonList(data));
     infoWrapper.setAction(action);
     sendPacket(player, infoWrapper.getHandle(), false);
@@ -135,12 +144,12 @@ public class PacketManager {
     WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
     wrapper.setEntityID(npc.getEntityId());
     wrapper.SetSlotStackPairLists(Arrays.asList(
-      new Pair<>(ItemSlot.MAINHAND, npc.getItemSlots().get(ItemSlot.MAINHAND)),
-      new Pair<>(ItemSlot.OFFHAND, npc.getItemSlots().get(ItemSlot.OFFHAND)),
-      new Pair<>(ItemSlot.FEET, npc.getItemSlots().get(ItemSlot.FEET)),
-      new Pair<>(ItemSlot.LEGS, npc.getItemSlots().get(ItemSlot.LEGS)),
-      new Pair<>(ItemSlot.CHEST, npc.getItemSlots().get(ItemSlot.CHEST)),
-      new Pair<>(ItemSlot.HEAD, npc.getItemSlots().get(ItemSlot.HEAD))
+        new Pair<>(ItemSlot.MAINHAND, npc.getItemSlots().get(ItemSlot.MAINHAND)),
+        new Pair<>(ItemSlot.OFFHAND, npc.getItemSlots().get(ItemSlot.OFFHAND)),
+        new Pair<>(ItemSlot.FEET, npc.getItemSlots().get(ItemSlot.FEET)),
+        new Pair<>(ItemSlot.LEGS, npc.getItemSlots().get(ItemSlot.LEGS)),
+        new Pair<>(ItemSlot.CHEST, npc.getItemSlots().get(ItemSlot.CHEST)),
+        new Pair<>(ItemSlot.HEAD, npc.getItemSlots().get(ItemSlot.HEAD))
     ));
     sendPacket(player, wrapper.getHandle(), false);
   }
@@ -181,7 +190,7 @@ public class PacketManager {
 
       if (debug) {
         PlayerNPCLib.getPlugin().getServer().getConsoleSender().sendMessage(
-          "Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName()
+            "Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName()
         );
       }
     } catch (InvocationTargetException e) {
