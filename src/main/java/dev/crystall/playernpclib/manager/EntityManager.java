@@ -10,6 +10,7 @@ import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
+import dev.crystall.playernpclib.api.event.ClickType;
 import dev.crystall.playernpclib.api.event.NPCHideEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
@@ -132,8 +133,7 @@ public class EntityManager {
       return;
     }
 
-    NPCInteractEvent.ClickType clickType = packetWrapper.getType() == EntityUseAction.ATTACK
-        ? NPCInteractEvent.ClickType.LEFT_CLICK : NPCInteractEvent.ClickType.RIGHT_CLICK;
+    ClickType clickType = packetWrapper.getType() == EntityUseAction.ATTACK ? ClickType.LEFT_CLICK : ClickType.RIGHT_CLICK;
 
     // Add the player to the delay set
     interactableDelay.add(player.getUniqueId());

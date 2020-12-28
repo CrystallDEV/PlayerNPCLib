@@ -46,7 +46,4 @@ public class NPCInteractEvent extends Event implements Cancellable {
     this.isCancelled = cancel;
   }
 
-  public enum ClickType {
-    LEFT_CLICK, RIGHT_CLICK
-  }
 }
