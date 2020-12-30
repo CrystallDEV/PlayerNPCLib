@@ -39,8 +39,7 @@ public abstract class AbstractPacket {
       throw new IllegalArgumentException("Packet handle cannot be NULL.");
     }
     if (!Objects.equal(handle.getType(), type)) {
-      throw new IllegalArgumentException(handle.getHandle()
-        + " is not a packet of type " + type);
+      throw new IllegalArgumentException(handle.getHandle() + " is not a packet of type " + type);
     }
 
     this.handle = handle;
