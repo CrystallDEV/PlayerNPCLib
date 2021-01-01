@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>dev.crystall</groupId>
-  <artifactId>PlayerNPCLib</artifactId>
+  <artifactId>playernpclib</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
