@@ -178,6 +178,7 @@ public abstract class BasePlayerNPC {
 
   public void setLocation(Location location, boolean update) {
     this.location = location;
+    this.hologram.teleport(location.clone().add(0, 2.5, 0));
     if (update) {
       for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
         update(player);
