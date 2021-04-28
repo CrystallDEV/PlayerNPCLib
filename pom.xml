@@ -19,6 +19,13 @@
   </properties>
   <url>https://www.crystall.dev</url>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>crystall-repo</id>
+      <url>https://nexus.crystall.dev/repository/paper-plugins/</url>
+    </snapshotRepository>
+  </distributionManagement>
+
   <build>
     <plugins>
       <plugin>
@@ -55,6 +62,7 @@
         </executions>
       </plugin>
     </plugins>
+
     <resources>
       <resource>
         <directory>src/main/resources</directory>
