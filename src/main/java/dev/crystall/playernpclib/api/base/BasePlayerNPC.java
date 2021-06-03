@@ -25,7 +25,7 @@ import org.bukkit.inventory.ItemStack;
 @Getter
 public abstract class BasePlayerNPC {
 
-  private String internalName;
+  private final String internalName;
   private String displayName;
   private String subName;
   private final UUID uuid = UUID.randomUUID();
@@ -45,6 +45,7 @@ public abstract class BasePlayerNPC {
     this.location = location;
     this.entityId = EntityManager.tickAndGetCounter();
     this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
+    this.hologram.getVisibilityManager().setVisibleByDefault(false);
     this.internalName = uuid.toString().substring(0, 16);
     setDisplayName(displayName);
   }
@@ -55,6 +56,7 @@ public abstract class BasePlayerNPC {
   }
 
   public void spawn() {
+    this.hologram.getVisibilityManager().resetVisibilityAll();
     for (Player player : PlayerNPCLib.getPlugin().getServer().getOnlinePlayers()) {
       show(player);
     }
