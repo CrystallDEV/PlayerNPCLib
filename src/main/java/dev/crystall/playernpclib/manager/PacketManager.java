@@ -12,7 +12,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
-import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerAnimation;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerEntityDestroy;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayServerEntityEquipment;
@@ -84,7 +83,7 @@ public class PacketManager {
    * @param player
    * @param npc
    */
-  public static void sendMovePacket(Player player, MovablePlayerNPC npc) {
+  public static void sendMovePacket(Player player, BasePlayerNPC npc) {
     // Location update
     WrapperPlayServerEntityTeleport moveWrapper = new WrapperPlayServerEntityTeleport();
     moveWrapper.setEntityID(npc.getEntityId());
@@ -125,7 +124,7 @@ public class PacketManager {
     if (npc.getEyeLocation() != null) {
       WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
       headWrapper.setEntityID(npc.getEntityId());
-      headWrapper.setHeadYaw((byte) (npc.getEyeLocation().getYaw() * 256.0F / 360.0F));
+      headWrapper.setHeadYaw((byte) ((npc.getEyeLocation().getYaw() % 360.0F) * 256.0F / 360.0F));
       sendPacket(player, headWrapper.getHandle(), false);
     }
   }

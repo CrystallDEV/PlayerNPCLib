@@ -15,6 +15,7 @@ import dev.crystall.playernpclib.api.event.NPCHideEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
+import dev.crystall.playernpclib.api.utility.Utils;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayClientUseEntity;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -51,17 +53,12 @@ public class EntityManager {
     Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
       for (BasePlayerNPC npc : playerNPCList) {
         if (!(npc instanceof MovablePlayerNPC)) {
+          if (npc.isLookAtClosestPlayer()) {
+            handleLookClosest(npc);
+          }
           continue;
         }
-        MovablePlayerNPC movablePlayerNPC = (MovablePlayerNPC) npc;
-        movablePlayerNPC.setLocation(movablePlayerNPC.getBukkitLivingEntity().getLocation(), false);
-        movablePlayerNPC.setEyeLocation(movablePlayerNPC.getBukkitLivingEntity().getEyeLocation());
-        if (npc.isSpawned() && npc.getHologram() != null && !npc.getHologram().isDeleted()) {
-          npc.getHologram().teleport(npc.getLocation().clone().add(0, 2.5, 0));
-        }
-        for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
-          PacketManager.sendMovePacket(player, movablePlayerNPC);
-        }
+        handleNPCMoving((MovablePlayerNPC) npc);
       }
     }, 0L, 1L);
   }
@@ -106,6 +103,43 @@ public class EntityManager {
         // The player is not in range of the NPC anymore, auto-hide it.
         hideNPC(player, npc);
       }
+    }
+  }
+
+  public void handleNPCMoving(MovablePlayerNPC npc) {
+    npc.setLocation(npc.getBukkitLivingEntity().getLocation(), false);
+    npc.setEyeLocation(npc.getBukkitLivingEntity().getEyeLocation(), false);
+    if (npc.isSpawned() && npc.getHologram() != null && !npc.getHologram().isDeleted()) {
+      npc.getHologram().teleport(npc.getLocation().clone().add(0, 2.5, 0));
+    }
+    for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+      PacketManager.sendMovePacket(player, npc);
+    }
+  }
+
+  /**
+   * Async gets the closest player and makes the given npc look at it
+   *
+   * @param npc that will look at the closest player
+   */
+  private void handleLookClosest(BasePlayerNPC npc) {
+    Player closestPlayer = null;
+    double shortestDistance = Double.MAX_VALUE;
+    for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_LOOK_AT_RADIUS)) {
+      if (!canSee(player, npc)) {
+        continue;
+      }
+      double distance = player.getLocation().distance(npc.getLocation());
+      if (distance < shortestDistance) {
+        closestPlayer = player;
+        shortestDistance = distance;
+      }
+    }
+
+    if (closestPlayer != null) {
+      Location lookLocation = Utils.lookAt(npc.getLocation(), closestPlayer.getLocation());
+      npc.setLocation(lookLocation, false);
+      npc.setEyeLocation(lookLocation, true);
     }
   }
 

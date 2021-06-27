@@ -7,8 +7,10 @@ import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.manager.EntityManager;
 import java.util.Arrays;
 import java.util.IllegalFormatException;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.util.Vector;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -68,5 +70,19 @@ public class Utils {
       }
     }
     return null;
+  }
+
+  /**
+   * Changes a given location {@param loc} to face the location {@param lookAt}. This will be used for NPCs and the world UI.
+   *
+   * @param loc the original location that should be changed
+   * @param lookAt the location that the original location {@param lookAt} should be facing
+   * @return
+   */
+  public static Location lookAt(Location loc, Location lookAt) {
+    Location directionLocation = loc.clone();
+    Vector dirBetweenLocations = lookAt.toVector().subtract(directionLocation.toVector()).normalize();
+    directionLocation.setDirection(dirBetweenLocations);
+    return directionLocation;
   }
 }

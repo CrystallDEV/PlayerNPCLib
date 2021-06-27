@@ -353,7 +353,6 @@ public class EntityHider implements Listener {
    * @return TRUE if the player may see the entity, FALSE if the entity has been hidden.
    */
   public final boolean canSee(Player observer, int entityId) {
-
     return isVisible(observer, entityId);
   }
 

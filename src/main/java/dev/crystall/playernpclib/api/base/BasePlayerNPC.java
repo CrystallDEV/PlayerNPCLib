@@ -37,13 +37,14 @@ public abstract class BasePlayerNPC {
   private final Hologram hologram;
 
   /**
-   * The id the entity will be registered with at the server
+   * The id the entity will be registered with at the player client. This should not collide with any existing entity at the server
    */
   protected int entityId;
   protected Location location;
-  @Setter
-  protected Location eyeLocation;
   protected PlayerSkin playerSkin;
+  protected Location eyeLocation;
+  @Setter
+  protected boolean isLookAtClosestPlayer = true;
 
   protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
@@ -53,6 +54,11 @@ public abstract class BasePlayerNPC {
     this.hologram.getVisibilityManager().setVisibleByDefault(false);
     this.internalName = uuid.toString().substring(0, 16);
     setDisplayName(displayName);
+  }
+
+  protected BasePlayerNPC(String displayName, Location location, boolean isLookAtClosestPlayer) {
+    this(displayName, location);
+    this.isLookAtClosestPlayer = isLookAtClosestPlayer;
   }
 
   protected BasePlayerNPC(String displayName, Location location, String subName) {
@@ -192,7 +198,16 @@ public abstract class BasePlayerNPC {
     this.hologram.teleport(location.clone().add(0, 2.5, 0));
     if (update) {
       for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
-        update(player);
+        PacketManager.sendMovePacket(player, this);
+      }
+    }
+  }
+
+  public void setEyeLocation(Location location, boolean update) {
+    this.eyeLocation = location;
+    if (update) {
+      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+        PacketManager.sendMovePacket(player, this);
       }
     }
   }
