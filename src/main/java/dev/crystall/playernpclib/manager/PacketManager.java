@@ -73,13 +73,7 @@ public class PacketManager {
     spawnWrapper.setYaw(npc.getLocation().getYaw());
     sendPacket(player, spawnWrapper.getHandle(), false);
 
-    // Head rotation
-    if (npc.getEyeLocation() != null) {
-      WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
-      headWrapper.setEntityID(npc.getEntityId());
-      headWrapper.setHeadYaw((byte) (npc.getEyeLocation().getYaw() * 256.0F / 360.0F));
-      sendPacket(player, headWrapper.getHandle(), false);
-    }
+    sendHeadRotationPacket(player, npc);
 
     Bukkit.getScheduler().runTaskLater(PlayerNPCLib.getPlugin(), () -> sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER), 20L);
   }
@@ -101,11 +95,7 @@ public class PacketManager {
     moveWrapper.setPitch(npc.getLocation().getPitch());
     sendPacket(player, moveWrapper.getHandle(), false);
 
-    // Head rotation
-    WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
-    headWrapper.setEntityID(npc.getEntityId());
-    headWrapper.setHeadYaw((byte) (npc.getBukkitLivingEntity().getEyeLocation().getYaw() * 256.0F / 360.0F));
-    sendPacket(player, headWrapper.getHandle(), false);
+    sendHeadRotationPacket(player, npc);
   }
 
   /**
@@ -122,6 +112,22 @@ public class PacketManager {
 
     // Remove player from tab list if its still on there
     sendPlayerInfoPacket(player, npc, PlayerInfoAction.REMOVE_PLAYER);
+  }
+
+  /**
+   * Sends packets to rotate an entities head
+   *
+   * @param player
+   * @param npc
+   */
+  public static void sendHeadRotationPacket(Player player, BasePlayerNPC npc) {
+    // Head rotation
+    if (npc.getEyeLocation() != null) {
+      WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
+      headWrapper.setEntityID(npc.getEntityId());
+      headWrapper.setHeadYaw((byte) (npc.getEyeLocation().getYaw() * 256.0F / 360.0F));
+      sendPacket(player, headWrapper.getHandle(), false);
+    }
   }
 
   /**
@@ -144,12 +150,12 @@ public class PacketManager {
     WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
     wrapper.setEntityID(npc.getEntityId());
     wrapper.SetSlotStackPairLists(Arrays.asList(
-        new Pair<>(ItemSlot.MAINHAND, npc.getItemSlots().get(ItemSlot.MAINHAND)),
-        new Pair<>(ItemSlot.OFFHAND, npc.getItemSlots().get(ItemSlot.OFFHAND)),
-        new Pair<>(ItemSlot.FEET, npc.getItemSlots().get(ItemSlot.FEET)),
-        new Pair<>(ItemSlot.LEGS, npc.getItemSlots().get(ItemSlot.LEGS)),
-        new Pair<>(ItemSlot.CHEST, npc.getItemSlots().get(ItemSlot.CHEST)),
-        new Pair<>(ItemSlot.HEAD, npc.getItemSlots().get(ItemSlot.HEAD))
+      new Pair<>(ItemSlot.MAINHAND, npc.getItemSlots().get(ItemSlot.MAINHAND)),
+      new Pair<>(ItemSlot.OFFHAND, npc.getItemSlots().get(ItemSlot.OFFHAND)),
+      new Pair<>(ItemSlot.FEET, npc.getItemSlots().get(ItemSlot.FEET)),
+      new Pair<>(ItemSlot.LEGS, npc.getItemSlots().get(ItemSlot.LEGS)),
+      new Pair<>(ItemSlot.CHEST, npc.getItemSlots().get(ItemSlot.CHEST)),
+      new Pair<>(ItemSlot.HEAD, npc.getItemSlots().get(ItemSlot.HEAD))
     ));
     sendPacket(player, wrapper.getHandle(), false);
   }
@@ -190,7 +196,7 @@ public class PacketManager {
 
       if (debug) {
         PlayerNPCLib.getPlugin().getServer().getConsoleSender().sendMessage(
-            "Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName()
+          "Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName()
         );
       }
     } catch (InvocationTargetException e) {

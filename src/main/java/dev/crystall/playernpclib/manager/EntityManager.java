@@ -55,6 +55,7 @@ public class EntityManager {
         }
         MovablePlayerNPC movablePlayerNPC = (MovablePlayerNPC) npc;
         movablePlayerNPC.setLocation(movablePlayerNPC.getBukkitLivingEntity().getLocation(), false);
+        movablePlayerNPC.setEyeLocation(movablePlayerNPC.getBukkitLivingEntity().getEyeLocation());
         if (npc.isSpawned() && npc.getHologram() != null && !npc.getHologram().isDeleted()) {
           npc.getHologram().teleport(npc.getLocation().clone().add(0, 2.5, 0));
         }

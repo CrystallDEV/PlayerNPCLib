@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -40,11 +41,13 @@ public abstract class BasePlayerNPC {
    */
   protected int entityId;
   protected Location location;
+  @Setter
   protected Location eyeLocation;
   protected PlayerSkin playerSkin;
 
   protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
+    this.eyeLocation = location;
     this.entityId = EntityManager.tickAndGetCounter();
     this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
     this.hologram.getVisibilityManager().setVisibleByDefault(false);
