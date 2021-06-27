@@ -54,7 +54,7 @@ public class NPCTester extends JavaPlugin implements Listener {
       npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
       npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
 
-      PlayerNPCLib.getEntityManager().spawnEntity(npc);
+      PlayerNPCLib.getEntityManager().spawnEntity(npc, true);
     }
 
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
@@ -70,7 +70,7 @@ public class NPCTester extends JavaPlugin implements Listener {
       npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
       npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
 
-      PlayerNPCLib.getEntityManager().spawnEntity(npc);
+      PlayerNPCLib.getEntityManager().spawnEntity(npc, true);
 
     }
   }

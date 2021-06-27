@@ -15,8 +15,8 @@ import dev.crystall.playernpclib.api.event.NPCHideEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
-import dev.crystall.playernpclib.api.utility.MathUtils;
 import dev.crystall.playernpclib.nms.wrappers.WrapperPlayClientUseEntity;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -68,9 +68,13 @@ public class EntityManager {
   /**
    * @param npc
    */
-  public void spawnEntity(BasePlayerNPC npc) {
+  public void spawnEntity(BasePlayerNPC npc, boolean showByDefault) {
     if (new NPCSpawnEvent(npc).callEvent()) {
-      npc.spawn();
+      if (showByDefault) {
+        npc.spawn(new ArrayList<>(PlayerNPCLib.getPlugin().getServer().getOnlinePlayers()));
+      } else {
+        npc.spawn();
+      }
       playerNPCList.add(npc);
     }
   }

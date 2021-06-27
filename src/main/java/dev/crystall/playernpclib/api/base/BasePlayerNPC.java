@@ -11,7 +11,9 @@ import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.skin.PlayerSkin;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.PacketManager;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
@@ -56,8 +58,13 @@ public abstract class BasePlayerNPC {
   }
 
   public void spawn() {
+    spawn(Collections.emptyList());
+  }
+
+  public void spawn(List<Player> showTo) {
     this.hologram.getVisibilityManager().resetVisibilityAll();
-    for (Player player : PlayerNPCLib.getPlugin().getServer().getOnlinePlayers()) {
+
+    for (Player player : showTo) {
       show(player);
     }
     isSpawned = true;
@@ -113,8 +120,8 @@ public abstract class BasePlayerNPC {
     updateDisplayName();
   }
 
-  public void updateDisplayName() {
-    if (hologram != null) {
+  private void updateDisplayName() {
+    if (hologram != null && !hologram.isDeleted()) {
       hologram.clearLines();
       if (displayName != null && !displayName.isEmpty()) {
         hologram.insertTextLine(0, displayName);
@@ -133,7 +140,7 @@ public abstract class BasePlayerNPC {
   public void playAnimation(int animationId) {
     if (!isSpawned) {
       PlayerNPCLib.getPlugin().getLogger()
-          .info(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
+        .info(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
       return;
     }
     for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
