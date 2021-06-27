@@ -205,7 +205,7 @@ public class EntityManager {
     double distanceSquared = player.getLocation().distanceSquared(npc.getLocation());
     double bukkitRange = Bukkit.getViewDistance() << 4;
 
-    return distanceSquared <= MathUtils.lengthSquared(hideDistance) && distanceSquared <= MathUtils.lengthSquared(bukkitRange);
+    return distanceSquared <= Math.sqrt(hideDistance) && distanceSquared <= Math.sqrt(bukkitRange);
   }
 
   /**
