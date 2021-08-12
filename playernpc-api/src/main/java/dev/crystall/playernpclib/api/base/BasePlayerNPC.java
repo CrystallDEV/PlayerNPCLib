@@ -13,8 +13,10 @@ import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.PacketManager;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +47,8 @@ public abstract class BasePlayerNPC {
   protected Location eyeLocation;
   @Setter
   protected boolean isLookAtClosestPlayer = true;
+
+  protected Set<UUID> shownTo = new HashSet<>();
 
   protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
@@ -101,6 +105,10 @@ public abstract class BasePlayerNPC {
   }
 
   public void show(Player player) {
+    if (shownTo.contains(player.getUniqueId())) {
+      return;
+    }
+    shownTo.add(player.getUniqueId());
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), true);
     PacketManager.sendNPCCreatePackets(player, this);
     PacketManager.sendEquipmentPackets(player, this);
@@ -112,6 +120,10 @@ public abstract class BasePlayerNPC {
   }
 
   public void hide(Player player) {
+    if (!shownTo.contains(player.getUniqueId())) {
+      return;
+    }
+    shownTo.remove(player.getUniqueId());
     PacketManager.sendHidePackets(player, this);
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
     if (hologram != null) {
