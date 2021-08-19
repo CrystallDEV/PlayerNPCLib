@@ -16,7 +16,7 @@ import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
-import dev.crystall.nms.wrappers.WrapperPlayClientUseEntity;
+import dev.crystall.playernpclib.nms_v1_16_R3.wrappers.WrapperPlayClientUseEntity;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

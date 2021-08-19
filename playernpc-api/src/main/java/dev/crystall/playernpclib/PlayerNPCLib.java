@@ -7,7 +7,10 @@ import dev.crystall.playernpclib.manager.EntityHidePolicy;
 import dev.crystall.playernpclib.manager.EntityHider;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.EventManager;
+import dev.crystall.playernpclib.wrapper.MinecraftVersions;
+import dev.crystall.playernpclib.wrapper.WrapperFactory;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +18,7 @@ import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
+@Slf4j
 @Getter
 public class PlayerNPCLib {
 
@@ -52,17 +56,15 @@ public class PlayerNPCLib {
     PlayerNPCLib.plugin = plugin;
 
     String versionName = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
-    if (!createManager(versionName)) {
-      // Disable the plugin if we encounter an error. Its most likely that the plugin depends on this library
-      getServer().getPluginManager().disablePlugin(plugin);
-      return;
-    }
+    checkServerVersion(versionName);
+
     if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-      plugin.getLogger().severe("*** HolographicDisplays is not installed or not enabled. ***");
-      plugin.getLogger().severe("*** This plugin will be disabled. ***");
+      log.error("*** HolographicDisplays is not installed or not enabled. ***");
+      log.error("*** This plugin will be disabled. ***");
       getServer().getPluginManager().disablePlugin(plugin);
       return;
     }
+    createManager();
 
     // Create the scoreboard for the npcs to be in
     Team npcTeam = null;
@@ -80,24 +82,32 @@ public class PlayerNPCLib {
       npcTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
     }
 
-    plugin.getLogger().info("Enabled for Server Version " + versionName);
+    log.info("Enabled for Server Version {}", versionName);
   }
 
   public void onDisable() {
 
   }
 
-  private boolean createManager(String versionName) {
+  private void checkServerVersion(String versionName) {
+    MinecraftVersions serverVersion = null;
     try {
-      MinecraftVersions.valueOf(versionName);
-      PlayerNPCLib.entityManager = new EntityManager();
-      PlayerNPCLib.eventManager = new EventManager();
-      PlayerNPCLib.entityHider = new EntityHider(plugin, EntityHidePolicy.WHITELIST);
-      return true;
-    } catch (IllegalArgumentException exception) {
-      plugin.getLogger().severe("[PlayerNPCLib] Your server's version (" + versionName + ") is not supported. PlayerNPCLib will not be enabled");
-      return false;
+      serverVersion = MinecraftVersions.valueOf(versionName);
+    } catch (IllegalArgumentException ignored) {
     }
+
+    if (!WrapperFactory.init(serverVersion)) {
+      log.error("Your server's version ({}) is not supported. PlayerNPCLib will not be enabled", versionName);
+      getServer().getPluginManager().disablePlugin(plugin);
+      return;
+    }
+    log.info("Your server's version ({}) is supported", versionName);
+  }
+
+  private void createManager() {
+    PlayerNPCLib.entityManager = new EntityManager();
+    PlayerNPCLib.eventManager = new EventManager();
+    PlayerNPCLib.entityHider = new EntityHider(plugin, EntityHidePolicy.WHITELIST);
   }
 
   public static boolean isNPC(Entity e) {

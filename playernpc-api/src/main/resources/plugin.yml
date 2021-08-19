@@ -4,5 +4,5 @@ main: dev.crystall.NPCTester
 api-version: 1.16
 authors: [ CrystallDEV ]
 depend: [ ProtocolLib ]
-description: PlayerNPCLib that uses packets to display efficient custom player mobs
+description: PlayerNPCLib that uses packets to display efficient custom player npcs
 website: https://www.crystall.dev

@@ -1,5 +1,14 @@
 package dev.crystall.playernpclib.manager;
 
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_ANIMATION;
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_ENTITY_DESTROY;
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_ENTITY_EQUIPMENT;
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_ENTITY_HEAD_ROTATION;
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_ENTITY_METADATA;
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_ENTITY_TELEPORT;
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO;
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM;
+
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
@@ -12,16 +21,17 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
-import dev.crystall.nms.wrappers.WrapperPlayServerAnimation;
-import dev.crystall.nms.wrappers.WrapperPlayServerEntityDestroy;
-import dev.crystall.nms.wrappers.WrapperPlayServerEntityEquipment;
-import dev.crystall.nms.wrappers.WrapperPlayServerEntityHeadRotation;
-import dev.crystall.nms.wrappers.WrapperPlayServerEntityMetadata;
-import dev.crystall.nms.wrappers.WrapperPlayServerEntityTeleport;
-import dev.crystall.nms.wrappers.WrapperPlayServerNamedEntitySpawn;
-import dev.crystall.nms.wrappers.WrapperPlayServerPlayerInfo;
-import dev.crystall.nms.wrappers.WrapperPlayServerScoreboardTeam;
-import dev.crystall.nms.wrappers.WrapperPlayServerScoreboardTeam.Mode;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerAnimation;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityDestroy;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityEquipment;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityHeadRotation;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityMetadata;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityTeleport;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerNamedEntitySpawn;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerPlayerInfo;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerScoreboardTeam;
+import dev.crystall.playernpclib.wrapper.TeamMode;
+import dev.crystall.playernpclib.wrapper.WrapperGenerator;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,17 +47,19 @@ public class PacketManager {
   }
 
   public static void sendScoreBoardTeamPacket(Player player, BasePlayerNPC npc) {
-    WrapperPlayServerScoreboardTeam wrapperTeam = new WrapperPlayServerScoreboardTeam();
+    BaseWrapperPlayServerScoreboardTeam wrapperTeam = new WrapperGenerator<BaseWrapperPlayServerScoreboardTeam>(
+      BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM).result;
     wrapperTeam.setName(Constants.NPC_TEAM_NAME);
-    wrapperTeam.setMode(Mode.PLAYERS_ADDED);
+    wrapperTeam.setMode(TeamMode.PLAYERS_ADDED);
     wrapperTeam.setPlayers(Collections.singletonList(npc.getInternalName()));
     sendPacket(player, wrapperTeam.getHandle(), false);
   }
 
   public static void sendScoreBoardTeamCreatePacket(Player player) {
-    WrapperPlayServerScoreboardTeam wrapperTeam = new WrapperPlayServerScoreboardTeam();
+    BaseWrapperPlayServerScoreboardTeam wrapperTeam = new WrapperGenerator<BaseWrapperPlayServerScoreboardTeam>(
+      BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM).result;
     wrapperTeam.setName(Constants.NPC_TEAM_NAME);
-    wrapperTeam.setMode(Mode.TEAM_CREATED);
+    wrapperTeam.setMode(TeamMode.TEAM_CREATED);
     wrapperTeam.setNameTagVisibility("always");
     wrapperTeam.setPlayers(Collections.emptyList());
     sendPacket(player, wrapperTeam.getHandle(), false);
@@ -64,7 +76,8 @@ public class PacketManager {
     sendPlayerInfoPacket(player, npc, PlayerInfoAction.ADD_PLAYER);
 
     // Spawn entity
-    WrapperPlayServerNamedEntitySpawn spawnWrapper = new WrapperPlayServerNamedEntitySpawn();
+    BaseWrapperPlayServerNamedEntitySpawn spawnWrapper = new WrapperGenerator<BaseWrapperPlayServerNamedEntitySpawn>(
+      BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM).result;
     spawnWrapper.setEntityID(npc.getEntityId());
     spawnWrapper.setPlayerUUID(npc.getUuid());
     spawnWrapper.setPosition(npc.getLocation().toVector());
@@ -85,7 +98,8 @@ public class PacketManager {
    */
   public static void sendMovePacket(Player player, BasePlayerNPC npc) {
     // Location update
-    WrapperPlayServerEntityTeleport moveWrapper = new WrapperPlayServerEntityTeleport();
+    BaseWrapperPlayServerEntityTeleport moveWrapper = new WrapperGenerator<BaseWrapperPlayServerEntityTeleport>(
+      BASE_WRAPPER_PLAY_SERVER_ENTITY_TELEPORT).result;
     moveWrapper.setEntityID(npc.getEntityId());
     moveWrapper.setX(npc.getLocation().getX());
     moveWrapper.setY(npc.getLocation().getY());
@@ -105,7 +119,8 @@ public class PacketManager {
    */
   public static void sendHidePackets(Player player, BasePlayerNPC npc) {
     // Remove entity
-    WrapperPlayServerEntityDestroy spawnWrapper = new WrapperPlayServerEntityDestroy();
+    BaseWrapperPlayServerEntityDestroy spawnWrapper = new WrapperGenerator<BaseWrapperPlayServerEntityDestroy>(
+      BASE_WRAPPER_PLAY_SERVER_ENTITY_DESTROY).result;
     spawnWrapper.setEntityIds(new int[]{npc.getEntityId()});
     sendPacket(player, spawnWrapper.getHandle(), false);
 
@@ -122,7 +137,8 @@ public class PacketManager {
   public static void sendHeadRotationPacket(Player player, BasePlayerNPC npc) {
     // Head rotation
     if (npc.getEyeLocation() != null) {
-      WrapperPlayServerEntityHeadRotation headWrapper = new WrapperPlayServerEntityHeadRotation();
+      BaseWrapperPlayServerEntityHeadRotation headWrapper = new WrapperGenerator<BaseWrapperPlayServerEntityHeadRotation>(
+        BASE_WRAPPER_PLAY_SERVER_ENTITY_HEAD_ROTATION).result;
       headWrapper.setEntityID(npc.getEntityId());
       headWrapper.setHeadYaw((byte) ((npc.getEyeLocation().getYaw() % 360.0F) * 256.0F / 360.0F));
       sendPacket(player, headWrapper.getHandle(), false);
@@ -137,7 +153,8 @@ public class PacketManager {
    * @param action
    */
   public static void sendPlayerInfoPacket(Player player, BasePlayerNPC npc, PlayerInfoAction action) {
-    WrapperPlayServerPlayerInfo infoWrapper = new WrapperPlayServerPlayerInfo();
+    BaseWrapperPlayServerPlayerInfo infoWrapper = new WrapperGenerator<BaseWrapperPlayServerPlayerInfo>(
+      BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO).result;
 
     PlayerInfoData data = new PlayerInfoData(npc.getGameProfile(), 1, NativeGameMode.NOT_SET, WrappedChatComponent.fromText(npc.getDisplayName()));
     infoWrapper.setData(Collections.singletonList(data));
@@ -146,7 +163,8 @@ public class PacketManager {
   }
 
   public static void sendEquipmentPackets(Player player, BasePlayerNPC npc) {
-    WrapperPlayServerEntityEquipment wrapper = new WrapperPlayServerEntityEquipment();
+    BaseWrapperPlayServerEntityEquipment wrapper = new WrapperGenerator<BaseWrapperPlayServerEntityEquipment>(
+      BASE_WRAPPER_PLAY_SERVER_ENTITY_EQUIPMENT).result;
     wrapper.setEntityID(npc.getEntityId());
     wrapper.SetSlotStackPairLists(Arrays.asList(
       new Pair<>(ItemSlot.MAINHAND, npc.getItemSlots().get(ItemSlot.MAINHAND)),
@@ -160,7 +178,8 @@ public class PacketManager {
   }
 
   public static void sendAnimationPacket(Player player, BasePlayerNPC npc, int animationID) {
-    WrapperPlayServerAnimation animationWrapper = new WrapperPlayServerAnimation();
+    BaseWrapperPlayServerAnimation animationWrapper = new WrapperGenerator<BaseWrapperPlayServerAnimation>(
+      BASE_WRAPPER_PLAY_SERVER_ANIMATION).result;
     animationWrapper.setEntityID(npc.getEntityId());
     animationWrapper.setAnimation(animationID);
     sendPacket(player, animationWrapper.getHandle(), false);
@@ -168,7 +187,8 @@ public class PacketManager {
   }
 
   public static void sendDeathMetaData(Player player, BasePlayerNPC npc) {
-    WrapperPlayServerEntityMetadata wrapperEntityMeta = new WrapperPlayServerEntityMetadata();
+    BaseWrapperPlayServerEntityMetadata wrapperEntityMeta = new WrapperGenerator<BaseWrapperPlayServerEntityMetadata>(
+      BASE_WRAPPER_PLAY_SERVER_ENTITY_METADATA).result;
     wrapperEntityMeta.setEntityID(npc.getEntityId());
 
     // Create the data watcher for this entity

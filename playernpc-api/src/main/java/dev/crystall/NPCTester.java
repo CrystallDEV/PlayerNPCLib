@@ -37,7 +37,10 @@ public class NPCTester extends JavaPlugin implements Listener {
   @Override
   public void onDisable() {
     super.onDisable();
-    playerNPCLib.onDisable();
+    // This can be null in case we have an error on startup
+    if (playerNPCLib != null) {
+      playerNPCLib.onDisable();
+    }
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
