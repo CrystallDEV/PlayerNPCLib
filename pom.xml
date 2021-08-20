@@ -10,8 +10,8 @@
   <version>1.0-SNAPSHOT</version>
 
   <modules>
-    <module>playernpc-nms</module>
-    <module>playernpc-api</module>
+    <module>playernpclib-nms</module>
+    <module>playernpclib-api</module>
     <module>playernpclib-basewrapper</module>
   </modules>
 
@@ -20,7 +20,6 @@
   <url>https://www.crystall.dev</url>
 
   <properties>
-    <java.version>16</java.version>
     <maven.compiler.source>16</maven.compiler.source>
     <maven.compiler.target>16</maven.compiler.target>
     <paper.version>1.17.1-R0.1-SNAPSHOT</paper.version>
@@ -29,9 +28,13 @@
 
   <distributionManagement>
     <snapshotRepository>
-      <id>crystall-repo</id>
+      <id>crystall-repo-snapshot</id>
       <url>https://nexus.crystall.dev/repository/paper-plugins/</url>
     </snapshotRepository>
+    <repository>
+      <id>crystall-repo-release</id>
+      <url>https://nexus.crystall.dev/repository/paper-plugins/</url>
+    </repository>
   </distributionManagement>
 
   <build>
@@ -53,10 +56,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.6.1</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-        </configuration>
       </plugin>
     </plugins>
   </build>
