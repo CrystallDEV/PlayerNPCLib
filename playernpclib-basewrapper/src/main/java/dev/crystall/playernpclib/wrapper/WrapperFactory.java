@@ -1,6 +1,5 @@
 package dev.crystall.playernpclib.wrapper;
 
-import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -92,11 +91,12 @@ public class WrapperFactory {
     Class<?> loadedClass = null;
     String className = "dev.crystall.playernpclib.nms_" + minecraftVersions.name() + ".wrappers." + wrapperClassName;
     try {
-      loadedClass = Class.forName(className);
+      loadedClass = WrapperFactory.class.getClassLoader().loadClass(className);
       log.info("Loaded wrapper class {}", className);
     } catch (ClassNotFoundException exception) {
       HAS_ERROR = true;
       log.error("Unable to load wrapper class {}", className);
+      exception.printStackTrace();
     }
     return loadedClass;
   }
