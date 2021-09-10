@@ -10,6 +10,7 @@ import dev.crystall.playernpclib.api.base.StaticPlayerNPC;
 import dev.crystall.playernpclib.api.event.ClickType;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.skin.SkinFetcher;
+import java.util.List;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -59,15 +60,20 @@ public class NPCTester extends JavaPlugin implements Listener {
       return;
     }
 
-    setDefaultEquipment(npc);
+    setDefaultValues(npc);
     PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
     npc.show(event.getPlayer());
   }
 
-  private void setDefaultEquipment(BasePlayerNPC npc) {
-    npc.setSubName(String.valueOf(npc.getEntityId()));
+  private void setDefaultValues(BasePlayerNPC npc) {
+    npc.setSubNames(List.of(
+      String.valueOf(npc.getEntityId()),
+      "Another sub name",
+      "Another sub name",
+      "Another sub name",
+      "Another sub name"
+    ));
     npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(5000)));
-
     npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
     npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
     npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));

@@ -112,9 +112,7 @@ public class EntityManager {
   public void handleNPCMoving(MovablePlayerNPC npc) {
     npc.setLocation(npc.getBukkitLivingEntity().getLocation(), false);
     npc.setEyeLocation(npc.getBukkitLivingEntity().getEyeLocation(), false);
-    if (npc.isSpawned() && npc.getHologram() != null && !npc.getHologram().isDeleted()) {
-      npc.getHologram().teleport(npc.getLocation().clone().add(0, 2.5, 0));
-    }
+    npc.updateHologram();
     for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
       PacketManager.sendMovePacket(player, npc);
     }

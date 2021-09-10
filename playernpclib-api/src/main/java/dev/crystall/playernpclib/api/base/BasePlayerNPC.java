@@ -11,6 +11,7 @@ import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.skin.PlayerSkin;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.PacketManager;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;
@@ -32,7 +33,7 @@ public abstract class BasePlayerNPC {
 
   private final String internalName;
   private String displayName;
-  private String subName;
+  private List<String> subNames = new ArrayList<>();
   private final UUID uuid = UUID.randomUUID();
   private boolean isSpawned = false;
   private final Map<ItemSlot, ItemStack> itemSlots = new EnumMap<>(ItemSlot.class);
@@ -65,9 +66,9 @@ public abstract class BasePlayerNPC {
     this.isLookAtClosestPlayer = isLookAtClosestPlayer;
   }
 
-  protected BasePlayerNPC(String displayName, Location location, String subName) {
+  protected BasePlayerNPC(String displayName, Location location, List<String> subNames) {
     this(displayName, location);
-    setSubName(subName);
+    setSubNames(subNames);
   }
 
   public void spawn() {
@@ -115,8 +116,8 @@ public abstract class BasePlayerNPC {
     PacketManager.sendEquipmentPackets(player, this);
     PacketManager.sendScoreBoardTeamPacket(player, this);
     if (hologram != null) {
-      updateDisplayName();
       hologram.getVisibilityManager().showTo(player);
+      updateDisplayName();
     }
   }
 
@@ -137,8 +138,8 @@ public abstract class BasePlayerNPC {
     updateDisplayName();
   }
 
-  public void setSubName(String subName) {
-    this.subName = subName;
+  public void setSubNames(List<String> subNames) {
+    this.subNames = subNames;
     updateDisplayName();
   }
 
@@ -148,9 +149,17 @@ public abstract class BasePlayerNPC {
       if (displayName != null && !displayName.isEmpty()) {
         hologram.insertTextLine(0, displayName);
       }
-      if (subName != null && !subName.isEmpty()) {
-        hologram.insertTextLine(1, subName);
+      for (int i = 1; i <= subNames.size(); i++) {
+        hologram.insertTextLine(i, subNames.get(i - 1));
       }
+      updateHologram();
+    }
+  }
+
+  public void updateHologram() {
+    if (this.hologram != null && !this.hologram.isDeleted()) {
+      var variableHeight = subNames.size() * 0.5F;
+      this.hologram.teleport(getLocation().clone().add(0, variableHeight + 1, 0));
     }
   }
 
@@ -162,7 +171,7 @@ public abstract class BasePlayerNPC {
   public void playAnimation(int animationId) {
     if (!isSpawned) {
       PlayerNPCLib.getPlugin().getLogger()
-        .info(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
+        .warning(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
       return;
     }
     for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
@@ -208,7 +217,7 @@ public abstract class BasePlayerNPC {
 
   public void setLocation(Location location, boolean update) {
     this.location = location;
-    this.hologram.teleport(location.clone().add(0, 2.5, 0));
+    updateHologram();
     if (update) {
       for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
         PacketManager.sendMovePacket(player, this);
