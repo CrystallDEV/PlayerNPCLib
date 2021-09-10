@@ -15,7 +15,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -53,6 +52,8 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     // Prevent sounds from this entity
     this.bukkitLivingEntity.setSilent(true);
     this.bukkitLivingEntity.setCanPickupItems(false);
+    this.bukkitLivingEntity.setInvisible(true);
+    this.bukkitLivingEntity.setInvulnerable(true);
     super.spawn();
   }
 
@@ -79,16 +80,6 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     super.hide(player);
   }
 
-  @Override
-  public void setItem(ItemSlot slot, ItemStack itemStack) {
-    super.setItem(slot, itemStack);
-    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
-      if (this.bukkitLivingEntity != null) {
-        this.bukkitLivingEntity.getEquipment().setItem(Utils.getEquipmentSlotFor(slot), itemStack);
-      }
-    });
-  }
-
   public void updateInventory() {
     if (isSpawned()) {
       // Update items on here with the ones on
@@ -101,4 +92,5 @@ public class MovablePlayerNPC extends BasePlayerNPC {
       }
     }
   }
+
 }
