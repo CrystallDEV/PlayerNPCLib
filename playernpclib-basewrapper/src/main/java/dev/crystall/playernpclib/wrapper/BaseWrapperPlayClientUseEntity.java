@@ -9,7 +9,7 @@ import org.bukkit.util.Vector;
 /**
  * Created by CrystallDEV on 18/08/2021
  */
-public interface BaseWrapperPlayClientUseEntity extends IBaseWrapper{
+public interface BaseWrapperPlayClientUseEntity extends IBaseWrapper {
 
   /**
    * Retrieve entity ID of the target.

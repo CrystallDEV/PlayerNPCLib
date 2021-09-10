@@ -1,5 +1,7 @@
 package dev.crystall.playernpclib.manager;
 
+import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY;
+
 import com.comphenix.protocol.PacketType.Play.Client;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -16,7 +18,8 @@ import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
-import dev.crystall.playernpclib.nms_v1_16_R3.wrappers.WrapperPlayClientUseEntity;
+import dev.crystall.playernpclib.wrapper.BaseWrapperPlayClientUseEntity;
+import dev.crystall.playernpclib.wrapper.WrapperGenerator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -149,7 +152,11 @@ public class EntityManager {
    */
   private void handleInteractPacket(Player player, PacketEvent event) {
     PacketContainer packet = event.getPacket();
-    WrapperPlayClientUseEntity packetWrapper = new WrapperPlayClientUseEntity(packet);
+    if (!packet.getType().equals(Client.USE_ENTITY)) {
+      return;
+    }
+    BaseWrapperPlayClientUseEntity packetWrapper = new WrapperGenerator<BaseWrapperPlayClientUseEntity>().map(
+      BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY, packet);
 
     BasePlayerNPC npc = null;
     for (BasePlayerNPC playerNPC : EntityManager.getPlayerNPCList()) {

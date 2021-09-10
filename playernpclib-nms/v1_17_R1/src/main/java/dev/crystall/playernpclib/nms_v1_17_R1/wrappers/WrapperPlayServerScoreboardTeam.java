@@ -9,7 +9,6 @@ import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerScoreboardTeam;
 import java.util.Collection;
 import java.util.List;
 import org.bukkit.ChatColor;
-import org.bukkit.scoreboard.Team.OptionStatus;
 
 public class WrapperPlayServerScoreboardTeam extends AbstractPacket implements BaseWrapperPlayServerScoreboardTeam {
 
@@ -64,12 +63,14 @@ public class WrapperPlayServerScoreboardTeam extends AbstractPacket implements B
 
   @Override
   public String getNameTagVisibility() {
-    return handle.getStrings().read(1);
+    var team = handle.getOptionalStructures().read(0);
+    return team.map(internalStructure -> internalStructure.getStrings().read(0)).orElse(null);
   }
 
   @Override
   public void setNameTagVisibility(String value) {
-    handle.getEnumModifier(OptionStatus.class, 0).write(0, OptionStatus.valueOf(value));
+    var team = handle.getOptionalStructures().read(0);
+    team.ifPresent(internalStructure -> internalStructure.getStrings().write(0, value));
   }
 
   @Override

@@ -4,6 +4,7 @@ import static org.bukkit.Bukkit.getPluginManager;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import dev.crystall.playernpclib.PlayerNPCLib;
+import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.base.StaticPlayerNPC;
 import dev.crystall.playernpclib.api.event.ClickType;
@@ -45,38 +46,34 @@ public class NPCTester extends JavaPlugin implements Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onRightClick(PlayerInteractEvent event) {
+    BasePlayerNPC npc = null;
     if (event.getAction().toString().startsWith("RIGHT") && event.getPlayer().isSneaking()) {
-      StaticPlayerNPC npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
-      npc.setSubName(String.valueOf(npc.getEntityId()));
-      npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(5000)));
-
-      npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
-      npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
-      npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
-      npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
-      npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
-      npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
-
-      PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
-      npc.show(event.getPlayer());
+      npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
     }
-
     if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
-      MovablePlayerNPC npc = new MovablePlayerNPC(ChatColor.RED + "Barbarian", event.getPlayer().getLocation(), EntityType.ZOMBIE);
-      npc.setSubName(String.valueOf(npc.getEntityId()));
-      npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(5000)));
-      npc.setAggressive(true);
-
-      npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
-      npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
-      npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
-      npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
-      npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
-      npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
-
-      PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
-      npc.show(event.getPlayer());
+      npc = new MovablePlayerNPC(ChatColor.RED + "Barbarian", event.getPlayer().getLocation(), EntityType.ZOMBIE);
+      ((MovablePlayerNPC) npc).setAggressive(true);
     }
+
+    if (npc == null) {
+      return;
+    }
+
+    setDefaultEquipment(npc);
+    PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
+    npc.show(event.getPlayer());
+  }
+
+  private void setDefaultEquipment(BasePlayerNPC npc) {
+    npc.setSubName(String.valueOf(npc.getEntityId()));
+    npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(5000)));
+
+    npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
+    npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
+    npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
+    npc.setItem(ItemSlot.FEET, new ItemStack(Material.DIAMOND_BOOTS));
+    npc.setItem(ItemSlot.MAINHAND, new ItemStack(Material.DIAMOND_AXE));
+    npc.setItem(ItemSlot.OFFHAND, new ItemStack(Material.DIAMOND_AXE));
   }
 
   @EventHandler

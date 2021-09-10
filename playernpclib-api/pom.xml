@@ -14,21 +14,24 @@
   <artifactId>playernpclib-api</artifactId>
 
   <build>
-    <resources>
-      <resource>
-        <targetPath>.</targetPath>
-        <directory>${basedir}/src/main/resources</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>plugin.yml</include>
-        </includes>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.2</version>
+        <configuration>
+          <outputDirectory>${dir}</outputDirectory>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -37,6 +40,30 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <artifactSet>
+            <excludes>
+              <exclude>org.spigotmc:spigot</exclude>
+              <exclude>org.spigotmc:spigot-api</exclude>
+              <exclude>com.destroystokyo.paper</exclude>
+              <exclude>com.destroystokyo.paper-api</exclude>
+              <exclude>junit:junit</exclude>
+              <exclude>io.netty:*</exclude>
+            </excludes>
+          </artifactSet>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
+          <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -47,12 +74,12 @@
       <artifactId>v1_16_R3</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-
     <dependency>
       <groupId>dev.crystall</groupId>
-      <artifactId>v1_17_R1</artifactId>
+      <artifactId>playernpclib-nms-v1_17_R1</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+
   </dependencies>
 
 </project>

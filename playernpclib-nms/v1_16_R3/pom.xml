@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>v1_16_R3</artifactId>
+  <artifactId>playernpclib-nms-v1_16_R3</artifactId>
 
   <dependencies>
     <dependency>
