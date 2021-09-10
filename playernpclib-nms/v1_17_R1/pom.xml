@@ -22,6 +22,11 @@
       <groupId>dev.crystall</groupId>
       <artifactId>playernpclib-basewrapper</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper</artifactId>
+      <version>1.17.1-R0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 </project>

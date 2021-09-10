@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import dev.crystall.playernpclib.wrapper.AbstractPacket;
 import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityDestroy;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 public class WrapperPlayServerEntityDestroy extends AbstractPacket implements BaseWrapperPlayServerEntityDestroy {
 
@@ -28,7 +29,7 @@ public class WrapperPlayServerEntityDestroy extends AbstractPacket implements Ba
 
   @Override
   public void setEntityIds(int[] value) {
-    handle.getIntegerArrays().write(0, value);
+    handle.getModifier().write(0, new IntArrayList(value));
   }
 
 }

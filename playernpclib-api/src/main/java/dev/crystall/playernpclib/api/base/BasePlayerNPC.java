@@ -96,6 +96,7 @@ public abstract class BasePlayerNPC {
 
     for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
       PacketManager.sendDeathMetaData(player, this);
+      hide(player);
     }
   }
 

@@ -152,6 +152,9 @@ public class EntityManager {
    */
   private void handleInteractPacket(Player player, PacketEvent event) {
     PacketContainer packet = event.getPacket();
+    if (!packet.getType().equals(Client.USE_ENTITY)) {
+      return;
+    }
     BaseWrapperPlayClientUseEntity packetWrapper = new WrapperGenerator<BaseWrapperPlayClientUseEntity>().map(
       BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY, packet);
 

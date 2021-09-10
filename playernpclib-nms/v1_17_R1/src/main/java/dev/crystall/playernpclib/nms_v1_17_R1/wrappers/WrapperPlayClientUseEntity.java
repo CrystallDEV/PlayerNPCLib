@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
+import com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction;
 import dev.crystall.playernpclib.wrapper.AbstractPacket;
 import dev.crystall.playernpclib.wrapper.BaseWrapperPlayClientUseEntity;
 import org.bukkit.World;
@@ -43,12 +44,12 @@ public class WrapperPlayClientUseEntity extends AbstractPacket implements BaseWr
 
   @Override
   public EntityUseAction getType() {
-    return handle.getEntityUseActions().read(0);
+    return handle.getEnumEntityUseActions().read(0).getAction();
   }
 
   @Override
   public void setType(EntityUseAction value) {
-    handle.getEntityUseActions().write(0, value);
+    handle.getEnumEntityUseActions().write(0, WrappedEnumEntityUseAction.fromHandle(value));
   }
 
   @Override

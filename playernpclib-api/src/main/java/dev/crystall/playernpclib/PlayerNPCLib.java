@@ -49,7 +49,6 @@ public class PlayerNPCLib {
   @Getter
   private static EntityHider entityHider;
 
-
   public PlayerNPCLib(JavaPlugin plugin) {
     Utils.verify(instance == null, "Only one instance of " + getClass().getCanonicalName() + " is allowed");
     PlayerNPCLib.instance = this;

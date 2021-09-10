@@ -12,6 +12,8 @@ import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.EntityPose;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
@@ -19,6 +21,7 @@ import com.comphenix.protocol.wrappers.Pair;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
@@ -188,12 +191,9 @@ public class PacketManager {
     wrapperEntityMeta.setEntityID(npc.getEntityId());
 
     // Create the data watcher for this entity
-    WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(player).deepClone();
-    watcher.setObject(8, 0F);
-
-    //    Optional<?> opt = Optional.of(WrappedChatComponent.fromText("dead").getHandle());
-    //    watcher.setObject(new WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), opt);
-    //    watcher.setObject(new WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)), true); //custom name visible
+    var watcher = WrappedDataWatcher.getEntityWatcher(player).deepClone();
+    var obj = new WrappedDataWatcherObject(6, WrappedDataWatcher.Registry.get(EnumWrappers.getEntityPoseClass()));
+    watcher.setObject(obj, EntityPose.DYING.toNms());
 
     wrapperEntityMeta.setMetadata(watcher.getWatchableObjects());
     sendPacket(player, wrapperEntityMeta.getHandle(), false);
