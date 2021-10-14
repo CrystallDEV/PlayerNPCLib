@@ -3,6 +3,10 @@ pipeline {
         label 'java-16'
     }
 
+    triggers {
+        githubPush()
+    }
+
     stages {
         stage('Build') {
             steps {
