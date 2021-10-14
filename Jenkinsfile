@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        label 'java-16'
+    }
 
     stages {
         stage('Build') {
