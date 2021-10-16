@@ -2,6 +2,7 @@ package dev.crystall.playernpclib.wrapper;
 
 import java.lang.reflect.InvocationTargetException;
 import lombok.NoArgsConstructor;
+import org.bukkit.Bukkit;
 
 /**
  * Created by CrystallDEV on 19/08/2021
@@ -19,7 +20,7 @@ public class WrapperGenerator<T> {
       }
       return aClass.getDeclaredConstructor(types).newInstance(initargs);
     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-      e.printStackTrace();
+      Bukkit.getLogger().severe("Unable to map class " + aClass.getSimpleName());
     }
     return null;
   }
