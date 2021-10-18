@@ -41,22 +41,14 @@ public class Utils {
   }
 
   public static EquipmentSlot getEquipmentSlotFor(ItemSlot itemSlot) {
-    switch (itemSlot) {
-      case MAINHAND:
-        return EquipmentSlot.HAND;
-      case OFFHAND:
-        return EquipmentSlot.OFF_HAND;
-      case FEET:
-        return EquipmentSlot.FEET;
-      case LEGS:
-        return EquipmentSlot.LEGS;
-      case CHEST:
-        return EquipmentSlot.CHEST;
-      case HEAD:
-        return EquipmentSlot.HEAD;
-      default:
-        return EquipmentSlot.valueOf(itemSlot.name());
-    }
+    return switch (itemSlot) {
+      case MAINHAND -> EquipmentSlot.HAND;
+      case OFFHAND -> EquipmentSlot.OFF_HAND;
+      case FEET -> EquipmentSlot.FEET;
+      case LEGS -> EquipmentSlot.LEGS;
+      case CHEST -> EquipmentSlot.CHEST;
+      case HEAD -> EquipmentSlot.HEAD;
+    };
   }
 
   public static BasePlayerNPC getNPCFromEntity(Entity entity) {

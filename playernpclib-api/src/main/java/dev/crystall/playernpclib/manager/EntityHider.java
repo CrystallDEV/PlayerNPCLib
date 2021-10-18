@@ -59,6 +59,7 @@ public class EntityHider implements Listener {
   // observer / entityToObserve / visible
   protected Table<Integer, Integer, Boolean> observerEntityMap = HashBasedTable.create();
 
+  // TODO register listener for packets based on MC version
   // Packets that update remote player entities
   private static final PacketType[] ENTITY_PACKETS = {
     ENTITY_EQUIPMENT,
@@ -128,15 +129,11 @@ public class EntityHider implements Listener {
    * @return TRUE if the entity was visible before this method call, FALSE otherwise.
    */
   public boolean setVisibility(Player observer, int entityID, boolean visible) {
-    switch (policy) {
-      case BLACKLIST:
-        // Non-membership means they are visible
-        return !setMembership(observer, entityID, !visible);
-      case WHITELIST:
-        return setMembership(observer, entityID, visible);
-      default:
-        throw new IllegalArgumentException("Unknown policy: " + policy);
-    }
+    return switch (policy) {
+      // Non-membership means they are visible
+      case BLACKLIST -> !setMembership(observer, entityID, !visible);
+      case WHITELIST -> setMembership(observer, entityID, visible);
+    };
   }
 
   /**

@@ -68,10 +68,10 @@ public class NPCTester extends JavaPlugin implements Listener {
   private void setDefaultValues(BasePlayerNPC npc) {
     npc.setSubNames(List.of(
       String.valueOf(npc.getEntityId()),
-      "Another sub name",
-      "Another sub name",
-      "Another sub name",
-      "Another sub name"
+      "Another sub name - 0",
+      "Another sub name - 1",
+      "Another sub name - 2",
+      "Another sub name - 3"
     ));
     npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(5000)));
     npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));

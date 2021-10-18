@@ -9,4 +9,5 @@ public interface Callback<T> {
 
   default void failed() {
   }
+
 }
