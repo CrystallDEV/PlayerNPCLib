@@ -4,6 +4,7 @@ import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by CrystallDEV on 01/09/2020
@@ -19,12 +20,8 @@ public class NPCRemoveEvent extends Event {
     this.npc = npc;
   }
 
-  public static HandlerList getHandlerList() {
-    return handlers;
-  }
-
   @Override
-  public HandlerList getHandlers() {
+  public @NotNull HandlerList getHandlers() {
     return handlers;
   }
 

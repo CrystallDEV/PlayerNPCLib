@@ -42,12 +42,12 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   @Override
   public void spawn() {
     this.bukkitLivingEntity = (Creature) getLocation().getWorld().spawnEntity(getLocation(), entityType);
-    if (this.bukkitLivingEntity instanceof Ageable) {
-      ((Ageable) this.bukkitLivingEntity).setAdult();
-      ((Ageable) this.bukkitLivingEntity).setAdult();
+    if (this.bukkitLivingEntity instanceof Ageable ageable) {
+      ageable.setAdult();
+      ageable.setAdult();
     }
-    if (this.bukkitLivingEntity instanceof Zombie) {
-      ((Zombie) this.bukkitLivingEntity).setShouldBurnInDay(false);
+    if (this.bukkitLivingEntity instanceof Zombie zombie) {
+      zombie.setShouldBurnInDay(false);
     }
     // Prevent sounds from this entity
     this.bukkitLivingEntity.setSilent(true);
@@ -73,11 +73,6 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     if (this.bukkitLivingEntity != null) {
       PlayerNPCLib.getEntityHider().hideEntity(player, this.bukkitLivingEntity);
     }
-  }
-
-  @Override
-  public void hide(Player player) {
-    super.hide(player);
   }
 
   public void updateInventory() {

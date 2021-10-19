@@ -96,7 +96,6 @@ public class WrapperFactory {
     } catch (ClassNotFoundException exception) {
       HAS_ERROR = true;
       log.error("Unable to load wrapper class {}", className);
-      exception.printStackTrace();
     }
     return loadedClass;
   }

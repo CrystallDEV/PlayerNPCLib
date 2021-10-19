@@ -19,6 +19,9 @@ public class SkinFetcher {
   private static final String MINESKIN_API = "https://api.mineskin.org/get/id/";
   private static final Map<Integer, PlayerSkin> cachedSkins = new ConcurrentHashMap<>();
 
+  private SkinFetcher() {
+  }
+
   // TODO maybe replace with the mineskin API java client -> https://github.com/InventivetalentDev/MineskinClient
   public static void asyncFetchSkin(int id, Callback<PlayerSkin> callback) {
     Bukkit.getScheduler().runTaskAsynchronously(PlayerNPCLib.getPlugin(), () -> {
@@ -63,7 +66,6 @@ public class SkinFetcher {
       return skin;
     } catch (IOException exception) {
       Bukkit.getLogger().severe("Could not fetch skin! (Id: " + id + "). Message: " + exception.getMessage());
-      exception.printStackTrace();
       return null;
     }
   }

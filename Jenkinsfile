@@ -1,5 +1,11 @@
 pipeline {
-    agent any
+    agent {
+        label 'java-16'
+    }
+
+    triggers {
+        githubPush()
+    }
 
     stages {
         stage('Build') {

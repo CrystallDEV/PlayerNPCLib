@@ -10,4 +10,5 @@ public class StaticPlayerNPC extends BasePlayerNPC {
   public StaticPlayerNPC(String name, Location location) {
     super(name, location);
   }
+
 }
