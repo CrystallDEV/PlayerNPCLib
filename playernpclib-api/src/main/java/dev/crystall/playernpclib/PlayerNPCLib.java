@@ -87,6 +87,10 @@ public class PlayerNPCLib {
     log.info("Enabled for Server Version {}", versionName);
   }
 
+  public void onDisable() {
+    log.info("Disabling PlayerNPCLib....");
+  }
+
   private void checkServerVersion(String versionName) {
     MinecraftVersions serverVersion;
     try {

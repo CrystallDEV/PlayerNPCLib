@@ -1,4 +1,12 @@
+[![Quality gate](https://sonarqube.crystall.dev/api/project_badges/quality_gate?project=dev.crystall%3Aplayernpclib)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
+
 [![Build Status](https://jenkins.crystall.dev/buildStatus/icon?job=PlayerNPCLib%2Fdevelop)](https://jenkins.crystall.dev/job/PlayerNPCLib/job/develop/)
+
+[![Bugs](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=bugs)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
+[![Lines of Code](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=ncloc)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
+[![Maintainability Rating](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=sqale_rating)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
+[![Reliability Rating](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=reliability_rating)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
+[![Security Rating](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=security_rating)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
 
 # PlayerNPCLib
 
