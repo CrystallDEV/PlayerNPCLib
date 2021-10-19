@@ -12,17 +12,19 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class NPCRemoveEvent extends Event {
 
-  private static final HandlerList handlers = new HandlerList();
-
   private final BasePlayerNPC npc;
 
   public NPCRemoveEvent(final BasePlayerNPC npc) {
     this.npc = npc;
   }
 
+  @Getter
+  private static final HandlerList handlerList = new HandlerList();
+
+  @NotNull
   @Override
-  public @NotNull HandlerList getHandlers() {
-    return handlers;
+  public HandlerList getHandlers() {
+    return getHandlerList();
   }
 
 }

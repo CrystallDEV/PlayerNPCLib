@@ -10,6 +10,7 @@ import dev.crystall.playernpclib.manager.EventManager;
 import dev.crystall.playernpclib.wrapper.MinecraftVersions;
 import dev.crystall.playernpclib.wrapper.WrapperFactory;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -23,12 +24,14 @@ import org.bukkit.scoreboard.Team.OptionStatus;
 public class PlayerNPCLib {
 
   @Getter
+  @Setter
   private static PlayerNPCLib instance;
 
   /**
    * The plugin that uses this library
    */
   @Getter
+  @Setter
   private static JavaPlugin plugin;
 
   /**
@@ -51,8 +54,8 @@ public class PlayerNPCLib {
 
   public PlayerNPCLib(JavaPlugin plugin) {
     Utils.verify(instance == null, "Only one instance of " + getClass().getCanonicalName() + " is allowed");
-    PlayerNPCLib.instance = this;
-    PlayerNPCLib.plugin = plugin;
+    setInstance(this);
+    setPlugin(plugin);
 
     String versionName = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
     checkServerVersion(versionName);
@@ -84,26 +87,28 @@ public class PlayerNPCLib {
     log.info("Enabled for Server Version {}", versionName);
   }
 
-  public void onDisable() {
-
-  }
-
   private void checkServerVersion(String versionName) {
-    MinecraftVersions serverVersion = null;
+    MinecraftVersions serverVersion;
     try {
       serverVersion = MinecraftVersions.valueOf(versionName);
     } catch (IllegalArgumentException ignored) {
+      logUnsupportedServerVersion(versionName);
+      return;
     }
 
     if (!WrapperFactory.init(serverVersion)) {
-      log.error("Your server's version ({}) is not supported. PlayerNPCLib will not be enabled", versionName);
-      getServer().getPluginManager().disablePlugin(plugin);
+      logUnsupportedServerVersion(versionName);
       return;
     }
     log.info("Your server's version ({}) is supported", versionName);
   }
 
-  private void createManager() {
+  private void logUnsupportedServerVersion(String versionName) {
+    log.error("Your server's version ({}) is not supported. PlayerNPCLib will not be enabled", versionName);
+    getServer().getPluginManager().disablePlugin(plugin);
+  }
+
+  private static void createManager() {
     PlayerNPCLib.entityManager = new EntityManager();
     PlayerNPCLib.eventManager = new EventManager();
     PlayerNPCLib.entityHider = new EntityHider(plugin, EntityHidePolicy.WHITELIST);

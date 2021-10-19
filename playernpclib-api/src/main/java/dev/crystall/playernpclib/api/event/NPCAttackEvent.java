@@ -17,8 +17,6 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class NPCAttackEvent extends Event implements Cancellable {
 
-  private static final HandlerList handlers = new HandlerList();
-
   private final BasePlayerNPC npc;
   private final LivingEntity target;
   private boolean isCancelled = false;
@@ -28,9 +26,13 @@ public class NPCAttackEvent extends Event implements Cancellable {
     this.target = target;
   }
 
+  @Getter
+  private static final HandlerList handlerList = new HandlerList();
+
+  @NotNull
   @Override
-  public @NotNull HandlerList getHandlers() {
-    return handlers;
+  public HandlerList getHandlers() {
+    return getHandlerList();
   }
 
   @Override
