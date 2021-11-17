@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
@@ -47,8 +48,9 @@ public abstract class BasePlayerNPC {
   protected PlayerSkin playerSkin;
   protected Location eyeLocation;
   @Setter
-  protected boolean isLookAtClosestPlayer = true;
+  protected boolean lookAtClosestPlayer = true;
 
+  protected boolean visibilityRestricted = true;
   protected Set<UUID> shownTo = new HashSet<>();
 
   protected BasePlayerNPC(String displayName, Location location) {
@@ -63,7 +65,7 @@ public abstract class BasePlayerNPC {
 
   protected BasePlayerNPC(String displayName, Location location, boolean isLookAtClosestPlayer) {
     this(displayName, location);
-    this.isLookAtClosestPlayer = isLookAtClosestPlayer;
+    this.lookAtClosestPlayer = isLookAtClosestPlayer;
   }
 
   protected BasePlayerNPC(String displayName, Location location, List<String> subNames) {
@@ -88,14 +90,13 @@ public abstract class BasePlayerNPC {
     if (!isSpawned) {
       return;
     }
-
     isSpawned = false;
 
     if (this.hologram != null) {
       this.hologram.delete();
     }
 
-    for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+    for (Player player : getVisibleTo()) {
       PacketManager.sendDeathMetaData(player, this);
       hide(player);
     }
@@ -110,7 +111,13 @@ public abstract class BasePlayerNPC {
     if (shownTo.contains(player.getUniqueId())) {
       return;
     }
-    shownTo.add(player.getUniqueId());
+    init(player);
+  }
+
+  public void init(Player player) {
+    if (visibilityRestricted) {
+      shownTo.add(player.getUniqueId());
+    }
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), true);
     PacketManager.sendNPCCreatePackets(player, this);
     PacketManager.sendEquipmentPackets(player, this);
@@ -125,7 +132,9 @@ public abstract class BasePlayerNPC {
     if (!shownTo.contains(player.getUniqueId())) {
       return;
     }
-    shownTo.remove(player.getUniqueId());
+    if (visibilityRestricted) {
+      shownTo.remove(player.getUniqueId());
+    }
     PacketManager.sendHidePackets(player, this);
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
     if (hologram != null) {
@@ -174,7 +183,7 @@ public abstract class BasePlayerNPC {
         .warning(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
       return;
     }
-    for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+    for (Player player : getVisibleTo()) {
       PacketManager.sendAnimationPacket(player, this, animationId);
     }
   }
@@ -200,7 +209,7 @@ public abstract class BasePlayerNPC {
 
     itemSlots.put(slot, itemStack);
     if (isSpawned) {
-      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+      for (Player player : getVisibleTo()) {
         PacketManager.sendEquipmentPackets(player, this);
       }
     }
@@ -209,7 +218,7 @@ public abstract class BasePlayerNPC {
   public void setPlayerSkin(PlayerSkin playerSkin) {
     this.playerSkin = playerSkin;
     if (isSpawned) {
-      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+      for (Player player : getVisibleTo()) {
         this.update(player);
       }
     }
@@ -219,7 +228,7 @@ public abstract class BasePlayerNPC {
     this.location = location;
     updateHologram();
     if (update) {
-      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+      for (Player player : getVisibleTo()) {
         PacketManager.sendMovePacket(player, this);
       }
     }
@@ -228,9 +237,30 @@ public abstract class BasePlayerNPC {
   public void setEyeLocation(Location location, boolean update) {
     this.eyeLocation = location;
     if (update) {
-      for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
+      for (Player player : getVisibleTo()) {
         PacketManager.sendMovePacket(player, this);
       }
     }
   }
+
+  public void setVisibilityRestricted(boolean visibilityRestricted) {
+    if (!visibilityRestricted) {
+      this.shownTo.clear();
+    }
+    this.visibilityRestricted = visibilityRestricted;
+  }
+
+  /**
+   * Collects all nearby players that the npc is visible to. If the npc is visibility restricted, then the set is filtered by shownTo Set.
+   *
+   * @return visibleToSet
+   */
+  protected Set<Player> getVisibleTo() {
+    var stream = location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE).stream();
+    if (visibilityRestricted) {
+      stream = stream.filter(p -> getShownTo().contains(p.getUniqueId()));
+    }
+    return stream.collect(Collectors.toSet());
+  }
+
 }

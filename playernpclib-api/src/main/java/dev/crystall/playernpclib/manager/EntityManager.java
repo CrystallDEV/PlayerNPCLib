@@ -20,7 +20,6 @@ import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
 import dev.crystall.playernpclib.wrapper.BaseWrapperPlayClientUseEntity;
 import dev.crystall.playernpclib.wrapper.WrapperGenerator;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,13 +54,13 @@ public class EntityManager {
 
     Bukkit.getScheduler().runTaskTimer(PlayerNPCLib.getPlugin(), () -> {
       for (BasePlayerNPC npc : playerNPCList) {
-        if (!(npc instanceof MovablePlayerNPC)) {
+        if (!(npc instanceof MovablePlayerNPC movablePlayerNPC)) {
           if (npc.isLookAtClosestPlayer()) {
             handleLookClosest(npc);
           }
           continue;
         }
-        handleNPCMoving((MovablePlayerNPC) npc);
+        handleNPCMoving(movablePlayerNPC);
       }
     }, 0L, 1L);
   }
@@ -71,11 +70,8 @@ public class EntityManager {
    */
   public void spawnEntity(BasePlayerNPC npc, boolean showByDefault) {
     if (new NPCSpawnEvent(npc).callEvent()) {
-      if (showByDefault) {
-        npc.spawn(new ArrayList<>(PlayerNPCLib.getPlugin().getServer().getOnlinePlayers()));
-      } else {
-        npc.spawn();
-      }
+      npc.setVisibilityRestricted(!showByDefault);
+      npc.spawn();
       playerNPCList.add(npc);
     }
   }
@@ -89,8 +85,8 @@ public class EntityManager {
       return false;
     }
 
-    playerNPCList.remove(npc);
     npc.remove();
+    playerNPCList.remove(npc);
     return true;
   }
 
@@ -169,7 +165,7 @@ public class EntityManager {
       return;
     }
 
-    // Cancel the event since we handle stuff ourself
+    // Cancel the event since we handle stuff ourselves
     event.setCancelled(true);
 
     // Active delay
@@ -222,7 +218,15 @@ public class EntityManager {
 
   public boolean canSee(Player player, int entityId) {
     BasePlayerNPC npc = playerNPCList.stream().filter(basePlayerNPC -> basePlayerNPC.getEntityId() == entityId).findFirst().orElse(null);
-    return npc != null && npc.getShownTo().contains(player.getUniqueId());
+    if (npc == null) {
+      return false;
+    }
+
+    if (npc.isVisibilityRestricted()) {
+      return npc.getShownTo().contains(player.getUniqueId());
+    }
+
+    return true;
   }
 
   public boolean inRangeOf(Player player, BasePlayerNPC npc) {

@@ -18,7 +18,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
@@ -36,14 +35,9 @@ public class EventManager implements Listener {
     PacketManager.sendScoreBoardTeamCreatePacket(event.getPlayer());
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
       if (PlayerNPCLib.getEntityManager().canSee(event.getPlayer(), npc)) {
-        npc.show(event.getPlayer());
+        npc.init(event.getPlayer());
       }
     }
-  }
-
-  @EventHandler
-  public void onPlayerQuit(PlayerQuitEvent event) {
-
   }
 
   @EventHandler
@@ -88,13 +82,11 @@ public class EventManager implements Listener {
           continue;
         }
 
-        // The monster is supposed to attack
-        if (movablePlayerNPC.isAggressive()) {
-          continue;
+        // Check if the monster is not supposed to attack / target
+        if (!movablePlayerNPC.isAggressive()) {
+          event.setCancelled(true);
+          return;
         }
-
-        event.setCancelled(true);
-        return;
       }
     }
   }
