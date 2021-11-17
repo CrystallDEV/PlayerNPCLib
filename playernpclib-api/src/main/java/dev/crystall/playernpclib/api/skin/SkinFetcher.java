@@ -56,7 +56,7 @@ public class SkinFetcher {
       scanner.close();
       httpURLConnection.disconnect();
 
-      JsonObject jsonObject = (JsonObject) new JsonParser().parse(builder.toString());
+      JsonObject jsonObject = (JsonObject) JsonParser.parseString(builder.toString());
       JsonObject textures = jsonObject.get("data").getAsJsonObject().get("texture").getAsJsonObject();
       String value = textures.get("value").getAsString();
       String signature = textures.get("signature").getAsString();
