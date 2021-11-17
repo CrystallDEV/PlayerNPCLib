@@ -54,6 +54,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     this.bukkitLivingEntity.setCanPickupItems(false);
     this.bukkitLivingEntity.setInvisible(true);
     this.bukkitLivingEntity.setInvulnerable(true);
+    this.bukkitLivingEntity.setRemoveWhenFarAway(false);
     super.spawn();
   }
 
