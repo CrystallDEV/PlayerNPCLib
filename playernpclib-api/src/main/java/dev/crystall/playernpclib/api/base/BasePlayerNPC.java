@@ -55,7 +55,7 @@ public abstract class BasePlayerNPC {
     this.location = location;
     this.eyeLocation = location;
     this.entityId = EntityManager.tickAndGetCounter();
-    this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.5, 0));
+    this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.25, 0));
     this.hologram.getVisibilityManager().setVisibleByDefault(false);
     this.internalName = uuid.toString().substring(0, 16);
     setDisplayName(displayName);
@@ -158,8 +158,8 @@ public abstract class BasePlayerNPC {
 
   public void updateHologram() {
     if (this.hologram != null && !this.hologram.isDeleted()) {
-      var variableHeight = subNames.size() * 0.5F;
-      this.hologram.teleport(getLocation().clone().add(0, variableHeight + 1, 0));
+      var variableHeight = subNames.size() * 0.25F;
+      this.hologram.teleport(this.location.clone().add(0, variableHeight + 2.25F, 0));
     }
   }
 
