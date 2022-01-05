@@ -41,7 +41,7 @@
           </execution>
         </executions>
         <configuration>
-          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <createDependencyReducedPom>true</createDependencyReducedPom>
           <artifactSet>
             <excludes>
               <exclude>org.spigotmc:spigot</exclude>
@@ -79,7 +79,11 @@
       <artifactId>playernpclib-nms-v1_17_R1</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-
+    <dependency>
+      <groupId>dev.crystall</groupId>
+      <artifactId>playernpclib-nms-v1_18_R1</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 </project>
