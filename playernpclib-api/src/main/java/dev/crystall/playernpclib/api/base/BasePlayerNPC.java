@@ -166,9 +166,9 @@ public abstract class BasePlayerNPC {
   }
 
   public void updateHologram() {
-    if (this.hologram != null && !this.hologram.isDeleted()) {
+    if (hologram != null && !hologram.isDeleted()) {
       var variableHeight = subNames.size() * 0.25F;
-      this.hologram.teleport(this.location.clone().add(0, variableHeight + 2.25F, 0));
+      hologram.teleport(this.location.clone().add(0, variableHeight + 2.25F, 0));
     }
   }
 
@@ -244,10 +244,12 @@ public abstract class BasePlayerNPC {
   }
 
   public void setVisibilityRestricted(boolean visibilityRestricted) {
+    this.visibilityRestricted = visibilityRestricted;
     if (!visibilityRestricted) {
       this.shownTo.clear();
     }
-    this.visibilityRestricted = visibilityRestricted;
+    hologram.getVisibilityManager().resetVisibilityAll();
+    hologram.getVisibilityManager().setVisibleByDefault(!visibilityRestricted);
   }
 
   /**

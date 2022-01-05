@@ -12,6 +12,7 @@ import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.skin.SkinFetcher;
 import java.util.List;
 import org.apache.commons.lang.math.RandomUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
@@ -73,7 +74,12 @@ public class NPCTester extends JavaPlugin implements Listener {
       "Another sub name - 2",
       "Another sub name - 3"
     ));
-    npc.setPlayerSkin(SkinFetcher.fetchSkin(RandomUtils.nextInt(5000)));
+    SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(5000), playerSkin -> {
+      // Set the skin in a synced call
+      Bukkit.getScheduler().runTask(this, () -> {
+        npc.setPlayerSkin(playerSkin);
+      });
+    });
     npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
     npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));
     npc.setItem(ItemSlot.LEGS, new ItemStack(Material.DIAMOND_LEGGINGS));
