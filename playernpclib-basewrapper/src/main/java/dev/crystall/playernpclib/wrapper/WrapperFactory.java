@@ -22,6 +22,9 @@ public class WrapperFactory {
 
   private static boolean HAS_ERROR = false;
 
+  private WrapperFactory() {
+  }
+
   public static boolean init(MinecraftVersions minecraftVersions) {
     if (minecraftVersions == null) {
       return false;
