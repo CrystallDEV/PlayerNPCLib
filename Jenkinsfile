@@ -13,7 +13,7 @@ pipeline {
                 echo 'Building..'
                 git credentialsId: '9eed7478-7c3f-472d-874d-1294c687815d', url: 'git@github.com:CrystallDEV/PlayerNPCLib.git'
 
-                withMaven {
+                withMaven(maven: 'maven-3') {
                     sh "mvn -Dmaven.test.failure.ignore=true clean install"
                 }
 
@@ -57,7 +57,7 @@ pipeline {
                 }
             }
             steps {
-                withMaven() {
+                withMaven(maven: 'maven-3') {
                     configFileProvider([configFile(fileId: '16f65a71-8abe-4a5e-ae13-1aa36c88c4a9', variable: 'MAVEN_SETTINGS')]) {
                         sh 'mvn -s $MAVEN_SETTINGS clean deploy'
                     }
@@ -69,10 +69,9 @@ pipeline {
                 branch "master"
             }
             steps {
-                withMaven() {
+                withMaven(maven: 'maven-3') {
                     configFileProvider([configFile(fileId: '16f65a71-8abe-4a5e-ae13-1aa36c88c4a9', variable: 'MAVEN_SETTINGS')]) {
-//                        sh 'mvn -s $MAVEN_SETTINGS clean deploy'
-                        echo 'TODO'
+                        sh 'mvn -s $MAVEN_SETTINGS clean deploy'
                     }
                 }
             }
