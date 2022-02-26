@@ -56,7 +56,7 @@ public abstract class BasePlayerNPC {
   protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
     this.eyeLocation = location;
-    this.entityId = EntityManager.tickAndGetCounter();
+    this.entityId = EntityManager.ENTITY_ID_COUNTER.getAndDecrement();
     this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.25, 0));
     this.hologram.getVisibilityManager().setVisibleByDefault(false);
     this.internalName = uuid.toString().substring(0, 16);

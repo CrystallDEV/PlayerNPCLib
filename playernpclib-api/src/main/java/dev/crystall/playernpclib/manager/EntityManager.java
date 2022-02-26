@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,7 +37,7 @@ import org.bukkit.util.Vector;
  */
 public class EntityManager {
 
-  private static int ENTITY_ID_COUNTER = Integer.MAX_VALUE;
+  public static final AtomicInteger ENTITY_ID_COUNTER = new AtomicInteger(Integer.MAX_VALUE);
 
   @Getter
   private static final List<BasePlayerNPC> playerNPCList = new CopyOnWriteArrayList<>();
@@ -256,10 +257,6 @@ public class EntityManager {
     Vector dir = npc.getLocation().toVector().subtract(player.getEyeLocation().toVector()).normalize();
     double cosFOV = Math.cos(Math.toRadians(60));
     return dir.dot(player.getEyeLocation().getDirection()) >= cosFOV;
-  }
-
-  public static int tickAndGetCounter() {
-    return --ENTITY_ID_COUNTER;
   }
 
 }
