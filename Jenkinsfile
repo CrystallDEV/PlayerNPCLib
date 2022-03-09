@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                git credentialsId: '9eed7478-7c3f-472d-874d-1294c687815d', url: 'git@github.com:CrystallDEV/PlayerNPCLib.git'
+                git credentialsId: '9eed7478-7c3f-472d-874d-1294c687815d', url: 'git@github.com:CrystallDEV/PlayerNPCLib.git', branch: env.BRANCH_NAME
 
                 withMaven(maven: 'maven-3') {
                     sh "mvn -Dmaven.test.failure.ignore=true clean install"
@@ -37,7 +37,9 @@ pipeline {
                 stage('Analysis') {
                     steps {
                         withSonarQubeEnv('crystall-sonarqube') {
-                            sh "mvn clean verify sonar:sonar"
+                            withMaven(maven: 'maven-3') {
+                                sh "mvn clean verify sonar:sonar"
+                            }
                         }
                     }
                 }

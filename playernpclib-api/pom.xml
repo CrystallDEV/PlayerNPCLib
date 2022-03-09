@@ -41,7 +41,7 @@
           </execution>
         </executions>
         <configuration>
-          <createDependencyReducedPom>true</createDependencyReducedPom>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
           <artifactSet>
             <excludes>
               <exclude>org.spigotmc:spigot</exclude>
@@ -62,7 +62,6 @@
               </excludes>
             </filter>
           </filters>
-          <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
         </configuration>
       </plugin>
     </plugins>
