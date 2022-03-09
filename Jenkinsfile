@@ -33,6 +33,9 @@ pipeline {
             //}
         }
         stage('SonarQube') {
+            when {
+                branch "master"
+            }
             stages {
                 stage('Analysis') {
                     steps {
