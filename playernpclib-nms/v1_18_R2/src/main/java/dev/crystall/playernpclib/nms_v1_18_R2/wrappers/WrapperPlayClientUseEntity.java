@@ -1,4 +1,4 @@
-package dev.crystall.playernpclib.nms_v1_18_R1.wrappers;
+package dev.crystall.playernpclib.nms_v1_18_R2.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
