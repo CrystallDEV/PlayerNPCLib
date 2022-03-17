@@ -22,7 +22,7 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <paper.version>1.18.1-R0.1-SNAPSHOT</paper.version>
+    <paper.version>1.18.2-R0.1-SNAPSHOT</paper.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -55,7 +55,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.6.1</version>
+        <version>3.8.1</version>
       </plugin>
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
