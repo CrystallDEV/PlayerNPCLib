@@ -33,7 +33,7 @@
     </snapshotRepository>
     <repository>
       <id>crystall-nexus</id>
-      <url>https://nexus.crystall.dev/repository/paper-plugins/</url>
+      <url>https://nexus.crystall.dev/repository/paper-public/</url>
     </repository>
   </distributionManagement>
 
