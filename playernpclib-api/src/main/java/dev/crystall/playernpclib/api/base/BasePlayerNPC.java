@@ -50,8 +50,13 @@ public abstract class BasePlayerNPC {
   @Setter
   protected boolean lookAtClosestPlayer = true;
 
-  protected boolean visibilityRestricted = true;
+  protected boolean visibilityRestricted = false;
   protected Set<UUID> shownTo = new HashSet<>();
+
+  protected BasePlayerNPC(String displayName, Location location, boolean visibilityRestricted) {
+    this(displayName, location);
+    this.visibilityRestricted = visibilityRestricted;
+  }
 
   protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
@@ -61,11 +66,6 @@ public abstract class BasePlayerNPC {
     this.hologram.getVisibilityManager().setVisibleByDefault(false);
     this.internalName = uuid.toString().substring(0, 16);
     setDisplayName(displayName);
-  }
-
-  protected BasePlayerNPC(String displayName, Location location, boolean isLookAtClosestPlayer) {
-    this(displayName, location);
-    this.lookAtClosestPlayer = isLookAtClosestPlayer;
   }
 
   protected BasePlayerNPC(String displayName, Location location, List<String> subNames) {
@@ -115,9 +115,10 @@ public abstract class BasePlayerNPC {
   }
 
   public void init(Player player) {
-    if (visibilityRestricted) {
-      shownTo.add(player.getUniqueId());
+    if (shownTo.contains(player.getUniqueId())) {
+      return;
     }
+    shownTo.add(player.getUniqueId());
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), true);
     PacketManager.sendNPCCreatePackets(player, this);
     PacketManager.sendEquipmentPackets(player, this);
@@ -132,9 +133,7 @@ public abstract class BasePlayerNPC {
     if (!shownTo.contains(player.getUniqueId())) {
       return;
     }
-    if (visibilityRestricted) {
-      shownTo.remove(player.getUniqueId());
-    }
+    shownTo.remove(player.getUniqueId());
     PacketManager.sendHidePackets(player, this);
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
     if (hologram != null) {

@@ -96,10 +96,15 @@ public class EntityManager {
    */
   public void handleRealPlayerMove(Player player) {
     for (BasePlayerNPC npc : getPlayerNPCList()) {
-      if (canSee(player, npc) && inRangeOf(player, npc) && inViewOf(player, npc)) {
+      var seeing = !npc.isVisibilityRestricted() || canSee(player, npc);
+      var isShownTo = npc.getShownTo().contains(player.getUniqueId());
+      if (seeing && inRangeOf(player, npc) && inViewOf(player, npc)) {
+        if (isShownTo) {
+          return;
+        }
         // The player is in range and can see the NPC, auto-show it.
         showNPC(player, npc);
-      } else if (!canSee(player, npc) && !inRangeOf(player, npc)) {
+      } else if (!seeing && !inRangeOf(player, npc)) {
         // The player is not in range of the NPC anymore, auto-hide it.
         hideNPC(player, npc);
       }
