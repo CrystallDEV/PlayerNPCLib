@@ -88,6 +88,12 @@
       <artifactId>playernpclib-nms-v1_18_R2</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>dev.crystall</groupId>
+      <artifactId>playernpclib-nms-v1_19_R1</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+
   </dependencies>
 
 </project>
