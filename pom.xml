@@ -22,7 +22,7 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <paper.version>1.19.1-R0.1-SNAPSHOT</paper.version>
+    <paper.version>1.19.2-R0.1-SNAPSHOT</paper.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
