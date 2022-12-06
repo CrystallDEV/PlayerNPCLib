@@ -18,6 +18,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
@@ -37,6 +38,14 @@ public class EventManager implements Listener {
       if (PlayerNPCLib.getEntityManager().canSee(event.getPlayer(), npc)) {
         npc.init(event.getPlayer());
       }
+    }
+  }
+
+  @EventHandler
+  public void onPlayerQuit(PlayerQuitEvent event) {
+    var player = event.getPlayer();
+    for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
+      npc.getShownTo().remove(player.getUniqueId());
     }
   }
 

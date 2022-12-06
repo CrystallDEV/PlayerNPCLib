@@ -11,7 +11,7 @@ import dev.crystall.playernpclib.api.event.ClickType;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.skin.SkinFetcher;
 import java.util.List;
-import org.apache.commons.lang.math.RandomUtils;
+import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,6 +27,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Created by CrystallDEV on 09/09/2020
  */
 public class NPCTester extends JavaPlugin implements Listener {
+
+  private static final Random random = new Random();
 
   private static PlayerNPCLib playerNPCLib;
 
@@ -49,10 +51,10 @@ public class NPCTester extends JavaPlugin implements Listener {
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onRightClick(PlayerInteractEvent event) {
     BasePlayerNPC npc = null;
-    if (event.getAction().toString().startsWith("RIGHT") && event.getPlayer().isSneaking()) {
+    if (event.getAction().toString().startsWith("RIGHT")) {
       npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
     }
-    if (event.getAction().toString().startsWith("LEFT") && event.getPlayer().isSneaking()) {
+    if (event.getAction().toString().startsWith("LEFT")) {
       npc = new MovablePlayerNPC(ChatColor.RED + "Barbarian", event.getPlayer().getLocation(), EntityType.ZOMBIE);
       ((MovablePlayerNPC) npc).setAggressive(true);
     }
@@ -62,8 +64,12 @@ public class NPCTester extends JavaPlugin implements Listener {
     }
 
     setDefaultValues(npc);
-    PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
-    npc.show(event.getPlayer());
+    if(event.getPlayer().isSneaking()){
+      PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
+      npc.show(event.getPlayer());
+    }else {
+      PlayerNPCLib.getEntityManager().spawnEntity(npc, true);
+    }
   }
 
   private void setDefaultValues(BasePlayerNPC npc) {
@@ -74,7 +80,7 @@ public class NPCTester extends JavaPlugin implements Listener {
       "Another sub name - 2",
       "Another sub name - 3"
     ));
-    SkinFetcher.asyncFetchSkin(RandomUtils.nextInt(5000), playerSkin -> {
+    SkinFetcher.asyncFetchSkin(random.nextInt(5000), playerSkin -> {
       // Set the skin in a synced call
       Bukkit.getScheduler().runTask(this, () -> {
         npc.setPlayerSkin(playerSkin);
