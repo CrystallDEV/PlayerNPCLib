@@ -10,7 +10,7 @@
     <version>1.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>playernpclib-nms-v1_16_R3</artifactId>
+  <artifactId>playernpclib-nms-v1_19_R2</artifactId>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
