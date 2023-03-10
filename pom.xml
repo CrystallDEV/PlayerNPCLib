@@ -7,7 +7,7 @@
 
   <groupId>dev.crystall</groupId>
   <artifactId>playernpclib</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
 
   <modules>
     <module>playernpclib-nms</module>
@@ -22,7 +22,7 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <paper.version>1.19.2-R0.1-SNAPSHOT</paper.version>
+    <paper.version>1.19.3-R0.1-SNAPSHOT</paper.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -94,8 +94,8 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.22</version>
-      <scope>provided</scope>
+      <version>1.18.26</version>
+      <scope>compile</scope>
     </dependency>
 
     <!--Paper API-->
