@@ -8,7 +8,7 @@
   <parent>
     <artifactId>playernpclib</artifactId>
     <groupId>dev.crystall</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>playernpclib-api</artifactId>
@@ -71,27 +71,27 @@
     <dependency>
       <groupId>dev.crystall</groupId>
       <artifactId>playernpclib-nms-v1_16_R3</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>dev.crystall</groupId>
       <artifactId>playernpclib-nms-v1_17_R1</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>dev.crystall</groupId>
       <artifactId>playernpclib-nms-v1_18_R1</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>dev.crystall</groupId>
       <artifactId>playernpclib-nms-v1_18_R2</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>dev.crystall</groupId>
       <artifactId>playernpclib-nms-v1_19_R1</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.1-SNAPSHOT</version>
     </dependency>
 
   </dependencies>

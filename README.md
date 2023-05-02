@@ -32,7 +32,7 @@ Add PlayerNPCLib as a dependency
   <dependency>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib-api</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
@@ -51,7 +51,7 @@ Add PlayerNPCLib as a dependency
 
 ``` groovy
 dependencies {
-    implementation 'dev.crystall:PlayerNPCLib:1.0-SNAPSHOT'
+    implementation 'dev.crystall:PlayerNPCLib:1.0.1-SNAPSHOT'
 }
 ```
 
