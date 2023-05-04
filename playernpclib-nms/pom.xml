@@ -18,16 +18,14 @@
     <module>v1_18_R1</module>
     <module>v1_18_R2</module>
     <module>v1_19_R1</module>
+    <module>v1_19_R2</module>
   </modules>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>dev.crystall</groupId>
-        <artifactId>playernpclib-basewrapper</artifactId>
-        <version>1.1-SNAPSHOT</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
+  <dependencies>
+    <dependency>
+      <groupId>dev.crystall</groupId>
+      <artifactId>playernpclib-basewrapper</artifactId>
+      <version>1.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>

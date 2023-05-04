@@ -17,11 +17,4 @@
     <maven.compiler.target>17</maven.compiler.target>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>dev.crystall</groupId>
-      <artifactId>playernpclib-basewrapper</artifactId>
-    </dependency>
-  </dependencies>
-
 </project>
