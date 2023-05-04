@@ -67,8 +67,17 @@ public class PlayerNPCLib {
       return;
     }
     createManager();
-
     // Create the scoreboard for the npcs to be in
+    createNPCScoreboards();
+
+    log.info("Enabled for Server Version {}", versionName);
+  }
+
+  public void onDisable() {
+    log.info("Disabling PlayerNPCLib....");
+  }
+
+  private void createNPCScoreboards() {
     Team npcTeam = null;
     for (Team team : Bukkit.getScoreboardManager().getMainScoreboard().getTeams()) {
       if (team.getName().equals(Constants.NPC_TEAM_NAME)) {
@@ -83,12 +92,6 @@ public class PlayerNPCLib {
       npcTeam.setOption(Option.DEATH_MESSAGE_VISIBILITY, OptionStatus.NEVER);
       npcTeam.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
     }
-
-    log.info("Enabled for Server Version {}", versionName);
-  }
-
-  public void onDisable() {
-    log.info("Disabling PlayerNPCLib....");
   }
 
   private void checkServerVersion(String versionName) {
