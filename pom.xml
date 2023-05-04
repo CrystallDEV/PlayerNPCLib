@@ -7,7 +7,7 @@
 
   <groupId>dev.crystall</groupId>
   <artifactId>playernpclib</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <modules>
     <module>playernpclib-nms</module>
@@ -22,7 +22,7 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <paper.version>1.18.2-R0.1-SNAPSHOT</paper.version>
+    <paper.version>1.19.2-R0.1-SNAPSHOT</paper.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -33,7 +33,7 @@
     </snapshotRepository>
     <repository>
       <id>crystall-nexus</id>
-      <url>https://nexus.crystall.dev/repository/paper-plugins/</url>
+      <url>https://nexus.crystall.dev/repository/paper-public/</url>
     </repository>
   </distributionManagement>
 
@@ -110,7 +110,7 @@
     <dependency>
       <groupId>com.gmail.filoghost.holographicdisplays</groupId>
       <artifactId>holographicdisplays-api</artifactId>
-      <version>2.4.5</version>
+      <version>2.4.9</version>
       <scope>provided</scope>
     </dependency>
     <!--    PROTOCOL LIb-->
