@@ -7,7 +7,7 @@
   <parent>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
   </parent>
   <artifactId>playernpclib-api</artifactId>
 
@@ -15,7 +15,7 @@
     <dependency>
       <groupId>dev.crystall</groupId>
       <artifactId>playernpclib-basewrapper</artifactId>
-      <version>1.1-SNAPSHOT</version>
+      <version>1.2-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
