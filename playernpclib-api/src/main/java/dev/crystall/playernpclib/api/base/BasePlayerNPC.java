@@ -3,8 +3,6 @@ package dev.crystall.playernpclib.api.base;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
-import com.gmail.filoghost.holographicdisplays.api.Hologram;
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI;
 import com.google.common.base.Preconditions;
 import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
@@ -22,6 +20,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
+import me.filoghost.holographicdisplays.api.hologram.Hologram;
+import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings.Visibility;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -62,8 +63,8 @@ public abstract class BasePlayerNPC {
     this.location = location;
     this.eyeLocation = location;
     this.entityId = EntityManager.ENTITY_ID_COUNTER.getAndDecrement();
-    this.hologram = HologramsAPI.createHologram(PlayerNPCLib.getPlugin(), this.location.clone().add(0, 2.25, 0));
-    this.hologram.getVisibilityManager().setVisibleByDefault(false);
+    this.hologram = HolographicDisplaysAPI.get(PlayerNPCLib.getPlugin()).createHologram(this.location.clone().add(0, 2.25, 0));
+    this.hologram.getVisibilitySettings().setGlobalVisibility(Visibility.HIDDEN);
     this.internalName = uuid.toString().substring(0, 16);
     setDisplayName(displayName);
   }
@@ -78,7 +79,7 @@ public abstract class BasePlayerNPC {
   }
 
   public void spawn(List<Player> showTo) {
-    this.hologram.getVisibilityManager().resetVisibilityAll();
+    this.hologram.getVisibilitySettings().clearIndividualVisibilities();
 
     for (Player player : showTo) {
       show(player);
@@ -124,7 +125,7 @@ public abstract class BasePlayerNPC {
     PacketManager.sendEquipmentPackets(player, this);
     PacketManager.sendScoreBoardTeamPacket(player, this);
     if (hologram != null) {
-      hologram.getVisibilityManager().showTo(player);
+      hologram.getVisibilitySettings().setIndividualVisibility(player, Visibility.VISIBLE);
       updateDisplayName();
     }
   }
@@ -137,7 +138,7 @@ public abstract class BasePlayerNPC {
     PacketManager.sendHidePackets(player, this);
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
     if (hologram != null) {
-      hologram.getVisibilityManager().hideTo(player);
+      hologram.getVisibilitySettings().setIndividualVisibility(player, Visibility.HIDDEN);
     }
   }
 
@@ -153,12 +154,12 @@ public abstract class BasePlayerNPC {
 
   private void updateDisplayName() {
     if (hologram != null && !hologram.isDeleted()) {
-      hologram.clearLines();
+      hologram.getLines().clear();
       if (displayName != null && !displayName.isEmpty()) {
-        hologram.insertTextLine(0, displayName);
+        hologram.getLines().insertText(0, displayName);
       }
       for (int i = 1; i <= subNames.size(); i++) {
-        hologram.insertTextLine(i, subNames.get(i - 1));
+        hologram.getLines().insertText(i, subNames.get(i - 1));
       }
       updateHologram();
     }
@@ -167,7 +168,7 @@ public abstract class BasePlayerNPC {
   public void updateHologram() {
     if (hologram != null && !hologram.isDeleted()) {
       var variableHeight = subNames.size() * 0.25F;
-      hologram.teleport(this.location.clone().add(0, variableHeight + 2.25F, 0));
+      hologram.setPosition(this.location.clone().add(0, variableHeight + 2.25F, 0));
     }
   }
 
@@ -247,8 +248,8 @@ public abstract class BasePlayerNPC {
     if (!visibilityRestricted) {
       this.shownTo.clear();
     }
-    hologram.getVisibilityManager().resetVisibilityAll();
-    hologram.getVisibilityManager().setVisibleByDefault(!visibilityRestricted);
+    hologram.getVisibilitySettings().clearIndividualVisibilities();
+    hologram.getVisibilitySettings().setGlobalVisibility(visibilityRestricted ? Visibility.HIDDEN : Visibility.VISIBLE);
   }
 
   /**
