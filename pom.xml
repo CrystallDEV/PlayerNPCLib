@@ -22,7 +22,7 @@
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <paper.version>1.19.3-R0.1-SNAPSHOT</paper.version>
+    <paper.version>1.20.1-R0.1-SNAPSHOT</paper.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -108,9 +108,9 @@
 
     <!-- Holographic displays -->
     <dependency>
-      <groupId>com.gmail.filoghost.holographicdisplays</groupId>
+      <groupId>me.filoghost.holographicdisplays</groupId>
       <artifactId>holographicdisplays-api</artifactId>
-      <version>2.4.9</version>
+      <version>3.0.3</version>
       <scope>provided</scope>
     </dependency>
     <!--    PROTOCOL LIb-->

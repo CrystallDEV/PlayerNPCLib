@@ -27,11 +27,23 @@ Add my nexus as a repository
 
 Add PlayerNPCLib as a dependency
 
-``` xml
+```xml
 <dependencies>
   <dependency>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib-api</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </dependency>
+</dependencies>
+```
+
+Add the correct nms version as a dependency
+
+```xml
+<dependencies>
+  <dependency>
+    <groupId>dev.crystall</groupId>
+    <artifactId>playernpclib-nms-v1_20_R1</artifactId>
     <version>1.1-SNAPSHOT</version>
   </dependency>
 </dependencies>
@@ -79,8 +91,8 @@ PlayerNPCLib.getEntityManager().spawnEntity(characterSelectionNPC, true);
 PlayerNPCLib.getEntityManager().removeEntity(characterSelectionNPC, true);
 ```
 
+### Create your own entity
 
-### Create your own entity 
 To Create your own entity, you simply have to extend the BasePlayerNPC class. A good example is the already existing MovablePlayerNPC which uses packets to
 display a moving PlayerNPC.
 
