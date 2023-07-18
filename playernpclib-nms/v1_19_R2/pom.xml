@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>playernpclib</artifactId>
     <groupId>dev.crystall</groupId>
+    <artifactId>playernpclib-nms</artifactId>
     <version>1.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>playernpclib-basewrapper</artifactId>
+  <artifactId>playernpclib-nms-v1_19_R2</artifactId>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>

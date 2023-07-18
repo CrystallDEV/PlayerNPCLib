@@ -7,7 +7,7 @@
   <parent>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib-nms</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>playernpclib-nms-v1_18_R2</artifactId>
@@ -16,12 +16,5 @@
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
   </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>dev.crystall</groupId>
-      <artifactId>playernpclib-basewrapper</artifactId>
-    </dependency>
-  </dependencies>
 
 </project>
