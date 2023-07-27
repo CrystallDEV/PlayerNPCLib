@@ -8,7 +8,6 @@ import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.skin.PlayerSkin;
 import dev.crystall.playernpclib.manager.EntityManager;
-import dev.crystall.playernpclib.manager.PacketManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -98,7 +97,7 @@ public abstract class BasePlayerNPC {
     }
 
     for (Player player : getVisibleTo()) {
-      PacketManager.sendDeathMetaData(player, this);
+      PlayerNPCLib.getPacketManager().sendDeathMetaData(player, this);
       hide(player);
     }
   }
@@ -121,9 +120,9 @@ public abstract class BasePlayerNPC {
     }
     shownTo.add(player.getUniqueId());
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), true);
-    PacketManager.sendNPCCreatePackets(player, this);
-    PacketManager.sendEquipmentPackets(player, this);
-    PacketManager.sendScoreBoardTeamPacket(player, this);
+    PlayerNPCLib.getPacketManager().sendNPCCreatePackets(player, this);
+    PlayerNPCLib.getPacketManager().sendEquipmentPackets(player, this);
+    PlayerNPCLib.getPacketManager().sendScoreBoardTeamPacket(player, this);
     if (hologram != null) {
       hologram.getVisibilitySettings().setIndividualVisibility(player, Visibility.VISIBLE);
       updateDisplayName();
@@ -135,7 +134,7 @@ public abstract class BasePlayerNPC {
       return;
     }
     shownTo.remove(player.getUniqueId());
-    PacketManager.sendHidePackets(player, this);
+    PlayerNPCLib.getPacketManager().sendHidePackets(player, this);
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
     if (hologram != null) {
       hologram.getVisibilitySettings().setIndividualVisibility(player, Visibility.HIDDEN);
@@ -184,7 +183,7 @@ public abstract class BasePlayerNPC {
       return;
     }
     for (Player player : getVisibleTo()) {
-      PacketManager.sendAnimationPacket(player, this, animationId);
+      PlayerNPCLib.getPacketManager().sendAnimationPacket(player, this, animationId);
     }
   }
 
@@ -210,7 +209,7 @@ public abstract class BasePlayerNPC {
     itemSlots.put(slot, itemStack);
     if (isSpawned) {
       for (Player player : getVisibleTo()) {
-        PacketManager.sendEquipmentPackets(player, this);
+        PlayerNPCLib.getPacketManager().sendEquipmentPackets(player, this);
       }
     }
   }
@@ -229,7 +228,7 @@ public abstract class BasePlayerNPC {
     updateHologram();
     if (update) {
       for (Player player : getVisibleTo()) {
-        PacketManager.sendMovePacket(player, this);
+        PlayerNPCLib.getPacketManager().sendMovePacket(player, this);
       }
     }
   }
@@ -238,7 +237,7 @@ public abstract class BasePlayerNPC {
     this.eyeLocation = location;
     if (update) {
       for (Player player : getVisibleTo()) {
-        PacketManager.sendMovePacket(player, this);
+        PlayerNPCLib.getPacketManager().sendMovePacket(player, this);
       }
     }
   }

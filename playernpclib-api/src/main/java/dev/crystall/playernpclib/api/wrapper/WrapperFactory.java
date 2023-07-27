@@ -1,5 +1,7 @@
 package dev.crystall.playernpclib.api.wrapper;
 
+import dev.crystall.playernpclib.PlayerNPCLib;
+import dev.crystall.playernpclib.manager.PacketManager;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -20,6 +22,8 @@ public class WrapperFactory {
   public static Class<? extends BaseWrapperPlayServerEntityTeleport> BASE_WRAPPER_PLAY_SERVER_ENTITY_TELEPORT;
   public static Class<? extends BaseWrapperPlayServerNamedEntitySpawn> BASE_WRAPPER_PLAY_SERVER_NAMED_ENTITY_SPAWN;
   public static Class<? extends BaseWrapperPlayServerPlayerInfo> BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO;
+  public static Class<? extends BaseWrapperPlayServerPlayerInfoRemove> BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO_REMOVE;
+
   public static Class<? extends BaseWrapperPlayServerScoreboardTeam> BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM;
 
   private static boolean HAS_ERROR = false;
@@ -95,7 +99,24 @@ public class WrapperFactory {
       "WrapperPlayServerScoreboardTeam");
   }
 
-  private static Class<?> parseWrapperClass(MinecraftVersions minecraftVersions, String wrapperClassName) {
+  public static void resolvePlayServerPlayerInfoRemove() {
+    BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO_REMOVE = (Class<? extends BaseWrapperPlayServerPlayerInfoRemove>) resolveWrapperForVersion(
+      "WrapperPlayServerPlayerInfoRemove");
+  }
+
+  public static PacketManager createPacketManager() {
+    return (PacketManager) WrapperGenerator.map(resolveManagerForVersion("PacketManagerImpl"));
+  }
+
+  private static Class<?> resolveManagerForVersion(String className) {
+    return resolveClassForVersion("manager", className);
+  }
+
+  private static Class<?> resolveWrapperForVersion(String className) {
+    return resolveClassForVersion("wrappers", className);
+  }
+
+  private static Class<?> resolveClassForVersion(String typePackageName, String className) {
     Class<?> loadedClass = null;
     String fullClassName = BASE_PACKAGE + ".nms_" + PlayerNPCLib.getDetectedNMSVersion().name() + "." + typePackageName + "." + className;
     try {

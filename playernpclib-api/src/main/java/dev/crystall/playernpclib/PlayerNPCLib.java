@@ -55,6 +55,12 @@ public class PlayerNPCLib {
   @Getter
   private static EntityHider entityHider;
 
+  /**
+   * Manages all packets sent to the player
+   */
+  @Getter
+  private static PacketManager packetManager;
+
   public PlayerNPCLib(JavaPlugin plugin) {
     Utils.verify(instance == null, "Only one instance of " + getClass().getCanonicalName() + " is allowed");
     setInstance(this);
@@ -118,6 +124,7 @@ public class PlayerNPCLib {
   }
 
   private static void createManager() {
+    PlayerNPCLib.packetManager = WrapperFactory.createPacketManager();
     PlayerNPCLib.entityManager = new EntityManager();
     PlayerNPCLib.eventManager = new EventManager();
     PlayerNPCLib.entityHider = new EntityHider(plugin, EntityHidePolicy.WHITELIST);

@@ -116,7 +116,7 @@ public class EntityManager {
     npc.setEyeLocation(npc.getBukkitLivingEntity().getEyeLocation(), false);
     npc.updateHologram();
     for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
-      PacketManager.sendMovePacket(player, npc);
+      PlayerNPCLib.getPacketManager().sendMovePacket(player, npc);
     }
   }
 

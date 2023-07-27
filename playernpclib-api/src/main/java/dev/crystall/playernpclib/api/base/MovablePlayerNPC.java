@@ -4,7 +4,6 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import dev.crystall.playernpclib.Constants;
 import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.utility.Utils;
-import dev.crystall.playernpclib.manager.PacketManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -83,7 +82,7 @@ public class MovablePlayerNPC extends BasePlayerNPC {
         getItemSlots().put(itemSlot, bukkitLivingEntity.getEquipment().getItem(slot));
       }
       for (Player player : location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
-        PacketManager.sendEquipmentPackets(player, this);
+        PlayerNPCLib.getPacketManager().sendEquipmentPackets(player, this);
       }
     }
   }

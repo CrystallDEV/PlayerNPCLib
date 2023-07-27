@@ -33,7 +33,7 @@ public class EventManager implements Listener {
 
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event) {
-    PacketManager.sendScoreBoardTeamCreatePacket(event.getPlayer());
+    PlayerNPCLib.getPacketManager().sendScoreBoardTeamCreatePacket(event.getPlayer());
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
       if (PlayerNPCLib.getEntityManager().canSee(event.getPlayer(), npc)) {
         npc.init(event.getPlayer());
