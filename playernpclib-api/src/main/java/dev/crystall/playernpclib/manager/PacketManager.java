@@ -36,7 +36,6 @@ import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerPlayerInfo;
 import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerScoreboardTeam;
 import dev.crystall.playernpclib.wrapper.TeamMode;
 import dev.crystall.playernpclib.wrapper.WrapperGenerator;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
 import org.bukkit.Bukkit;
@@ -206,16 +205,12 @@ public class PacketManager {
    * @param packetContainer
    */
   private static void sendPacket(Player player, PacketContainer packetContainer, boolean debug) {
-    try {
-      ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
+    ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
 
-      if (debug) {
-        PlayerNPCLib.getPlugin().getServer().getConsoleSender().sendMessage(
-          "Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName()
-        );
-      }
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException("Cannot send packet " + packetContainer, e);
+    if (debug) {
+      PlayerNPCLib.getPlugin().getServer().getConsoleSender().sendMessage(
+        "Sent packet " + packetContainer.getType().name() + " to " + player.getDisplayName()
+      );
     }
   }
 

@@ -313,11 +313,7 @@ public class EntityHider implements Listener {
       destroyEntity.getIntegerArrays().write(0, new int[]{entityId});
 
       // Make the entity disappear
-      try {
-        manager.sendServerPacket(observer, destroyEntity);
-      } catch (InvocationTargetException e) {
-        throw new RuntimeException("Cannot send server packet.", e);
-      }
+      manager.sendServerPacket(observer, destroyEntity);
     }
     return visibleBefore;
   }
