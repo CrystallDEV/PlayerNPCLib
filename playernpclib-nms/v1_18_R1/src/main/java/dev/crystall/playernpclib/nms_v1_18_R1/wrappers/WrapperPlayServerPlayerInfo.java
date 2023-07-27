@@ -4,8 +4,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
-import dev.crystall.playernpclib.wrapper.AbstractPacket;
-import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerPlayerInfo;
+import dev.crystall.playernpclib.api.wrapper.AbstractPacket;
+import dev.crystall.playernpclib.api.wrapper.BaseWrapperPlayServerPlayerInfo;
 import java.util.List;
 
 public class WrapperPlayServerPlayerInfo extends AbstractPacket implements BaseWrapperPlayServerPlayerInfo {

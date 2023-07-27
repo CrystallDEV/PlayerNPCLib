@@ -26,7 +26,7 @@
   <dependencies>
     <dependency>
       <groupId>dev.crystall</groupId>
-      <artifactId>playernpclib-basewrapper</artifactId>
+      <artifactId>playernpclib-api</artifactId>
       <version>1.2-SNAPSHOT</version>
     </dependency>
   </dependencies>

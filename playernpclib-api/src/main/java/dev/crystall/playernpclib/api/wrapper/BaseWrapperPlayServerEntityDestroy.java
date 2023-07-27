@@ -1,4 +1,4 @@
-package dev.crystall.playernpclib.wrapper;
+package dev.crystall.playernpclib.api.wrapper;
 
 /**
  * Created by CrystallDEV on 18/08/2021

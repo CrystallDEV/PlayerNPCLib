@@ -1,16 +1,15 @@
-package dev.crystall.playernpclib.wrapper;
+package dev.crystall.playernpclib.api.wrapper;
 
 import java.lang.reflect.InvocationTargetException;
-import lombok.NoArgsConstructor;
-import org.bukkit.Bukkit;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by CrystallDEV on 19/08/2021
  */
-@NoArgsConstructor
-public class WrapperGenerator<T> {
+@Slf4j
+public class WrapperGenerator {
 
-  public T map(Class<? extends T> aClass, Object... initargs) {
+  public static <T> T map(Class<? extends T> aClass, Object... initargs) {
     try {
       Class<?>[] types = new Class[initargs.length];
       int i = 0;
@@ -20,7 +19,7 @@ public class WrapperGenerator<T> {
       }
       return aClass.getDeclaredConstructor(types).newInstance(initargs);
     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-      Bukkit.getLogger().severe("Unable to map class " + aClass.getSimpleName());
+      log.error("Unable to map class " + aClass.getSimpleName(), e);
     }
     return null;
   }

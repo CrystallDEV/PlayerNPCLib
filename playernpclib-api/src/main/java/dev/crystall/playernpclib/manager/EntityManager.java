@@ -1,6 +1,6 @@
 package dev.crystall.playernpclib.manager;
 
-import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY;
+import static dev.crystall.playernpclib.api.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY;
 
 import com.comphenix.protocol.PacketType.Play.Client;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -18,8 +18,8 @@ import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
-import dev.crystall.playernpclib.wrapper.BaseWrapperPlayClientUseEntity;
-import dev.crystall.playernpclib.wrapper.WrapperGenerator;
+import dev.crystall.playernpclib.api.wrapper.BaseWrapperPlayClientUseEntity;
+import dev.crystall.playernpclib.api.wrapper.WrapperGenerator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,7 +67,7 @@ public class EntityManager {
   }
 
   /**
-   * @param npc
+   * @param npc The npc to spawn
    */
   public void spawnEntity(BasePlayerNPC npc, boolean showByDefault) {
     if (new NPCSpawnEvent(npc).callEvent()) {
@@ -78,8 +78,8 @@ public class EntityManager {
   }
 
   /**
-   * @param npc
-   * @return
+   * @param npc The npc to spawn
+   * @return true if the entity was removed, false otherwise
    */
   public boolean removeEntity(BasePlayerNPC npc) {
     if (!playerNPCList.contains(npc)) {
@@ -155,7 +155,7 @@ public class EntityManager {
     if (!packet.getType().equals(Client.USE_ENTITY)) {
       return;
     }
-    BaseWrapperPlayClientUseEntity packetWrapper = new WrapperGenerator<BaseWrapperPlayClientUseEntity>().map(
+    BaseWrapperPlayClientUseEntity packetWrapper = WrapperGenerator.map(
       BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY, packet);
 
     BasePlayerNPC npc = null;

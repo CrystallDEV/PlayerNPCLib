@@ -1,16 +1,13 @@
-package dev.crystall.playernpclib.wrapper;
+package dev.crystall.playernpclib.api.wrapper;
 
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import java.util.List;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
 /**
  * Created by CrystallDEV on 18/08/2021
  */
-public interface BaseWrapperPlayServerEntityMetadata extends IBaseWrapper{
-
+public interface BaseWrapperPlayServerEntityHeadRotation extends IBaseWrapper{
   /**
    * Retrieve Entity ID.
    * <p>
@@ -44,17 +41,19 @@ public interface BaseWrapperPlayServerEntityMetadata extends IBaseWrapper{
   Entity getEntity(PacketEvent event);
 
   /**
-   * Retrieve Metadata.
+   * Retrieve Head Yaw.
+   * <p>
+   * Notes: head yaw in steps of 2p/256
    *
-   * @return The current Metadata
+   * @return The current Head Yaw
    */
-  List<WrappedWatchableObject> getMetadata();
+  byte getHeadYaw();
 
   /**
-   * Set Metadata.
+   * Set Head Yaw.
    *
    * @param value - new value.
    */
-  void setMetadata(List<WrappedWatchableObject> value);
+  void setHeadYaw(byte value);
 
 }

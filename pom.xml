@@ -12,7 +12,7 @@
   <modules>
     <module>playernpclib-nms</module>
     <module>playernpclib-api</module>
-    <module>playernpclib-basewrapper</module>
+    <module>playernpclib-tester</module>
   </modules>
 
   <name>PlayerNPCLib</name>
@@ -117,7 +117,7 @@
     <dependency>
       <groupId>com.comphenix.protocol</groupId>
       <artifactId>ProtocolLib</artifactId>
-      <version>5.0.0</version>
+      <version>5.1.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

@@ -1,4 +1,4 @@
-package dev.crystall.playernpclib.wrapper;
+package dev.crystall.playernpclib.api.wrapper;
 
 import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.World;
@@ -7,7 +7,8 @@ import org.bukkit.entity.Entity;
 /**
  * Created by CrystallDEV on 18/08/2021
  */
-public interface BaseWrapperPlayServerEntityHeadRotation extends IBaseWrapper{
+public interface BaseWrapperPlayServerAnimation extends IBaseWrapper{
+
   /**
    * Retrieve Entity ID.
    * <p>
@@ -41,19 +42,19 @@ public interface BaseWrapperPlayServerEntityHeadRotation extends IBaseWrapper{
   Entity getEntity(PacketEvent event);
 
   /**
-   * Retrieve Head Yaw.
+   * Retrieve Animation.
    * <p>
-   * Notes: head yaw in steps of 2p/256
+   * Notes: animation ID
    *
-   * @return The current Head Yaw
+   * @return The current Animation
    */
-  byte getHeadYaw();
+  int getAnimation();
 
   /**
-   * Set Head Yaw.
+   * Set Animation.
    *
    * @param value - new value.
    */
-  void setHeadYaw(byte value);
+  void setAnimation(int value);
 
 }

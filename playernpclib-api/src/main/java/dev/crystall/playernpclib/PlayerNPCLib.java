@@ -3,12 +3,13 @@ package dev.crystall.playernpclib;
 import static org.bukkit.Bukkit.getServer;
 
 import dev.crystall.playernpclib.api.utility.Utils;
+import dev.crystall.playernpclib.api.wrapper.MinecraftVersions;
+import dev.crystall.playernpclib.api.wrapper.WrapperFactory;
 import dev.crystall.playernpclib.manager.EntityHidePolicy;
 import dev.crystall.playernpclib.manager.EntityHider;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.EventManager;
-import dev.crystall.playernpclib.wrapper.MinecraftVersions;
-import dev.crystall.playernpclib.wrapper.WrapperFactory;
+import dev.crystall.playernpclib.manager.PacketManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,14 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 @Slf4j
-@Getter
 public class PlayerNPCLib {
 
   @Getter
   @Setter
   private static PlayerNPCLib instance;
+
+  @Getter
+  private static MinecraftVersions detectedNMSVersion;
 
   /**
    * The plugin that uses this library
@@ -35,7 +38,7 @@ public class PlayerNPCLib {
   private static JavaPlugin plugin;
 
   /**
-   * Manages all custom player npcs (static and non static ones)
+   * Manages all custom player npcs (static and non-static ones)
    */
   @Getter
   private static EntityManager entityManager;
@@ -95,15 +98,14 @@ public class PlayerNPCLib {
   }
 
   private void checkServerVersion(String versionName) {
-    MinecraftVersions serverVersion;
     try {
-      serverVersion = MinecraftVersions.valueOf(versionName);
+      detectedNMSVersion = MinecraftVersions.valueOf(versionName);
     } catch (IllegalArgumentException ignored) {
       logUnsupportedServerVersion(versionName);
       return;
     }
 
-    if (!WrapperFactory.init(serverVersion)) {
+    if (!WrapperFactory.init()) {
       logUnsupportedServerVersion(versionName);
       return;
     }

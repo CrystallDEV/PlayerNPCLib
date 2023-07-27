@@ -1,4 +1,4 @@
-package dev.crystall.playernpclib.wrapper;
+package dev.crystall.playernpclib.api.wrapper;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import java.util.List;

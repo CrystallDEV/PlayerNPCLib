@@ -1,4 +1,4 @@
-package dev.crystall;
+package dev.crystall.playernpclib.tester;
 
 import static org.bukkit.Bukkit.getPluginManager;
 

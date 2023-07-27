@@ -2,8 +2,8 @@ package dev.crystall.playernpclib.nms_v1_19_R1.wrappers;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import dev.crystall.playernpclib.wrapper.AbstractPacket;
-import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityDestroy;
+import dev.crystall.playernpclib.api.wrapper.AbstractPacket;
+import dev.crystall.playernpclib.api.wrapper.BaseWrapperPlayServerEntityDestroy;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 public class WrapperPlayServerEntityDestroy extends AbstractPacket implements BaseWrapperPlayServerEntityDestroy {

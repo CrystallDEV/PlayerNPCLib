@@ -1,13 +1,15 @@
-package dev.crystall.playernpclib.wrapper;
+package dev.crystall.playernpclib.api.wrapper;
 
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import java.util.List;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 
 /**
  * Created by CrystallDEV on 18/08/2021
  */
-public interface BaseWrapperPlayServerAnimation extends IBaseWrapper{
+public interface BaseWrapperPlayServerEntityMetadata extends IBaseWrapper{
 
   /**
    * Retrieve Entity ID.
@@ -42,19 +44,17 @@ public interface BaseWrapperPlayServerAnimation extends IBaseWrapper{
   Entity getEntity(PacketEvent event);
 
   /**
-   * Retrieve Animation.
-   * <p>
-   * Notes: animation ID
+   * Retrieve Metadata.
    *
-   * @return The current Animation
+   * @return The current Metadata
    */
-  int getAnimation();
+  List<WrappedWatchableObject> getMetadata();
 
   /**
-   * Set Animation.
+   * Set Metadata.
    *
    * @param value - new value.
    */
-  void setAnimation(int value);
+  void setMetadata(List<WrappedWatchableObject> value);
 
 }
