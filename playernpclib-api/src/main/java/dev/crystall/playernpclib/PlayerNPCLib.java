@@ -69,12 +69,6 @@ public class PlayerNPCLib {
     String versionName = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
     checkServerVersion(versionName);
 
-    if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-      log.error("*** HolographicDisplays is not installed or not enabled. ***");
-      log.error("*** This plugin will be disabled. ***");
-      getServer().getPluginManager().disablePlugin(plugin);
-      return;
-    }
     createManager();
     // Create the scoreboard for the npcs to be in
     createNPCScoreboards();

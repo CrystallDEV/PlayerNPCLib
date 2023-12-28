@@ -19,16 +19,17 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
-import me.filoghost.holographicdisplays.api.HolographicDisplaysAPI;
-import me.filoghost.holographicdisplays.api.hologram.Hologram;
-import me.filoghost.holographicdisplays.api.hologram.VisibilitySettings.Visibility;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@SuppressWarnings("UnstableApiUsage")
 @Getter
 public abstract class BasePlayerNPC {
 
@@ -38,7 +39,7 @@ public abstract class BasePlayerNPC {
   private final UUID uuid = UUID.randomUUID();
   private boolean isSpawned = false;
   private final Map<ItemSlot, ItemStack> itemSlots = new EnumMap<>(ItemSlot.class);
-  private final Hologram hologram;
+  private final TextDisplay display;
 
   /**
    * The id the entity will be registered with at the player client. This should not collide with any existing entity at the server
@@ -55,15 +56,15 @@ public abstract class BasePlayerNPC {
 
   protected BasePlayerNPC(String displayName, Location location, boolean visibilityRestricted) {
     this(displayName, location);
-    this.visibilityRestricted = visibilityRestricted;
+    updateDefaultVisibility(visibilityRestricted);
   }
+
 
   protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
     this.eyeLocation = location;
     this.entityId = EntityManager.ENTITY_ID_COUNTER.getAndDecrement();
-    this.hologram = HolographicDisplaysAPI.get(PlayerNPCLib.getPlugin()).createHologram(this.location.clone().add(0, 2.25, 0));
-    this.hologram.getVisibilitySettings().setGlobalVisibility(Visibility.HIDDEN);
+    this.display = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
     this.internalName = uuid.toString().substring(0, 16);
     setDisplayName(displayName);
   }
@@ -78,7 +79,7 @@ public abstract class BasePlayerNPC {
   }
 
   public void spawn(List<Player> showTo) {
-    this.hologram.getVisibilitySettings().clearIndividualVisibilities();
+    this.display.setVisibleByDefault(true);
 
     for (Player player : showTo) {
       show(player);
@@ -92,8 +93,8 @@ public abstract class BasePlayerNPC {
     }
     isSpawned = false;
 
-    if (this.hologram != null) {
-      this.hologram.delete();
+    if (this.display != null) {
+      this.display.remove();
     }
 
     for (Player player : getVisibleTo()) {
@@ -123,8 +124,8 @@ public abstract class BasePlayerNPC {
     PlayerNPCLib.getPacketManager().sendNPCCreatePackets(player, this);
     PlayerNPCLib.getPacketManager().sendEquipmentPackets(player, this);
     PlayerNPCLib.getPacketManager().sendScoreBoardTeamPacket(player, this);
-    if (hologram != null) {
-      hologram.getVisibilitySettings().setIndividualVisibility(player, Visibility.VISIBLE);
+    if (display != null) {
+      player.showEntity(PlayerNPCLib.getPlugin(), display);
       updateDisplayName();
     }
   }
@@ -136,8 +137,8 @@ public abstract class BasePlayerNPC {
     shownTo.remove(player.getUniqueId());
     PlayerNPCLib.getPacketManager().sendHidePackets(player, this);
     PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
-    if (hologram != null) {
-      hologram.getVisibilitySettings().setIndividualVisibility(player, Visibility.HIDDEN);
+    if (display != null) {
+      player.hideEntity(PlayerNPCLib.getPlugin(), display);
     }
   }
 
@@ -152,22 +153,33 @@ public abstract class BasePlayerNPC {
   }
 
   private void updateDisplayName() {
-    if (hologram != null && !hologram.isDeleted()) {
-      hologram.getLines().clear();
-      if (displayName != null && !displayName.isEmpty()) {
-        hologram.getLines().insertText(0, displayName);
-      }
-      for (int i = 1; i <= subNames.size(); i++) {
-        hologram.getLines().insertText(i, subNames.get(i - 1));
-      }
-      updateHologram();
+    if (display == null || display.isDead()) {
+      return;
+    }
+    var textComponent = Component.text();
+    if (displayName != null && !displayName.isEmpty()) {
+      textComponent.content(displayName);
+    }
+    for (int i = 1; i <= subNames.size(); i++) {
+      var subNameComponent = Component.text(subNames.get(i - 1));
+      textComponent.appendNewline();
+      textComponent.append(subNameComponent);
+    }
+    display.text(textComponent.build());
+    updateHologram();
+  }
+
+  private void updateDefaultVisibility(boolean visibilityRestricted) {
+    this.visibilityRestricted = visibilityRestricted;
+    if (!visibilityRestricted) {
+      this.shownTo.clear();
     }
   }
 
   public void updateHologram() {
-    if (hologram != null && !hologram.isDeleted()) {
+    if (display != null && !display.isDead()) {
       var variableHeight = subNames.size() * 0.25F;
-      hologram.setPosition(this.location.clone().add(0, variableHeight + 2.25F, 0));
+      display.teleport(this.location.clone().add(0, variableHeight + 2.25F, 0));
     }
   }
 
@@ -179,7 +191,7 @@ public abstract class BasePlayerNPC {
   public void playAnimation(int animationId) {
     if (!isSpawned) {
       PlayerNPCLib.getPlugin().getLogger()
-        .warning(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
+          .warning(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
       return;
     }
     for (Player player : getVisibleTo()) {
@@ -247,12 +259,14 @@ public abstract class BasePlayerNPC {
     if (!visibilityRestricted) {
       this.shownTo.clear();
     }
-    hologram.getVisibilitySettings().clearIndividualVisibilities();
-    hologram.getVisibilitySettings().setGlobalVisibility(visibilityRestricted ? Visibility.HIDDEN : Visibility.VISIBLE);
+
+    for (Player player : getVisibleTo()) {
+      player.showEntity(PlayerNPCLib.getPlugin(), display);
+    }
   }
 
   /**
-   * Collects all nearby players that the npc is visible to. If the npc is visibility restricted, then the set is filtered by shownTo Set.
+   * Collects all nearby players that the npc is currently visible to. If the npc is visibility restricted, then the set is filtered by shownTo Set.
    *
    * @return visibleToSet
    */

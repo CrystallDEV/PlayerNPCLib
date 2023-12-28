@@ -32,7 +32,7 @@ Add PlayerNPCLib as a dependency
   <dependency>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib-api</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
@@ -44,7 +44,7 @@ Add the correct nms version as a dependency
   <dependency>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib-nms-v1_20_R1</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
