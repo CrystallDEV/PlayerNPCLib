@@ -66,7 +66,7 @@ public class PlayerNPCLib {
     setInstance(this);
     setPlugin(plugin);
 
-    String versionName = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
+    String versionName = Bukkit.getServer().getMinecraftVersion();
     checkServerVersion(versionName);
 
     createManager();
@@ -99,7 +99,7 @@ public class PlayerNPCLib {
 
   private void checkServerVersion(String versionName) {
     try {
-      detectedNMSVersion = MinecraftVersions.valueOf(versionName);
+      detectedNMSVersion = MinecraftVersions.parse(versionName);
     } catch (IllegalArgumentException ignored) {
       logUnsupportedServerVersion(versionName);
       return;
