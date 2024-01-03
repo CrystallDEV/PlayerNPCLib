@@ -19,8 +19,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TextDisplay;
@@ -30,6 +32,7 @@ import org.bukkit.inventory.ItemStack;
  * Created by CrystallDEV on 01/09/2020
  */
 @SuppressWarnings("UnstableApiUsage")
+@Slf4j
 @Getter
 public abstract class BasePlayerNPC {
 
@@ -59,12 +62,11 @@ public abstract class BasePlayerNPC {
     updateDefaultVisibility(visibilityRestricted);
   }
 
-
   protected BasePlayerNPC(String displayName, Location location) {
     this.location = location;
     this.eyeLocation = location;
     this.entityId = EntityManager.ENTITY_ID_COUNTER.getAndDecrement();
-    this.display = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
+    this.display = spawnTextDisplay();
     this.internalName = uuid.toString().substring(0, 16);
     setDisplayName(displayName);
   }
@@ -178,8 +180,10 @@ public abstract class BasePlayerNPC {
 
   public void updateHologram() {
     if (display != null && !display.isDead()) {
-      var variableHeight = subNames.size() * 0.25F;
-      display.teleport(this.location.clone().add(0, variableHeight + 2.25F, 0));
+      var x = location.getX();
+      var y = location.getY() + 2.25F;
+      var z = location.getZ();
+      display.teleport(new Location(location.getWorld(), x, y, z));
     }
   }
 
@@ -190,13 +194,19 @@ public abstract class BasePlayerNPC {
    */
   public void playAnimation(int animationId) {
     if (!isSpawned) {
-      PlayerNPCLib.getPlugin().getLogger()
-          .warning(String.format("Unable to play animation for npc: %s-%s! NPC not spawned", this.getDisplayName(), this.getUuid()));
+      log.warn("Unable to play animation for npc: {}-{}! NPC not spawned", this.getDisplayName(), this.getUuid());
       return;
     }
     for (Player player : getVisibleTo()) {
       PlayerNPCLib.getPacketManager().sendAnimationPacket(player, this, animationId);
     }
+  }
+
+  private TextDisplay spawnTextDisplay() {
+    var textDisplay = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
+    textDisplay.setBillboard(Billboard.VERTICAL);
+    textDisplay.setShadowed(false);
+    return textDisplay;
   }
 
   public WrappedGameProfile getGameProfile() {

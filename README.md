@@ -103,7 +103,6 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     this.bukkitLivingEntity = (Creature)this.getLocation().getWorld().spawnEntity(this.getLocation(), this.entityType);
     if (this.bukkitLivingEntity instanceof Ageable) {
       ((Ageable)this.bukkitLivingEntity).setAdult();
-      ((Ageable)this.bukkitLivingEntity).setAdult();
     }
 
     if (this.bukkitLivingEntity instanceof Zombie) {

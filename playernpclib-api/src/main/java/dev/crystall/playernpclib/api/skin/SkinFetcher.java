@@ -9,11 +9,13 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@Slf4j
 public class SkinFetcher {
 
   private static final String MINESKIN_API = "https://api.mineskin.org/get/id/";
@@ -65,7 +67,7 @@ public class SkinFetcher {
       cachedSkins.put(id, skin);
       return skin;
     } catch (IOException exception) {
-      Bukkit.getLogger().severe("Could not fetch skin! (Id: " + id + "). Message: " + exception.getMessage());
+      log.error("Could not fetch skin! (Id: {}). Message: {}", id, exception.getMessage());
       return null;
     }
   }

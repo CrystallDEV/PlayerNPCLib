@@ -106,7 +106,9 @@ public class EntityManager {
   }
 
   /**
-   * @param player
+   * Handles the movement of a real player.
+   *
+   * @param player The player whose movement is being handled.
    */
   public void handleRealPlayerMove(Player player) {
     for (BasePlayerNPC npc : getPlayerNPCList()) {
@@ -125,6 +127,12 @@ public class EntityManager {
     }
   }
 
+
+  /**
+   * Handles the movement of an NPC.
+   *
+   * @param npc the movable player NPC to be handled
+   */
   public void handleNPCMoving(MovablePlayerNPC npc) {
     npc.setLocation(npc.getBukkitLivingEntity().getLocation(), false);
     npc.setEyeLocation(npc.getBukkitLivingEntity().getEyeLocation(), false);

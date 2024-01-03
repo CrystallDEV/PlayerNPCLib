@@ -10,7 +10,7 @@ import dev.crystall.playernpclib.api.base.StaticPlayerNPC;
 import dev.crystall.playernpclib.api.event.ClickType;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
 import dev.crystall.playernpclib.api.skin.SkinFetcher;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -50,6 +50,10 @@ public class NPCTester extends JavaPlugin implements Listener {
 
   @EventHandler(priority = EventPriority.HIGHEST)
   public void onRightClick(PlayerInteractEvent event) {
+    if (event.getItem() == null || event.getItem().getType() != Material.STICK) {
+      return;
+    }
+
     BasePlayerNPC npc = null;
     if (event.getAction().toString().startsWith("RIGHT")) {
       npc = new StaticPlayerNPC("P" + System.currentTimeMillis(), event.getPlayer().getLocation());
@@ -64,27 +68,23 @@ public class NPCTester extends JavaPlugin implements Listener {
     }
 
     setDefaultValues(npc);
-    if(event.getPlayer().isSneaking()){
+    if (event.getPlayer().isSneaking()) {
       PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
       npc.show(event.getPlayer());
-    }else {
+    } else {
       PlayerNPCLib.getEntityManager().spawnEntity(npc, true);
     }
   }
 
   private void setDefaultValues(BasePlayerNPC npc) {
-    npc.setSubNames(List.of(
-      String.valueOf(npc.getEntityId()),
-      "Another sub name - 0",
-      "Another sub name - 1",
-      "Another sub name - 2",
-      "Another sub name - 3"
-    ));
+    var subNames = new ArrayList<String>();
+    for (int i = 0; i < Math.random() * 10; i++) {
+      subNames.add("Sub name " + i);
+    }
+    npc.setSubNames(subNames);
     SkinFetcher.asyncFetchSkin(random.nextInt(5000), playerSkin -> {
       // Set the skin in a synced call
-      Bukkit.getScheduler().runTask(this, () -> {
-        npc.setPlayerSkin(playerSkin);
-      });
+      Bukkit.getScheduler().runTask(this, () -> npc.setPlayerSkin(playerSkin));
     });
     npc.setItem(ItemSlot.HEAD, new ItemStack(Material.DIAMOND_HELMET));
     npc.setItem(ItemSlot.CHEST, new ItemStack(Material.DIAMOND_CHESTPLATE));

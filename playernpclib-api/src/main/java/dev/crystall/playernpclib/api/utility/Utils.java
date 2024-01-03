@@ -1,12 +1,12 @@
 package dev.crystall.playernpclib.api.utility;
 
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
-import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.base.BasePlayerNPC;
 import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.manager.EntityManager;
 import java.util.Arrays;
 import java.util.IllegalFormatException;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EquipmentSlot;
@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@Slf4j
 public class Utils {
 
   private Utils() {
@@ -35,11 +36,17 @@ public class Utils {
     try {
       throw new RuntimeException(error + " - " + Arrays.toString(args));
     } catch (IllegalFormatException e) { // In-case there was an error formatting the error message, still throw the exception.
-      PlayerNPCLib.getPlugin().getLogger().severe("[Utils#verify] Can't format message");
-      PlayerNPCLib.getPlugin().getLogger().severe(e.getMessage());
+      log.error("[Utils#verify] Can't format message");
+      log.error(e.getMessage());
     }
   }
 
+  /**
+   * Gets the {@link EquipmentSlot} for a given {@link ItemSlot}.
+   *
+   * @param itemSlot the item slot that should be checked
+   * @return the {@link EquipmentSlot} for the given {@link ItemSlot}
+   */
   public static EquipmentSlot getEquipmentSlotFor(ItemSlot itemSlot) {
     return switch (itemSlot) {
       case MAINHAND -> EquipmentSlot.HAND;
@@ -51,6 +58,12 @@ public class Utils {
     };
   }
 
+  /**
+   * Gets the {@link BasePlayerNPC} from a given {@link Entity}.
+   *
+   * @param entity the entity that should be checked
+   * @return the {@link BasePlayerNPC} if the entity is a {@link BasePlayerNPC}, otherwise null
+   */
   public static BasePlayerNPC getNPCFromEntity(Entity entity) {
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
       if (npc instanceof MovablePlayerNPC movablePlayerNPC) {
@@ -68,7 +81,7 @@ public class Utils {
    *
    * @param loc the original location that should be changed
    * @param lookAt the location that the original location {@param lookAt} should be facing
-   * @return
+   * @return the new location that is facing the location {@param lookAt}
    */
   public static Location lookAt(Location loc, Location lookAt) {
     Location directionLocation = loc.clone();
