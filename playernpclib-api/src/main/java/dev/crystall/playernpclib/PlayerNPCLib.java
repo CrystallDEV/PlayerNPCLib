@@ -78,6 +78,9 @@ public class PlayerNPCLib {
 
   public void onDisable() {
     log.info("Disabling PlayerNPCLib....");
+    if (entityManager != null) {
+      entityManager.removeAll();
+    }
   }
 
   private void createNPCScoreboards() {

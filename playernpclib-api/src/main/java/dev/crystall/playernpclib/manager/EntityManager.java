@@ -15,6 +15,7 @@ import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.event.ClickType;
 import dev.crystall.playernpclib.api.event.NPCHideEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
+import dev.crystall.playernpclib.api.event.NPCRemoveEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,6 +37,7 @@ import org.bukkit.util.Vector;
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@Slf4j
 public class EntityManager {
 
   public static final AtomicInteger ENTITY_ID_COUNTER = new AtomicInteger(Integer.MAX_VALUE);
@@ -66,6 +69,14 @@ public class EntityManager {
     }, 0L, 1L);
   }
 
+  public void removeAll() {
+    log.info("Removing all NPCs ({} NPCs)", playerNPCList.size());
+    for (BasePlayerNPC npc : playerNPCList) {
+      npc.remove();
+    }
+    playerNPCList.clear();
+  }
+
   /**
    * @param npc The npc to spawn
    */
@@ -85,10 +96,13 @@ public class EntityManager {
     if (!playerNPCList.contains(npc)) {
       return false;
     }
+    if (new NPCRemoveEvent(npc).callEvent()) {
+      npc.remove();
+      playerNPCList.remove(npc);
+      return true;
+    }
 
-    npc.remove();
-    playerNPCList.remove(npc);
-    return true;
+    return false;
   }
 
   /**
