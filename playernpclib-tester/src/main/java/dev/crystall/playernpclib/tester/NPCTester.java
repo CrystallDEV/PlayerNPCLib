@@ -49,7 +49,7 @@ public class NPCTester extends JavaPlugin implements Listener {
   }
 
   @EventHandler(priority = EventPriority.HIGHEST)
-  public void onRightClick(PlayerInteractEvent event) {
+  public void onInteract(PlayerInteractEvent event) {
     if (event.getItem() == null || event.getItem().getType() != Material.STICK) {
       return;
     }
@@ -100,4 +100,5 @@ public class NPCTester extends JavaPlugin implements Listener {
       PlayerNPCLib.getEntityManager().removeEntity(event.getNpc());
     }
   }
+
 }

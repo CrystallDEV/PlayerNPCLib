@@ -18,6 +18,7 @@ import org.bukkit.inventory.EquipmentSlot;
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@Slf4j
 @Getter
 public class MovablePlayerNPC extends BasePlayerNPC {
 
@@ -40,6 +41,10 @@ public class MovablePlayerNPC extends BasePlayerNPC {
 
   @Override
   public void spawn() {
+    if (getLocation().getWorld().getDifficulty().equals(org.bukkit.Difficulty.PEACEFUL) && entityType.getEntityClass() == Creature.class) {
+      log.warn("Tried spawning a movable entity with creature entity type in peaceful mode.");
+      return;
+    }
     this.bukkitLivingEntity = (Creature) getLocation().getWorld().spawnEntity(getLocation(), entityType);
     if (this.bukkitLivingEntity instanceof Ageable ageable) {
       ageable.setAdult();
