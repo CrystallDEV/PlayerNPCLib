@@ -115,3 +115,12 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   }
 }
 ```
+
+
+## Visibility Management
+
+The visibility of an entity is handled its settings. If an entity is visible by default, each nearby player receives on certain conditions the packets to display the entity.
+
+If an entity is not visible by default, each nearby player receives on certain conditions the packets to hide the entity.
+
+A npc can be shown to a player by adding it to the visibleTo list of the npc.

@@ -6,7 +6,7 @@ import dev.crystall.playernpclib.PlayerNPCLib;
 import dev.crystall.playernpclib.api.utility.Utils;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Location;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Creature;
@@ -16,6 +16,11 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.EquipmentSlot;
 
 /**
+ * Spawns a movable npc, which moves around and can be attacked by players. This npc will be spawned as a creature and will be invisible to all players by
+ * default
+ * <p>
+ * It spawns a bukkit entity to make it move around and attack players to prevent recalculation of the pathfinding and to guarantee vanilla like behaviour
+ * <p>
  * Created by CrystallDEV on 01/09/2020
  */
 @Slf4j
@@ -64,19 +69,14 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   @Override
   public void remove() {
     super.remove();
-    Bukkit.getScheduler().runTask(PlayerNPCLib.getPlugin(), () -> {
-      if (this.bukkitLivingEntity != null) {
-        this.bukkitLivingEntity.remove();
-      }
-    });
+    if (this.bukkitLivingEntity != null && !this.bukkitLivingEntity.isDead()) {
+      this.bukkitLivingEntity.remove();
+    }
   }
 
   @Override
-  public void show(Player player) {
-    super.show(player);
-    if (this.bukkitLivingEntity != null) {
-      PlayerNPCLib.getEntityHider().hideEntity(player, this.bukkitLivingEntity);
-    }
+  public void update(Player player) {
+    super.update(player);
   }
 
   public void updateInventory() {

@@ -55,7 +55,14 @@ public abstract class BasePlayerNPC {
   protected boolean lookAtClosestPlayer = true;
 
   protected boolean visibilityRestricted = false;
+  /**
+   * The set of players that this npc is currently shown to.
+   */
   protected Set<UUID> shownTo = new HashSet<>();
+  /**
+   * The set of players that are currently able to see the npc. This set is only used if the npc is visibility restricted.
+   */
+  protected Set<UUID> visibleTo = new HashSet<>();
 
   protected BasePlayerNPC(String displayName, Location location, boolean visibilityRestricted) {
     this(displayName, location);
@@ -99,7 +106,7 @@ public abstract class BasePlayerNPC {
       this.display.remove();
     }
 
-    for (Player player : getVisibleTo()) {
+    for (Player player : getNearbyVisibleTo()) {
       PlayerNPCLib.getPacketManager().sendDeathMetaData(player, this);
       hide(player);
     }
@@ -111,37 +118,29 @@ public abstract class BasePlayerNPC {
   }
 
   public void show(Player player) {
+    visibleTo.add(player.getUniqueId());
     if (shownTo.contains(player.getUniqueId())) {
       return;
     }
-    init(player);
-  }
-
-  public void init(Player player) {
-    if (shownTo.contains(player.getUniqueId())) {
-      return;
-    }
-    shownTo.add(player.getUniqueId());
-    PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), true);
     PlayerNPCLib.getPacketManager().sendNPCCreatePackets(player, this);
     PlayerNPCLib.getPacketManager().sendEquipmentPackets(player, this);
     PlayerNPCLib.getPacketManager().sendScoreBoardTeamPacket(player, this);
     if (display != null) {
       player.showEntity(PlayerNPCLib.getPlugin(), display);
-      updateDisplayName();
     }
+    shownTo.add(player.getUniqueId());
   }
 
   public void hide(Player player) {
+    visibleTo.remove(player.getUniqueId());
     if (!shownTo.contains(player.getUniqueId())) {
       return;
     }
-    shownTo.remove(player.getUniqueId());
     PlayerNPCLib.getPacketManager().sendHidePackets(player, this);
-    PlayerNPCLib.getEntityHider().setVisibility(player, getEntityId(), false);
     if (display != null) {
       player.hideEntity(PlayerNPCLib.getPlugin(), display);
     }
+    shownTo.remove(player.getUniqueId());
   }
 
   public void setDisplayName(String displayName) {
@@ -168,17 +167,24 @@ public abstract class BasePlayerNPC {
       textComponent.append(subNameComponent);
     }
     display.text(textComponent.build());
-    updateHologram();
+    updateTextDisplay();
   }
 
   private void updateDefaultVisibility(boolean visibilityRestricted) {
     this.visibilityRestricted = visibilityRestricted;
     if (!visibilityRestricted) {
-      this.shownTo.clear();
+      this.visibleTo.clear();
     }
   }
 
-  public void updateHologram() {
+  private TextDisplay spawnTextDisplay() {
+    TextDisplay textDisplay = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
+    textDisplay.setBillboard(Billboard.VERTICAL);
+    textDisplay.setShadowed(false);
+    return textDisplay;
+  }
+
+  public void updateTextDisplay() {
     if (display != null && !display.isDead()) {
       var x = location.getX();
       var y = location.getY() + 2.25F;
@@ -197,16 +203,9 @@ public abstract class BasePlayerNPC {
       log.warn("Unable to play animation for npc: {}-{}! NPC not spawned", this.getDisplayName(), this.getUuid());
       return;
     }
-    for (Player player : getVisibleTo()) {
+    for (Player player : getNearbyVisibleTo()) {
       PlayerNPCLib.getPacketManager().sendAnimationPacket(player, this, animationId);
     }
-  }
-
-  private TextDisplay spawnTextDisplay() {
-    var textDisplay = (TextDisplay) location.getWorld().spawnEntity(location, EntityType.TEXT_DISPLAY);
-    textDisplay.setBillboard(Billboard.VERTICAL);
-    textDisplay.setShadowed(false);
-    return textDisplay;
   }
 
   public WrappedGameProfile getGameProfile() {
@@ -230,7 +229,7 @@ public abstract class BasePlayerNPC {
 
     itemSlots.put(slot, itemStack);
     if (isSpawned) {
-      for (Player player : getVisibleTo()) {
+      for (Player player : getNearbyVisibleTo()) {
         PlayerNPCLib.getPacketManager().sendEquipmentPackets(player, this);
       }
     }
@@ -239,7 +238,7 @@ public abstract class BasePlayerNPC {
   public void setPlayerSkin(PlayerSkin playerSkin) {
     this.playerSkin = playerSkin;
     if (isSpawned) {
-      for (Player player : getVisibleTo()) {
+      for (Player player : getNearbyVisibleTo()) {
         this.update(player);
       }
     }
@@ -247,9 +246,9 @@ public abstract class BasePlayerNPC {
 
   public void setLocation(Location location, boolean update) {
     this.location = location;
-    updateHologram();
+    updateTextDisplay();
     if (update) {
-      for (Player player : getVisibleTo()) {
+      for (Player player : getNearbyVisibleTo()) {
         PlayerNPCLib.getPacketManager().sendMovePacket(player, this);
       }
     }
@@ -258,7 +257,7 @@ public abstract class BasePlayerNPC {
   public void setEyeLocation(Location location, boolean update) {
     this.eyeLocation = location;
     if (update) {
-      for (Player player : getVisibleTo()) {
+      for (Player player : getNearbyVisibleTo()) {
         PlayerNPCLib.getPacketManager().sendMovePacket(player, this);
       }
     }
@@ -266,11 +265,13 @@ public abstract class BasePlayerNPC {
 
   public void setVisibilityRestricted(boolean visibilityRestricted) {
     this.visibilityRestricted = visibilityRestricted;
+    this.display.setVisibleByDefault(!visibilityRestricted);
+
     if (!visibilityRestricted) {
-      this.shownTo.clear();
+      this.visibleTo.clear();
     }
 
-    for (Player player : getVisibleTo()) {
+    for (Player player : getNearbyVisibleTo()) {
       player.showEntity(PlayerNPCLib.getPlugin(), display);
     }
   }
@@ -280,10 +281,10 @@ public abstract class BasePlayerNPC {
    *
    * @return visibleToSet
    */
-  protected Set<Player> getVisibleTo() {
+  protected Set<Player> getNearbyVisibleTo() {
     var stream = location.getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE).stream();
     if (visibilityRestricted) {
-      stream = stream.filter(p -> getShownTo().contains(p.getUniqueId()));
+      stream = stream.filter(p -> getVisibleTo().contains(p.getUniqueId()));
     }
     return stream.collect(Collectors.toSet());
   }

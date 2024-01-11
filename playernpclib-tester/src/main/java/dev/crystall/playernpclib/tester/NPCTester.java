@@ -70,7 +70,6 @@ public class NPCTester extends JavaPlugin implements Listener {
     setDefaultValues(npc);
     if (event.getPlayer().isSneaking()) {
       PlayerNPCLib.getEntityManager().spawnEntity(npc, false);
-      npc.show(event.getPlayer());
     } else {
       PlayerNPCLib.getEntityManager().spawnEntity(npc, true);
     }

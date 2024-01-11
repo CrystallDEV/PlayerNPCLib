@@ -80,9 +80,9 @@ public class EntityManager {
   /**
    * @param npc The npc to spawn
    */
-  public void spawnEntity(BasePlayerNPC npc, boolean showByDefault) {
+  public void spawnEntity(BasePlayerNPC npc, boolean visibilityRestricted) {
     if (new NPCSpawnEvent(npc).callEvent()) {
-      npc.setVisibilityRestricted(!showByDefault);
+      npc.setVisibilityRestricted(visibilityRestricted);
       npc.spawn();
       playerNPCList.add(npc);
     }
@@ -112,8 +112,8 @@ public class EntityManager {
    */
   public void handleRealPlayerMove(Player player) {
     for (BasePlayerNPC npc : getPlayerNPCList()) {
-      var seeing = !npc.isVisibilityRestricted() || canSee(player, npc);
-      var isShownTo = npc.getShownTo().contains(player.getUniqueId());
+      var seeing = !npc.isVisibilityRestricted() || isVisibleTo(player, npc);
+      var isShownTo = npc.getVisibleTo().contains(player.getUniqueId());
       if (seeing && inRangeOf(player, npc) && inViewOf(player, npc)) {
         if (isShownTo) {
           return;
@@ -136,7 +136,7 @@ public class EntityManager {
   public void handleNPCMoving(MovablePlayerNPC npc) {
     npc.setLocation(npc.getBukkitLivingEntity().getLocation(), false);
     npc.setEyeLocation(npc.getBukkitLivingEntity().getEyeLocation(), false);
-    npc.updateHologram();
+    npc.updateTextDisplay();
     for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
       PlayerNPCLib.getPacketManager().sendMovePacket(player, npc);
     }
@@ -151,7 +151,7 @@ public class EntityManager {
     Player closestPlayer = null;
     double shortestDistance = Double.MAX_VALUE;
     for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_LOOK_AT_RADIUS)) {
-      if (!canSee(player, npc)) {
+      if (!isVisibleTo(player, npc)) {
         continue;
       }
       double distance = player.getLocation().distance(npc.getLocation());
@@ -240,18 +240,18 @@ public class EntityManager {
     npc.hide(player);
   }
 
-  public boolean canSee(Player player, BasePlayerNPC npc) {
-    return npc.getShownTo().contains(player.getUniqueId());
+  public boolean isVisibleTo(Player player, BasePlayerNPC npc) {
+    return isVisibleTo(player, npc.getEntityId());
   }
 
-  public boolean canSee(Player player, int entityId) {
+  public boolean isVisibleTo(Player player, int entityId) {
     BasePlayerNPC npc = playerNPCList.stream().filter(basePlayerNPC -> basePlayerNPC.getEntityId() == entityId).findFirst().orElse(null);
     if (npc == null) {
       return false;
     }
 
     if (npc.isVisibilityRestricted()) {
-      return npc.getShownTo().contains(player.getUniqueId());
+      return npc.getVisibleTo().contains(player.getUniqueId());
     }
 
     return true;

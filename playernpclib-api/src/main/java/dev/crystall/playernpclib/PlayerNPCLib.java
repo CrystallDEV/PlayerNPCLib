@@ -2,11 +2,11 @@ package dev.crystall.playernpclib;
 
 import static org.bukkit.Bukkit.getServer;
 
+import dev.crystall.playernpclib.api.base.BasePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.utility.Utils;
 import dev.crystall.playernpclib.api.wrapper.MinecraftVersions;
 import dev.crystall.playernpclib.api.wrapper.WrapperFactory;
-import dev.crystall.playernpclib.manager.EntityHidePolicy;
-import dev.crystall.playernpclib.manager.EntityHider;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.EventManager;
 import dev.crystall.playernpclib.manager.PacketManager;
@@ -48,12 +48,6 @@ public class PlayerNPCLib {
    */
   @Getter
   private static EventManager eventManager;
-
-  /**
-   * Handles hiding and showing of entities
-   */
-  @Getter
-  private static EntityHider entityHider;
 
   /**
    * Manages all packets sent to the player
@@ -124,15 +118,39 @@ public class PlayerNPCLib {
     PlayerNPCLib.packetManager = WrapperFactory.createPacketManager();
     PlayerNPCLib.entityManager = new EntityManager();
     PlayerNPCLib.eventManager = new EventManager();
-    PlayerNPCLib.entityHider = new EntityHider(plugin, EntityHidePolicy.WHITELIST);
   }
 
+  /**
+   * Checks if the given entity is a player npc of this library
+   *
+   * @param e the entity to check
+   * @return true if the entity is a player npc, false otherwise
+   */
   public static boolean isNPC(Entity e) {
-    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> npc.getEntityId() == e.getEntityId());
+    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> checkEntity(npc, e.getEntityId()));
   }
 
+  /**
+   * Checks if the given entity id is a player npc of this library
+   *
+   * @param entityId the entity id to check
+   * @return true if the entity is a player npc, false otherwise
+   */
   public static boolean isNPC(int entityId) {
-    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> npc.getEntityId() == entityId);
+    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> checkEntity(npc, entityId));
   }
 
+  /**
+   * Checks if either the bukkit entity or the npc itself is the given entity
+   *
+   * @param npc the npc to check
+   * @param entityId the entity id to check
+   * @return true if the entity is a player npc, false otherwise
+   */
+  private static boolean checkEntity(BasePlayerNPC npc, int entityId) {
+    if (npc instanceof MovablePlayerNPC) {
+      return ((MovablePlayerNPC) npc).getBukkitLivingEntity().getEntityId() == entityId || npc.getEntityId() == entityId;
+    }
+    return npc.getEntityId() == entityId;
+  }
 }
