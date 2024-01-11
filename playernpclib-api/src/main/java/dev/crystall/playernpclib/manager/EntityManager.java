@@ -1,6 +1,6 @@
 package dev.crystall.playernpclib.manager;
 
-import static dev.crystall.playernpclib.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY;
+import static dev.crystall.playernpclib.api.wrapper.WrapperFactory.BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY;
 
 import com.comphenix.protocol.PacketType.Play.Client;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -15,11 +15,12 @@ import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.event.ClickType;
 import dev.crystall.playernpclib.api.event.NPCHideEvent;
 import dev.crystall.playernpclib.api.event.NPCInteractEvent;
+import dev.crystall.playernpclib.api.event.NPCRemoveEvent;
 import dev.crystall.playernpclib.api.event.NPCShowEvent;
 import dev.crystall.playernpclib.api.event.NPCSpawnEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
-import dev.crystall.playernpclib.wrapper.BaseWrapperPlayClientUseEntity;
-import dev.crystall.playernpclib.wrapper.WrapperGenerator;
+import dev.crystall.playernpclib.api.wrapper.BaseWrapperPlayClientUseEntity;
+import dev.crystall.playernpclib.api.wrapper.WrapperGenerator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,6 +37,7 @@ import org.bukkit.util.Vector;
 /**
  * Created by CrystallDEV on 01/09/2020
  */
+@Slf4j
 public class EntityManager {
 
   public static final AtomicInteger ENTITY_ID_COUNTER = new AtomicInteger(Integer.MAX_VALUE);
@@ -66,38 +69,51 @@ public class EntityManager {
     }, 0L, 1L);
   }
 
+  public void removeAll() {
+    log.info("Removing all NPCs ({} NPCs)", playerNPCList.size());
+    for (BasePlayerNPC npc : playerNPCList) {
+      npc.remove();
+    }
+    playerNPCList.clear();
+  }
+
   /**
-   * @param npc
+   * @param npc The npc to spawn
    */
-  public void spawnEntity(BasePlayerNPC npc, boolean showByDefault) {
+  public void spawnEntity(BasePlayerNPC npc, boolean visibilityRestricted) {
     if (new NPCSpawnEvent(npc).callEvent()) {
-      npc.setVisibilityRestricted(!showByDefault);
+      npc.setVisibilityRestricted(visibilityRestricted);
       npc.spawn();
       playerNPCList.add(npc);
     }
   }
 
   /**
-   * @param npc
-   * @return
+   * @param npc The npc to spawn
+   * @return true if the entity was removed, false otherwise
    */
   public boolean removeEntity(BasePlayerNPC npc) {
     if (!playerNPCList.contains(npc)) {
       return false;
     }
+    if (new NPCRemoveEvent(npc).callEvent()) {
+      npc.remove();
+      playerNPCList.remove(npc);
+      return true;
+    }
 
-    npc.remove();
-    playerNPCList.remove(npc);
-    return true;
+    return false;
   }
 
   /**
-   * @param player
+   * Handles the movement of a real player.
+   *
+   * @param player The player whose movement is being handled.
    */
   public void handleRealPlayerMove(Player player) {
     for (BasePlayerNPC npc : getPlayerNPCList()) {
-      var seeing = !npc.isVisibilityRestricted() || canSee(player, npc);
-      var isShownTo = npc.getShownTo().contains(player.getUniqueId());
+      var seeing = !npc.isVisibilityRestricted() || isVisibleTo(player, npc);
+      var isShownTo = npc.getVisibleTo().contains(player.getUniqueId());
       if (seeing && inRangeOf(player, npc) && inViewOf(player, npc)) {
         if (isShownTo) {
           return;
@@ -111,12 +127,18 @@ public class EntityManager {
     }
   }
 
+
+  /**
+   * Handles the movement of an NPC.
+   *
+   * @param npc the movable player NPC to be handled
+   */
   public void handleNPCMoving(MovablePlayerNPC npc) {
     npc.setLocation(npc.getBukkitLivingEntity().getLocation(), false);
     npc.setEyeLocation(npc.getBukkitLivingEntity().getEyeLocation(), false);
-    npc.updateHologram();
+    npc.updateTextDisplay();
     for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_VISIBILITY_RANGE)) {
-      PacketManager.sendMovePacket(player, npc);
+      PlayerNPCLib.getPacketManager().sendMovePacket(player, npc);
     }
   }
 
@@ -129,7 +151,7 @@ public class EntityManager {
     Player closestPlayer = null;
     double shortestDistance = Double.MAX_VALUE;
     for (Player player : npc.getLocation().getNearbyPlayers(Constants.NPC_LOOK_AT_RADIUS)) {
-      if (!canSee(player, npc)) {
+      if (!isVisibleTo(player, npc)) {
         continue;
       }
       double distance = player.getLocation().distance(npc.getLocation());
@@ -155,7 +177,7 @@ public class EntityManager {
     if (!packet.getType().equals(Client.USE_ENTITY)) {
       return;
     }
-    BaseWrapperPlayClientUseEntity packetWrapper = new WrapperGenerator<BaseWrapperPlayClientUseEntity>().map(
+    BaseWrapperPlayClientUseEntity packetWrapper = WrapperGenerator.map(
       BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY, packet);
 
     BasePlayerNPC npc = null;
@@ -218,18 +240,18 @@ public class EntityManager {
     npc.hide(player);
   }
 
-  public boolean canSee(Player player, BasePlayerNPC npc) {
-    return npc.getShownTo().contains(player.getUniqueId());
+  public boolean isVisibleTo(Player player, BasePlayerNPC npc) {
+    return isVisibleTo(player, npc.getEntityId());
   }
 
-  public boolean canSee(Player player, int entityId) {
+  public boolean isVisibleTo(Player player, int entityId) {
     BasePlayerNPC npc = playerNPCList.stream().filter(basePlayerNPC -> basePlayerNPC.getEntityId() == entityId).findFirst().orElse(null);
     if (npc == null) {
       return false;
     }
 
     if (npc.isVisibilityRestricted()) {
-      return npc.getShownTo().contains(player.getUniqueId());
+      return npc.getVisibleTo().contains(player.getUniqueId());
     }
 
     return true;

@@ -2,13 +2,14 @@ package dev.crystall.playernpclib;
 
 import static org.bukkit.Bukkit.getServer;
 
+import dev.crystall.playernpclib.api.base.BasePlayerNPC;
+import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.utility.Utils;
-import dev.crystall.playernpclib.manager.EntityHidePolicy;
-import dev.crystall.playernpclib.manager.EntityHider;
+import dev.crystall.playernpclib.api.wrapper.MinecraftVersions;
+import dev.crystall.playernpclib.api.wrapper.WrapperFactory;
 import dev.crystall.playernpclib.manager.EntityManager;
 import dev.crystall.playernpclib.manager.EventManager;
-import dev.crystall.playernpclib.wrapper.MinecraftVersions;
-import dev.crystall.playernpclib.wrapper.WrapperFactory;
+import dev.crystall.playernpclib.manager.PacketManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,14 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 @Slf4j
-@Getter
 public class PlayerNPCLib {
 
   @Getter
   @Setter
   private static PlayerNPCLib instance;
+
+  @Getter
+  private static MinecraftVersions detectedNMSVersion;
 
   /**
    * The plugin that uses this library
@@ -35,7 +38,7 @@ public class PlayerNPCLib {
   private static JavaPlugin plugin;
 
   /**
-   * Manages all custom player npcs (static and non static ones)
+   * Manages all custom player npcs (static and non-static ones)
    */
   @Getter
   private static EntityManager entityManager;
@@ -47,25 +50,19 @@ public class PlayerNPCLib {
   private static EventManager eventManager;
 
   /**
-   * Handles hiding and showing of entities
+   * Manages all packets sent to the player
    */
   @Getter
-  private static EntityHider entityHider;
+  private static PacketManager packetManager;
 
   public PlayerNPCLib(JavaPlugin plugin) {
     Utils.verify(instance == null, "Only one instance of " + getClass().getCanonicalName() + " is allowed");
     setInstance(this);
     setPlugin(plugin);
 
-    String versionName = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
+    String versionName = Bukkit.getServer().getMinecraftVersion();
     checkServerVersion(versionName);
 
-    if (!Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
-      log.error("*** HolographicDisplays is not installed or not enabled. ***");
-      log.error("*** This plugin will be disabled. ***");
-      getServer().getPluginManager().disablePlugin(plugin);
-      return;
-    }
     createManager();
     // Create the scoreboard for the npcs to be in
     createNPCScoreboards();
@@ -75,6 +72,9 @@ public class PlayerNPCLib {
 
   public void onDisable() {
     log.info("Disabling PlayerNPCLib....");
+    if (entityManager != null) {
+      entityManager.removeAll();
+    }
   }
 
   private void createNPCScoreboards() {
@@ -95,15 +95,14 @@ public class PlayerNPCLib {
   }
 
   private void checkServerVersion(String versionName) {
-    MinecraftVersions serverVersion;
     try {
-      serverVersion = MinecraftVersions.valueOf(versionName);
+      detectedNMSVersion = MinecraftVersions.parse(versionName);
     } catch (IllegalArgumentException ignored) {
       logUnsupportedServerVersion(versionName);
       return;
     }
 
-    if (!WrapperFactory.init(serverVersion)) {
+    if (!WrapperFactory.init()) {
       logUnsupportedServerVersion(versionName);
       return;
     }
@@ -116,17 +115,42 @@ public class PlayerNPCLib {
   }
 
   private static void createManager() {
+    PlayerNPCLib.packetManager = WrapperFactory.createPacketManager();
     PlayerNPCLib.entityManager = new EntityManager();
     PlayerNPCLib.eventManager = new EventManager();
-    PlayerNPCLib.entityHider = new EntityHider(plugin, EntityHidePolicy.WHITELIST);
   }
 
+  /**
+   * Checks if the given entity is a player npc of this library
+   *
+   * @param e the entity to check
+   * @return true if the entity is a player npc, false otherwise
+   */
   public static boolean isNPC(Entity e) {
-    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> npc.getEntityId() == e.getEntityId());
+    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> checkEntity(npc, e.getEntityId()));
   }
 
+  /**
+   * Checks if the given entity id is a player npc of this library
+   *
+   * @param entityId the entity id to check
+   * @return true if the entity is a player npc, false otherwise
+   */
   public static boolean isNPC(int entityId) {
-    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> npc.getEntityId() == entityId);
+    return EntityManager.getPlayerNPCList().stream().anyMatch(npc -> checkEntity(npc, entityId));
   }
 
+  /**
+   * Checks if either the bukkit entity or the npc itself is the given entity
+   *
+   * @param npc the npc to check
+   * @param entityId the entity id to check
+   * @return true if the entity is a player npc, false otherwise
+   */
+  private static boolean checkEntity(BasePlayerNPC npc, int entityId) {
+    if (npc instanceof MovablePlayerNPC) {
+      return ((MovablePlayerNPC) npc).getBukkitLivingEntity().getEntityId() == entityId || npc.getEntityId() == entityId;
+    }
+    return npc.getEntityId() == entityId;
+  }
 }

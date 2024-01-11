@@ -4,9 +4,10 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
-import dev.crystall.playernpclib.wrapper.AbstractPacket;
-import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerPlayerInfo;
+import dev.crystall.playernpclib.api.wrapper.AbstractPacket;
+import dev.crystall.playernpclib.api.wrapper.BaseWrapperPlayServerPlayerInfo;
 import java.util.List;
+import java.util.Set;
 
 public class WrapperPlayServerPlayerInfo extends AbstractPacket implements BaseWrapperPlayServerPlayerInfo {
 
@@ -20,15 +21,14 @@ public class WrapperPlayServerPlayerInfo extends AbstractPacket implements BaseW
   }
 
   @Override
-  public PlayerInfoAction getAction() {
-    return handle.getPlayerInfoAction().read(0);
+  public Set<PlayerInfoAction> getActions() {
+    return handle.getPlayerInfoActions().read(0);
   }
 
   @Override
-  public void setAction(PlayerInfoAction value) {
-    handle.getPlayerInfoAction().write(0, value);
+  public void setActions(Set<PlayerInfoAction> value) {
+    handle.getPlayerInfoActions().write(0, value);
   }
-
   @Override
   public List<PlayerInfoData> getData() {
     return handle.getPlayerInfoDataLists().read(0);

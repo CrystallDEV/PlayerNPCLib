@@ -7,7 +7,6 @@ import dev.crystall.playernpclib.api.base.MovablePlayerNPC;
 import dev.crystall.playernpclib.api.event.NPCAttackEvent;
 import dev.crystall.playernpclib.api.utility.Utils;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -19,8 +18,6 @@ import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
 
 /**
  * Created by CrystallDEV on 13/09/2020
@@ -33,19 +30,18 @@ public class EventManager implements Listener {
 
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event) {
-    PacketManager.sendScoreBoardTeamCreatePacket(event.getPlayer());
+    PlayerNPCLib.getPacketManager().sendScoreBoardTeamCreatePacket(event.getPlayer());
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
-      if (PlayerNPCLib.getEntityManager().canSee(event.getPlayer(), npc)) {
-        npc.init(event.getPlayer());
+      if (PlayerNPCLib.getEntityManager().isVisibleTo(event.getPlayer(), npc)) {
+        npc.show(event.getPlayer());
       }
     }
   }
 
   @EventHandler
-  public void onPlayerQuit(PlayerQuitEvent event) {
-    var player = event.getPlayer();
+  public void onPlayerQuit(PlayerQuitEvent event){
     for (BasePlayerNPC npc : EntityManager.getPlayerNPCList()) {
-      npc.getShownTo().remove(player.getUniqueId());
+      npc.hide(event.getPlayer());
     }
   }
 
@@ -53,7 +49,7 @@ public class EventManager implements Listener {
   public void onPlayerMove(PlayerMoveEvent event) {
     Location from = event.getFrom();
     Location to = event.getTo();
-    // Only check movement when the player moves from one block to another.
+    // Only check movement when the player moved from one block to another.
     if (from.getBlockX() != to.getBlockX() || from.getBlockY() != to.getBlockY() || from.getBlockZ() != to.getBlockZ()) {
       PlayerNPCLib.getEntityManager().handleRealPlayerMove(event.getPlayer());
     }
@@ -123,17 +119,5 @@ public class EventManager implements Listener {
       PlayerNPCLib.getEntityManager().removeEntity(playerNPC);
     }, 20L);
   }
-
-  @EventHandler
-  public void onChunkUnload(ChunkUnloadEvent event) {
-    Chunk chunk = event.getChunk();
-
-  }
-
-  @EventHandler
-  public void onChunkLoad(ChunkLoadEvent event) {
-    Chunk chunk = event.getChunk();
-  }
-
 
 }

@@ -3,8 +3,8 @@ package dev.crystall.playernpclib.nms_v1_16_R3.wrappers;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import dev.crystall.playernpclib.wrapper.AbstractPacket;
-import dev.crystall.playernpclib.wrapper.BaseWrapperPlayServerEntityTeleport;
+import dev.crystall.playernpclib.api.wrapper.AbstractPacket;
+import dev.crystall.playernpclib.api.wrapper.BaseWrapperPlayServerEntityTeleport;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 

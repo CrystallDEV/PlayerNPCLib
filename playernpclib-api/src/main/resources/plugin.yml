@@ -1,8 +1,0 @@
-name: PlayerNPCLib
-version: 1.1.0-SNAPSHOT
-main: dev.crystall.NPCTester
-api-version: 1.19
-authors: [ CrystallDEV ]
-depend: [ ProtocolLib, HolographicDisplays ]
-description: PlayerNPCLib that uses packets to display efficient custom player npcs
-website: https://www.crystall.dev

@@ -1,16 +1,8 @@
-[![Quality gate](https://sonarqube.crystall.dev/api/project_badges/quality_gate?project=dev.crystall%3Aplayernpclib)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
-
-[![Build Status](https://jenkins.crystall.dev/buildStatus/icon?job=PlayerNPCLib%2Fdevelop)](https://jenkins.crystall.dev/job/PlayerNPCLib/job/develop/)
-
-[![Bugs](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=bugs)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
-[![Lines of Code](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=ncloc)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
-[![Maintainability Rating](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=sqale_rating)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
-[![Reliability Rating](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=reliability_rating)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
-[![Security Rating](https://sonarqube.crystall.dev/api/project_badges/measure?project=dev.crystall%3Aplayernpclib&metric=security_rating)](https://sonarqube.crystall.dev/dashboard?id=dev.crystall%3Aplayernpclib)
-
 # PlayerNPCLib
 
-NPC Library which is 99% based on packets to spawn in custom player looking npcs
+NPC Library which is 99% based on packets to spawn in custom player looking npcs.
+
+The library is based on paper and should break on other non paper server distributions.
 
 ## Maven
 
@@ -32,7 +24,7 @@ Add PlayerNPCLib as a dependency
   <dependency>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib-api</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
@@ -44,7 +36,7 @@ Add the correct nms version as a dependency
   <dependency>
     <groupId>dev.crystall</groupId>
     <artifactId>playernpclib-nms-v1_20_R1</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
   </dependency>
 </dependencies>
 ```
@@ -69,7 +61,7 @@ dependencies {
 
 # Code examples
 
-Setup the library. This should be called on startup
+Set up the library. This should be called on startup
 
 ``` Java
 playerNPCLib = new PlayerNPCLib(this);
@@ -111,7 +103,6 @@ public class MovablePlayerNPC extends BasePlayerNPC {
     this.bukkitLivingEntity = (Creature)this.getLocation().getWorld().spawnEntity(this.getLocation(), this.entityType);
     if (this.bukkitLivingEntity instanceof Ageable) {
       ((Ageable)this.bukkitLivingEntity).setAdult();
-      ((Ageable)this.bukkitLivingEntity).setAdult();
     }
 
     if (this.bukkitLivingEntity instanceof Zombie) {
@@ -124,3 +115,12 @@ public class MovablePlayerNPC extends BasePlayerNPC {
   }
 }
 ```
+
+
+## Visibility Management
+
+The visibility of an entity is handled its settings. If an entity is visible by default, each nearby player receives on certain conditions the packets to display the entity.
+
+If an entity is not visible by default, each nearby player receives on certain conditions the packets to hide the entity.
+
+A npc can be shown to a player by adding it to the visibleTo list of the npc.
