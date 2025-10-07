@@ -18,7 +18,10 @@ public enum MinecraftVersions {
   v1_19_R1("1.19.1"),
   v1_19_R2("1.19.2"),
   v1_19_R3("1.19.3"),
-  v1_20_R1("1.20.1");
+  v1_20_R1("1.20.1"),
+  v1_20_R2("1.20.2"),
+  v1_20_R4("1.20.4"),
+  ;
 
   private final String serverVersion;
 
