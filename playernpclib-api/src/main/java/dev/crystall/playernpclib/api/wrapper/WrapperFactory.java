@@ -1,18 +1,24 @@
 package dev.crystall.playernpclib.api.wrapper;
 
 import dev.crystall.playernpclib.PlayerNPCLib;
+import dev.crystall.playernpclib.api.wrapper.impl.*;
 import dev.crystall.playernpclib.manager.PacketManager;
+import dev.crystall.playernpclib.manager.impl.SharedPacketManagerImpl;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * Factory for wrapper class references and PacketManager instantiation.
+ *
+ * SIMPLIFIED: Direct class references instead of dynamic loading.
+ * All wrappers are now shared implementations in the impl package.
+ *
  * Created by CrystallDEV on 18/08/2021
+ * Simplified for wrapper consolidation on 2025-10-07
  */
 @Slf4j
-@SuppressWarnings("unchecked")
 public class WrapperFactory {
 
-  private static final String BASE_PACKAGE = "dev.crystall.playernpclib";
-
+  // Wrapper class references (loaded directly, no reflection)
   public static Class<? extends BaseWrapperPlayClientUseEntity> BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY;
   public static Class<? extends BaseWrapperPlayServerAnimation> BASE_WRAPPER_PLAY_SERVER_ANIMATION;
   public static Class<? extends BaseWrapperPlayServerEntityDestroy> BASE_WRAPPER_PLAY_SERVER_ENTITY_DESTROY;
@@ -23,110 +29,60 @@ public class WrapperFactory {
   public static Class<? extends BaseWrapperPlayServerNamedEntitySpawn> BASE_WRAPPER_PLAY_SERVER_NAMED_ENTITY_SPAWN;
   public static Class<? extends BaseWrapperPlayServerPlayerInfo> BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO;
   public static Class<? extends BaseWrapperPlayServerPlayerInfoRemove> BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO_REMOVE;
-
   public static Class<? extends BaseWrapperPlayServerScoreboardTeam> BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM;
 
-  private static boolean HAS_ERROR = false;
-
   private WrapperFactory() {
+    // Utility class, no instantiation
   }
 
+  /**
+   * Initialize all wrapper class references.
+   *
+   * @return true if initialization successful, false if version not detected
+   */
   public static boolean init() {
-    if (PlayerNPCLib.getDetectedNMSVersion() == null) {
+    MinecraftVersions version = PlayerNPCLib.getDetectedNMSVersion();
+    if (version == null) {
+      log.error("Cannot initialize WrapperFactory: NMS version not detected");
       return false;
     }
-    resolvePlayClientUseEntity();
-    resolvePlayServerAnimation();
-    resolvePlayServerEntityDestroy();
-    resolvePlayServerEntityEquipment();
-    resolvePlayServerEntityHeadRotation();
-    resolvePlayServerEntityMetadata();
-    resolvePlayServerEntityTeleport();
-    resolvePlayServerNamedEntitySpawn();
-    resolvePlayServerPlayerInfo();
-    resolvePlayServerPlayerInfoRemove();
-    resolvePlayServerScoreboardTeam();
-    return !HAS_ERROR;
-  }
 
-  public static void resolvePlayClientUseEntity() {
-    BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY = (Class<? extends BaseWrapperPlayClientUseEntity>) resolveWrapperForVersion(
-      "WrapperPlayClientUseEntity");
-  }
+    log.info("Initializing shared wrappers for version {}", version.getServerVersion());
 
-  public static void resolvePlayServerAnimation() {
-    BASE_WRAPPER_PLAY_SERVER_ANIMATION = (Class<? extends BaseWrapperPlayServerAnimation>) resolveWrapperForVersion(
-      "WrapperPlayServerAnimation");
-  }
+    // Direct class references - no dynamic loading needed
+    BASE_WRAPPER_PLAY_CLIENT_USE_ENTITY = WrapperPlayClientUseEntity.class;
+    BASE_WRAPPER_PLAY_SERVER_ANIMATION = WrapperPlayServerAnimation.class;
+    BASE_WRAPPER_PLAY_SERVER_ENTITY_DESTROY = WrapperPlayServerEntityDestroy.class;
+    BASE_WRAPPER_PLAY_SERVER_ENTITY_EQUIPMENT = WrapperPlayServerEntityEquipment.class;
+    BASE_WRAPPER_PLAY_SERVER_ENTITY_HEAD_ROTATION = WrapperPlayServerEntityHeadRotation.class;
+    BASE_WRAPPER_PLAY_SERVER_ENTITY_METADATA = WrapperPlayServerEntityMetadata.class;
+    BASE_WRAPPER_PLAY_SERVER_ENTITY_TELEPORT = WrapperPlayServerEntityTeleport.class;
+    BASE_WRAPPER_PLAY_SERVER_NAMED_ENTITY_SPAWN = WrapperPlayServerNamedEntitySpawn.class;
+    BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO = WrapperPlayServerPlayerInfo.class;
+    BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM = WrapperPlayServerScoreboardTeam.class;
 
-  public static void resolvePlayServerEntityDestroy() {
-    BASE_WRAPPER_PLAY_SERVER_ENTITY_DESTROY = (Class<? extends BaseWrapperPlayServerEntityDestroy>) resolveWrapperForVersion(
-      "WrapperPlayServerEntityDestroy");
-  }
-
-  public static void resolvePlayServerEntityEquipment() {
-    BASE_WRAPPER_PLAY_SERVER_ENTITY_EQUIPMENT = (Class<? extends BaseWrapperPlayServerEntityEquipment>) resolveWrapperForVersion(
-      "WrapperPlayServerEntityEquipment");
-  }
-
-  public static void resolvePlayServerEntityHeadRotation() {
-    BASE_WRAPPER_PLAY_SERVER_ENTITY_HEAD_ROTATION = (Class<? extends BaseWrapperPlayServerEntityHeadRotation>) resolveWrapperForVersion(
-      "WrapperPlayServerEntityHeadRotation");
-  }
-
-  public static void resolvePlayServerEntityMetadata() {
-    BASE_WRAPPER_PLAY_SERVER_ENTITY_METADATA = (Class<? extends BaseWrapperPlayServerEntityMetadata>) resolveWrapperForVersion(
-      "WrapperPlayServerEntityMetadata");
-  }
-
-  public static void resolvePlayServerEntityTeleport() {
-    BASE_WRAPPER_PLAY_SERVER_ENTITY_TELEPORT = (Class<? extends BaseWrapperPlayServerEntityTeleport>) resolveWrapperForVersion(
-      "WrapperPlayServerEntityTeleport");
-  }
-
-  public static void resolvePlayServerNamedEntitySpawn() {
-    BASE_WRAPPER_PLAY_SERVER_NAMED_ENTITY_SPAWN = (Class<? extends BaseWrapperPlayServerNamedEntitySpawn>) resolveWrapperForVersion(
-      "WrapperPlayServerNamedEntitySpawn");
-  }
-
-  public static void resolvePlayServerPlayerInfo() {
-    BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO = (Class<? extends BaseWrapperPlayServerPlayerInfo>) resolveWrapperForVersion(
-      "WrapperPlayServerPlayerInfo");
-  }
-
-  public static void resolvePlayServerScoreboardTeam() {
-    BASE_WRAPPER_PLAY_SERVER_SCOREBOARD_TEAM = (Class<? extends BaseWrapperPlayServerScoreboardTeam>) resolveWrapperForVersion(
-      "WrapperPlayServerScoreboardTeam");
-  }
-
-  public static void resolvePlayServerPlayerInfoRemove() {
-    BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO_REMOVE = (Class<? extends BaseWrapperPlayServerPlayerInfoRemove>) resolveWrapperForVersion(
-      "WrapperPlayServerPlayerInfoRemove");
-  }
-
-  public static PacketManager createPacketManager() {
-    return (PacketManager) WrapperGenerator.map(resolveManagerForVersion("PacketManagerImpl"));
-  }
-
-  private static Class<?> resolveManagerForVersion(String className) {
-    return resolveClassForVersion("manager", className);
-  }
-
-  private static Class<?> resolveWrapperForVersion(String className) {
-    return resolveClassForVersion("wrappers", className);
-  }
-
-  private static Class<?> resolveClassForVersion(String typePackageName, String className) {
-    Class<?> loadedClass = null;
-    String fullClassName = BASE_PACKAGE + ".nms_" + PlayerNPCLib.getDetectedNMSVersion().name() + "." + typePackageName + "." + className;
-    try {
-      loadedClass = WrapperFactory.class.getClassLoader().loadClass(fullClassName);
-      log.info("Loaded {} class {}", typePackageName, fullClassName);
-    } catch (ClassNotFoundException exception) {
-      HAS_ERROR = true;
-      log.error("Unable to load {} class {}", typePackageName, fullClassName);
+    // Conditional loading for modern versions (1.20+)
+    if (version.hasPlayerInfoRemove()) {
+      BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO_REMOVE = WrapperPlayServerPlayerInfoRemove.class;
+      log.info("Loaded PLAYER_INFO_REMOVE wrapper (modern version)");
+    } else {
+      BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO_REMOVE = null;
+      log.info("Skipped PLAYER_INFO_REMOVE wrapper (legacy version)");
     }
-    return loadedClass;
+
+    log.info("Successfully initialized {} shared wrappers",
+        BASE_WRAPPER_PLAY_SERVER_PLAYER_INFO_REMOVE == null ? 10 : 11);
+
+    return true;
   }
 
+  /**
+   * Create PacketManager instance.
+   *
+   * @return SharedPacketManagerImpl instance
+   */
+  public static PacketManager createPacketManager() {
+    log.info("Creating shared PacketManager implementation");
+    return new SharedPacketManagerImpl();
+  }
 }

@@ -29,17 +29,7 @@ Add PlayerNPCLib as a dependency
 </dependencies>
 ```
 
-Add the correct nms version as a dependency
-
-```xml
-<dependencies>
-  <dependency>
-    <groupId>dev.crystall</groupId>
-    <artifactId>playernpclib-nms-v1_20_R1</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
-  </dependency>
-</dependencies>
-```
+**Note**: As of version 1.3.1, NMS modules have been consolidated into the API module. You only need the `playernpclib-api` dependency - it works for all supported Minecraft versions (1.16.3-1.21.7) automatically.
 
 ## Gradle
 

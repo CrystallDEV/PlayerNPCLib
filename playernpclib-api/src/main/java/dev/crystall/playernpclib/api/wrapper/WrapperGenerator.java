@@ -19,8 +19,9 @@ public class WrapperGenerator {
       }
       return aClass.getDeclaredConstructor(types).newInstance(initargs);
     } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-      log.error("Unable to map class " + aClass.getSimpleName(), e);
+      String errorMsg = String.format("Failed to instantiate wrapper class %s", aClass.getSimpleName());
+      log.error(errorMsg, e);
+      throw new RuntimeException(errorMsg, e);
     }
-    return null;
   }
 }
