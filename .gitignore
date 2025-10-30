@@ -114,3 +114,15 @@ run/
 
 # JRebel config
 rebel.xml
+
+#ignore nearly everything from the paper game server
+.paper-test-server/*
+.paper-test-server/plugins/*
+.paper-test-server/plugins/playernpclib-*.jar
+!.paper-test-server/plugins/
+!.paper-test-server/plugins/*.jar
+!.paper-test-server/paper.jar
+!.paper-test-server/paper.sh
+!.paper-test-server/paper.bat
+!.paper-test-server/paper.yml
+!.paper-test-server/server.properties

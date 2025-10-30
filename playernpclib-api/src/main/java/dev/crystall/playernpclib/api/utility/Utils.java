@@ -55,6 +55,7 @@ public class Utils {
       case LEGS -> EquipmentSlot.LEGS;
       case CHEST -> EquipmentSlot.CHEST;
       case HEAD -> EquipmentSlot.HEAD;
+      default -> EquipmentSlot.HAND;
     };
   }
 
